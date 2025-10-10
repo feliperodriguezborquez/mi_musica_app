@@ -2,7 +2,13 @@ from flask import Flask, render_template, abort, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
+# ... tus otras importaciones ...
+from werkzeug.middleware.proxy_fix import ProxyFix # <-- AÑADE ESTA LÍNEA
+
 app = Flask(__name__)
+# --- AÑADE ESTA LÍNEA JUSTO DESPUÉS DE INICIALIZAR LA APP ---
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 # --- Configuración de la Base de Datos ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comentarios.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
