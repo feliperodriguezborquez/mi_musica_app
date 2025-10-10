@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Composiciones</h2>
+    <p>Explora las composiciones originales.</p>
+    
+    <div class="lista-scroll" style="height: 70vh;">
+        <div class="lista-composiciones">
+            {% for obra in obras %}
+                <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
+                    <div class="info-tarjeta">
+                        <h3>{{ obra.titulo }}</h3>
+                        <p>{{ obra.musica }}</p>
+                    </div>
+                    </a>
+            {% else %}
+                <p>No hay composiciones para mostrar.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

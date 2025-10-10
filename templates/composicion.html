@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="detalle-obra">
+        <a href="{{ url_for('index') }}" class="btn-volver">← Volver al Catálogo</a>
+        
+        <h2>{{ obra.titulo }}</h2>
+        
+        <h3>
+            Música: {{ obra.musica }} | Letra: {{ obra.letra }} | Idioma: {{ obra.idioma }} ({{ obra.anio }})
+        </h3>
+        
+        <p class="descripcion">{{ obra.descripcion }}</p>
+
+        {% if obra.tags %}
+        <div class="tags-container">
+            <strong>Etiquetas:</strong>
+            {% for tag in obra.tags %}
+                <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if obra.tipo == 'local' %}
+            <h4>Audio</h4>
+            <audio controls class="reproductor">
+                <source src="{{ url_for('static', filename=obra.audio) }}" type="audio/mpeg">
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+
+            <h4 style="margin-top: 30px;">Partitura</h4>
+            <embed src="{{ url_for('static', filename=obra.partitura) }}" type="application/pdf" width="100%" height="700px" />
+        
+        {% elif obra.tipo == 'youtube_selectable' %}
+            <div class="player-selection-buttons">
+                <button class="player-button" onclick="showPlayer('audio')">Escuchar Canción</button>
+                <button class="player-button" onclick="showPlayer('video')">Ver Video</button>
+            </div>
+
+            <div id="audioPlayer" class="embed-container">
+                {{ obra.youtube_audio_embed | safe }}
+            </div>
+            <div id="videoPlayer" class="embed-container" style="display:none;">
+                {{ obra.youtube_video_embed | safe }}
+            </div>
+
+            <script>
+                function showPlayer(type) {
+                    const videoPlayer = document.getElementById('videoPlayer');
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    const videoButton = document.querySelector('.player-button[onclick*="video"]');
+                    const audioButton = document.querySelector('.player-button[onclick*="audio"]');
+
+                    if (type === 'video') {
+                        videoPlayer.style.display = 'block';
+                        audioPlayer.style.display = 'none';
+                        videoButton.classList.add('active');
+                        audioButton.classList.remove('active');
+                    } else {
+                        videoPlayer.style.display = 'none';
+                        audioPlayer.style.display = 'block';
+                        audioButton.classList.add('active');
+                        videoButton.classList.remove('active');
+                    }
+                }
+                document.addEventListener('DOMContentLoaded', () => {
+                    showPlayer('audio');
+                });
+            </script>
+        {% endif %}
+
+        <hr style="margin-top: 40px; margin-bottom: 40px;">
+
+        <div class="comentarios-seccion">
+            <h3>Comentarios</h3>
+            
+            <form action="{{ url_for('add_comment', comp_id=obra.id) }}" method="post" class="comentario-form">
+                <input type="text" name="autor" placeholder="Tu nombre" required>
+                <textarea name="contenido" rows="4" placeholder="Escribe tu comentario..." required></textarea>
+                <button type="submit">Enviar Comentario</button>
+            </form>
+            
+            <div class="lista-comentarios">
+                {% for comentario in comentarios %}
+                    <div class="comentario">
+                        <p><strong>{{ comentario.autor }}</strong> <span class="fecha-comentario">{{ comentario.fecha_creacion.strftime('%d-%m-%Y') }}</span></p>
+                        <p>{{ comentario.contenido }}</p>
+                    </div>
+                {% else %}
+                    <p>Aún no hay comentarios. ¡Sé el primero!</p>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+{% endblock %}

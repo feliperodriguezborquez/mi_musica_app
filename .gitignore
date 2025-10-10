@@ -1,0 +1,13 @@
+# Entorno virtual de Python
+venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+
+# Bases de datos de SQLite
+*.db
+*.db-journal
+
+# Archivos de configuración de VS Code (opcional)
+.vscode/

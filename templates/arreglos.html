@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Arreglos Musicales</h2>
+    <p>Explora los arreglos musicales disponibles.</p>
+    
+    <div class="lista-scroll" style="height: 60vh;">
+        <div class="lista-composiciones">
+            {% for obra in obras %}
+                <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
+                    <div class="info-tarjeta">
+                        <h3>{{ obra.titulo }}</h3>
+                        <p>{{ obra.musica }}</p>
+                    </div>
+                </a>
+            {% else %}
+                <p>No hay arreglos disponibles en este momento.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Catálogo General</h2>
+    
+    <div class="lista-scroll" style="height: 70vh;">
+        <div class="lista-composiciones">
+            {% for obra in composiciones %}
+                <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
+                    <div class="info-tarjeta">
+                        <h3>{{ obra.titulo }}</h3>
+                        <p>{{ obra.musica }}</p>
+                    </div>
+                    <div class="categoria-tags-container">
+                        {% if obra.categorias %}
+                            {% for cat in obra.categorias %}
+                                <span class="categoria-tag">{{ cat }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

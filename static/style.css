@@ -1,8 +1,17 @@
+/* --- Paleta de Colores --- */
+:root {
+    --color-principal: #d4ac0d;
+    --color-fondo: #f4f4f9;
+    --color-texto: #333;
+    --color-acento: #f1c40f;
+    --color-blanco: #fff;
+}
+
 /* Estilos Generales */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
     margin: 0;
     line-height: 1.6;
 }
@@ -13,103 +22,269 @@ body {
     padding: 0 20px;
 }
 
-/* Header y Footer */
+/* Header y Navegación */
 header {
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    text-align: center;
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
     padding: 1rem 0;
     margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--color-blanco);
+    text-decoration: none;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: var(--color-blanco);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+    padding: 5px 0;
+    border-bottom: 2px solid transparent;
+}
+
+nav ul li a:hover {
+    border-bottom-color: var(--color-blanco);
+}
+
+
+/* Footer */
 footer {
     text-align: center;
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #34495e;
-    color: #ecf0f1;
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
 }
 
-/* Lista de Composiciones (Página principal) */
-.lista-composiciones {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.tarjeta-obra {
-    background-color: #fff;
+/* Lista Vertical con Scroll */
+.lista-scroll {
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
+    padding: 10px;
+    background-color: var(--color-blanco);
+    overflow-y: auto;
+}
+
+.lista-composiciones {
+    display: block; 
+}
+
+/* --- ESTILOS ACTUALIZADOS PARA LA TARJETA --- */
+.tarjeta-obra {
+    display: flex; /* <-- CAMBIO CLAVE: usamos Flexbox */
+    justify-content: space-between; /* <-- Para empujar los elementos a los extremos */
+    align-items: center; /* <-- Para centrarlos verticalmente */
+    border: 1px solid #eee;
+    border-radius: 8px;
     text-decoration: none;
-    color: #333;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    color: var(--color-texto);
+    transition: background-color 0.2s;
+    margin-bottom: 10px;
+    padding: 15px; /* <-- Movemos el padding aquí */
+}
+
+.tarjeta-obra:last-child {
+    margin-bottom: 0;
 }
 
 .tarjeta-obra:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-.tarjeta-obra img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
+    background-color: #f7f7f7;
 }
 
 .info-tarjeta {
-    padding: 15px;
+    padding: 0; /* <-- Quitamos el padding de aquí ya que está en el padre */
 }
 
 .info-tarjeta h3 {
     margin: 0 0 5px 0;
+    font-size: 1.1em;
 }
 
 .info-tarjeta p {
     margin: 0;
     color: #777;
+    font-size: 0.9em;
 }
+
+/* --- NUEVO ESTILO PARA LA ETIQUETA DE CATEGORÍA --- */
+.categoria-tag {
+    background-color: #e0e0e0;
+    color: #555;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-left: 15px; /* Espacio entre el texto y la etiqueta */
+    white-space: nowrap; /* Evita que el texto de la etiqueta se parta */
+}
+
 
 /* Página de Detalle de la Composición */
 .detalle-obra {
-    background-color: #fff;
+    background-color: var(--color-blanco);
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ... (el resto del CSS sigue igual) ... */
+
+.detalle-obra h2, .detalle-obra h3 {
     text-align: center;
 }
-
-.portada-detalle {
-    max-width: 300px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
 .descripcion {
     font-size: 1.1em;
     color: #555;
     max-width: 600px;
     margin: 20px auto;
+    text-align: center;
 }
-
 .reproductor {
     width: 100%;
     max-width: 500px;
-    margin-top: 20px;
+    margin: 20px auto;
+    display: block;
 }
-
 .btn-volver {
     display: inline-block;
     margin-bottom: 20px;
     text-decoration: none;
-    background-color: #3498db;
+    background-color: var(--color-principal);
     color: white;
     padding: 10px 15px;
     border-radius: 5px;
     transition: background-color 0.2s;
 }
-
 .btn-volver:hover {
-    background-color: #2980b9;
+    background-color: var(--color-acento);
+}
+.tags-container {
+    margin: 20px 0;
+    text-align: center;
+}
+.tag-link {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 12px;
+    margin: 5px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.2s, color 0.2s;
+}
+.tag-link:hover {
+    background-color: var(--color-principal);
+    color: #fff;
+}
+.player-selection-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+.player-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.player-button:hover {
+    background-color: #e0e0e0;
+}
+.player-button.active {
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+    border-color: var(--color-principal);
+}
+.player-button.active:hover {
+    background-color: var(--color-acento);
+    border-color: var(--color-acento);
+}
+.embed-container {
+    margin-top: 2rem;
+}
+.embed-container iframe {
+    width: 100%;
+    height: 380px;
+    border: 0;
+    border-radius: 12px;
+}
+
+.categoria-tags-container {
+    display: flex;
+    gap: 5px; /* Espacio entre etiquetas si hay más de una */
+}
+
+
+
+/* Estilos para la Sección de Comentarios */
+.comentarios-seccion {
+    margin-top: 30px;
+}
+.comentario-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+.comentario-form input,
+.comentario-form textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+}
+.comentario-form button {
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.comentario-form button:hover {
+    background-color: var(--color-acento);
+}
+.comentario {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+.comentario:last-child {
+    border-bottom: none;
+}
+.fecha-comentario {
+    color: #999;
+    font-size: 0.8em;
+    margin-left: 10px;
 }

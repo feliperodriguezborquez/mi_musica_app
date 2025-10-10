@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Listas de Reproducción</h2>
+    <p>Selecciona una etiqueta para ver todas las composiciones asociadas.</p>
+    
+    <div class="tags-container" style="text-align: left; margin-top: 2rem;">
+        <h3>Listas Principales</h3>
+        {% for tag in listas_principales %}
+            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+        {% endfor %}
+        
+        <h3 style="margin-top: 2rem;">Momentos Litúrgicos</h3>
+        {% for tag in momentos_liturgicos %}
+            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}
