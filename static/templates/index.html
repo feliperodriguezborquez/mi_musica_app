@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Catálogo de Obras</h2>
+    <div class="lista-composiciones">
+        {% for obra in composiciones %}
+            <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
+                <img src="{{ url_for('static', filename=obra.portada) }}" alt="Portada de {{ obra.titulo }}">
+                <div class="info-tarjeta">
+                    <h3>{{ obra.titulo }}</h3>
+                    <p>{{ obra.compositor }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,115 @@
+/* Estilos Generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* Header y Footer */
+header {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+/* Lista de Composiciones (Página principal) */
+.lista-composiciones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.tarjeta-obra {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.tarjeta-obra:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.tarjeta-obra img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.info-tarjeta {
+    padding: 15px;
+}
+
+.info-tarjeta h3 {
+    margin: 0 0 5px 0;
+}
+
+.info-tarjeta p {
+    margin: 0;
+    color: #777;
+}
+
+/* Página de Detalle de la Composición */
+.detalle-obra {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.portada-detalle {
+    max-width: 300px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.descripcion {
+    font-size: 1.1em;
+    color: #555;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.reproductor {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+.btn-volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.btn-volver:hover {
+    background-color: #2980b9;
+}
