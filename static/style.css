@@ -2,6 +2,7 @@
 :root {
     --color-principal: #d4ac0d;
     --color-fondo: #f4f4f9;
+    --color-boton-nav: #cfa60d; /* Tono dorado, un poco más oscuro */
     --color-texto: #333;
     --color-acento: #f1c40f;
     --color-blanco: #fff;
@@ -17,20 +18,40 @@ body {
 }
 
 .container {
-    max-width: 960px;
+    max-width: 100%; /* Ocupará todo el ancho disponible */
     margin: 20px auto;
-    padding: 0 20px;
+    padding: 0 5%; /* Dejamos un 5% de margen a cada lado */
 }
 
 /* ... (Header, Footer, Búsqueda, etc. sin cambios) ... */
 header { background-color: var(--color-principal); color: var(--color-blanco); padding: 1rem 0; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 nav { display: flex; justify-content: space-between; align-items: center; }
 .brand-logo { font-size: 1.5em; font-weight: bold; color: var(--color-blanco); text-decoration: none; }
-nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
-nav ul li { margin-left: 20px; }
-nav ul li a { color: var(--color-blanco); text-decoration: none; font-weight: bold; transition: color 0.2s; padding: 5px 0; border-bottom: 2px solid transparent; }
-nav ul li a:hover { border-bottom-color: var(--color-blanco); }
-.nav-separator { border-left: 1px solid rgba(255, 255, 255, 0.3); margin: 0 15px; height: 20px; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 15px; }
+nav ul li { margin-left: 0; } /* Eliminamos el margen por defecto */
+nav ul li a { 
+    color: var(--color-blanco); 
+    text-decoration: none; 
+    font-weight: bold; 
+    transition: all 0.2s; 
+    padding: 8px 12px;
+    border-radius: 6px; /* Bordes redondeados */
+    background-color: var(--color-boton-nav); /* Fondo permanente más oscuro */
+}
+nav ul li a:hover { 
+    /* Un poco más oscuro al pasar el ratón */
+    background-color: #c7a00c; 
+    transform: translateY(1px);
+}
+.nav-separator { 
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    height: 20px;
+    margin: 0; /* El espaciado ahora lo controla 'gap' en el ul */
+}
+.nav-separator-thick {
+    /* Hacemos este separador más opaco en lugar de más grueso */
+    border-left-color: rgba(255, 255, 255, 0.6);
+}
 footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: var(--color-principal); color: var(--color-blanco); }
 .filter-container { margin-bottom: 20px; }
 .search-bar input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.1em; box-sizing: border-box; }
@@ -38,7 +59,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 /* --- ESTILOS RESTAURADOS PARA LA LISTA CON SCROLL --- */
 
 .lista-scroll {
-    height: 65vh; /* Altura del 65% de la ventana */
+    height: 85vh; /* Altura del 85% de la ventana */
     overflow-y: auto; /* Scroll vertical si es necesario */
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -65,6 +86,13 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     padding: 15px;
 }
 
+.song-title-with-number {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.song-number { color: #888; font-size: 1.1em; }
+
 .tarjeta-obra:last-child {
     border-bottom: none;
 }
@@ -74,7 +102,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 }
 
 .info-tarjeta {
-    padding: 0;
+    padding: 0; /* No padding needed here */
 }
 .info-tarjeta h3 { margin: 0 0 5px 0; font-size: 1.1em; }
 .info-tarjeta p { margin: 0; color: #777; font-size: 0.9em; }
@@ -82,25 +110,56 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .categoria-tag { background-color: #e0e0e0; color: #555; font-size: 0.8em; font-weight: bold; padding: 4px 10px; border-radius: 12px; margin-left: 15px; white-space: nowrap; }
 
 /* --- ESTILOS DE PÁGINA DE DETALLE --- */
-.detalle-obra { background-color: var(--color-blanco); padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto; }
+.detalle-obra { background-color: var(--color-blanco); padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 100%; margin: 0 auto; }
 .detalle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.detalle-obra h2 { text-align: center; font-size: 2.5em; margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 10px; border-bottom: 3px solid var(--color-principal); }
-.metadata-grid { display: grid; grid-template-columns: 120px auto; gap: 8px 15px; max-width: 550px; margin: 0 auto 2.5rem auto; font-size: 1em; align-items: start; }
-.metadata-label { font-weight: bold; color: var(--color-texto); text-align: right; padding-right: 15px; }
+.title-container {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--color-principal);
+}
+.detalle-obra h2 { font-size: 2.5em; margin-top: 0; margin-bottom: 0.5rem; }
+.song-subtitle {
+    font-style: italic;
+    color: #666;
+    font-size: 1.2em;
+    margin: 0;
+}
+.metadata-grid { display: flex; justify-content: center; gap: 100px; margin: 0 auto 2.5rem auto; font-size: 1.1em; }
+.metadata-column p { margin: 0 0 10px 0; }
+.metadata-label { font-weight: bold; color: var(--color-texto); }
 .metadata-value { color: #555; font-style: italic; }
-.metadata-value.metadata-fullwidth { font-style: italic; text-align: left; }
-.metadata-fullwidth { grid-column: 1 / -1; text-align: left; }
-.metadata-fullwidth.metadata-label { margin-bottom: -5px; }
 .detalle-obra h4 { font-size: 1.2em; border-bottom: 2px solid var(--color-principal); padding-bottom: 8px; margin-top: 40px; margin-bottom: 20px; }
-.tags-container { text-align: left; padding: 0; margin: 0 0 20px 0; border: none; }
+.tags-container { text-align: left; padding: 0; margin: 0 0 20px 0; border: none; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .reproductor { width: 100%; max-width: 500px; margin: 20px auto; display: block; }
 .btn-volver { display: inline-block; text-decoration: none; background-color: var(--color-principal); color: white; padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s; }
-.btn-editar { text-decoration: none; padding: 8px 15px; background-color: #f0f0f0; color: #333; border-radius: 5px; font-size: 0.9em; border: 1px solid #ddd; transition: background-color 0.2s; }
+.btn-editar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #f0f0f0; /* Color gris como otros botones */
+    color: #333; /* Color de texto oscuro */
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1001;
+    transition: background-color 0.2s;
+}
 .btn-editar:hover { background-color: #e0e0e0; }
 .seccion-lista { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; }
 .seccion-lista h3 { margin-top: 0; border-bottom: 2px solid var(--color-principal); padding-bottom: 10px; }
 .seccion-lista .tags-container { text-align: left; border: none; padding: 0; }
 .tag-link { display: inline-block; background-color: #e0e0e0; color: #333; padding: 5px 12px; margin: 5px; border-radius: 15px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s, color 0.2s; }
+.btn-nav { display: inline-block; text-decoration: none; background-color: var(--color-principal); color: white; padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s; }
+.btn-nav-disabled { display: inline-block; text-decoration: none; background-color: #ccc; color: #888; padding: 10px 15px; border-radius: 5px; cursor: not-allowed; }
+.btn-nav:hover { background-color: var(--color-acento); }
 .tag-link:hover { background-color: var(--color-principal); color: #fff; }
 .tag-link-todas { background-color: var(--color-principal) !important; color: var(--color-blanco) !important; font-weight: bold; }
 .edit-form { background-color: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-top: 2rem; }
@@ -131,7 +190,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .login-form label { display: block; margin-bottom: 8px; }
 .login-form input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 20px; }
 .login-form button { width: 100%; padding: 12px; background-color: var(--color-principal); color: var(--color-blanco); border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; }
-.login-link { background-color: rgba(0,0,0,0.1); padding: 5px 10px !important; border-radius: 5px; border-bottom: 2px solid transparent !important; }
+.login-link { background-color: rgba(0,0,0,0.1); border-radius: 5px; }
 .flash-message { padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center; }
 .flash-message.success { background-color: #d4edda; color: #155724; }
 .flash-message.danger { background-color: #f8d7da; color: #721c24; }
@@ -165,6 +224,12 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     padding-left: 5px; /* Pequeña indentación */
 }
 
+.login-link {
+    background-color: transparent;
+    border: 1px solid var(--color-blanco);
+    border-radius: 5px;
+}
+
 .btn-borrar-comentario {
     background: none;
     border: 1px solid #e74c3c;
@@ -179,4 +244,315 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .btn-borrar-comentario:hover {
     background-color: #e74c3c;
     color: white;
+}
+
+/* --- Estilos Responsivos para Móvil --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px; /* Menos padding lateral en pantallas pequeñas */
+    }
+
+    /* --- Navegación --- */
+    nav {
+        flex-direction: column; /* Apila el logo y la lista de navegación */
+        gap: 15px;
+    }
+
+    nav ul {
+        flex-wrap: wrap; /* Permite que los items se ajusten en varias líneas si es necesario */
+        justify-content: center;
+        gap: 10px;
+    }
+
+    nav ul li {
+        margin-left: 0; /* Resetea el margen */
+    }
+
+    /* --- Tarjeta de Canción en la Lista --- */
+    .tarjeta-obra {
+        flex-direction: column; /* Apila la info y las categorías */
+        align-items: flex-start; /* Alinea todo a la izquierda */
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .categoria-tags-container {
+        margin-left: 0;
+    }
+
+    .categoria-tag {
+        margin-left: 0; /* Resetea el margen */
+    }
+
+    /* --- Página de Detalle --- */
+    .detalle-obra {
+        padding: 20px;
+    }
+
+    .detalle-obra h2 {
+        font-size: 1.8em; /* Título un poco más pequeño */
+    }
+
+    .metadata-grid {
+        grid-template-columns: 1fr; /* Cambia el grid a una sola columna */
+        text-align: left;
+        gap: 10px;
+    }
+
+    .metadata-label {
+        text-align: left; /* Alinea las etiquetas a la izquierda */
+        padding-right: 0;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+}
+
+/* --- Controles de Partitura OSMD --- */
+.partitura-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--color-principal); /* Línea amarilla debajo del título */
+    padding-bottom: 8px;
+    margin-top: 30px;
+}
+.partitura-header h4 {
+    margin: 0;
+    border: none;
+}
+.osmd-controls {
+    display: flex;
+    gap: 5px;
+    justify-content: center; /* Centra los botones */
+    margin: 25px 0 0 0; /* 25px arriba, 0 en los otros lados */
+}
+.osmd-controls button {
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+.osmd-controls button:hover {
+    background-color: #e0e0e0;
+}
+.osmd-controls button:active {
+    background-color: #d0d0d0;
+}
+
+/* Contenedor de la partitura */
+#osmd-container {
+    width: 100%;
+    margin-top: 20px; /* Mantenemos el espacio superior */
+    /* Eliminamos el fondo, borde y padding para que se integre */
+    background-color: transparent;
+}
+
+/* Vista horizontal con scroll */
+#osmd-container.horizontal-scroll {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap;
+    padding-bottom: 20px;
+}
+
+#osmd-container.horizontal-scroll > svg {
+    display: inline-block;
+    max-width: none !important;
+}
+
+/* --- Controles de Selección de Instrumentos --- */
+.instrument-controls-container {
+    padding: 10px 15px; /* Menos padding vertical */
+    background-color: var(--color-blanco); /* Fondo blanco */
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: -10px; /* Compensa el margen del contenedor de la partitura */
+}
+
+.instrument-select-all-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.instrument-select-all-controls button {
+    background-color: #e9e9e9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 10px; /* Botones más pequeños */
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.instrument-select-all-controls button:hover {
+    background-color: #ddd;
+}
+
+.instrument-list {
+    display: flex;
+    flex-wrap: wrap; /* Eliminado para que no haya saltos de línea dentro de la lista */
+    gap: 10px; /* Menos espacio entre elementos */
+}
+
+/* --- Nuevos Estilos para Grupos de Familias --- */
+.instrument-family-group {
+    width: 100%;
+    padding: 8px 0; /* Menos padding vertical */
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px; /* Menos espacio entre elementos */
+}
+.instrument-family-group:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+.instrument-checkbox-item.master label {
+    font-weight: bold; /* Mantenemos negrita pero tamaño normal */
+    font-size: 1em;
+}
+.family-separator {
+    height: 20px;
+    border-left: 2px solid #ddd;
+}
+
+/* Estilo personalizado para checkboxes */
+.instrument-checkbox-item input[type="checkbox"] {
+    display: none; /* Ocultamos el checkbox original */
+}
+
+.instrument-checkbox-item label {
+    cursor: pointer;
+    user-select: none; /* Evita que el texto se seleccione al hacer doble clic */
+    display: flex;
+    align-items: center;
+}
+
+.instrument-checkbox-item label::before {
+    content: '';
+    display: inline-block;
+    width: 14px; /* Checkbox más pequeño */
+    height: 14px; /* Checkbox más pequeño */
+    margin-right: 6px; /* Menos espacio */
+    border: 2px solid var(--color-principal);
+    border-radius: 3px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.instrument-checkbox-item input:checked + label::before {
+    background-color: var(--color-principal);
+    content: '✓'; /* Símbolo de check */
+    color: white;
+    text-align: center;
+    line-height: 12px; /* Alinea el check verticalmente */
+    font-weight: bold;
+}
+
+/* --- Estilos para el Menú Lateral de Playlist --- */
+.playlist-toggle-btn {
+    position: fixed;
+    top: 150px; /* Bajamos el botón del menú */
+    right: 20px;
+    font-size: 24px;
+    background-color: var(--color-principal);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1002;
+    top: 0;
+    right: 0;
+    background-color: #f1f1f1;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 20px; /* Reducimos el padding superior */
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 5px; /* Subimos el botón de cerrar */
+    right: 25px;
+    font-size: 36px;
+    text-decoration: none;
+    color: #818181;
+}
+
+.sidebar h4 {
+    padding: 0 32px 15px 32px; /* Ajustamos el padding del título */
+    font-size: 1.5em;
+    color: #333;
+    border-bottom: 2px solid #ddd; /* Añadimos un separador sutil */
+    margin: 0;
+}
+
+.sidebar-title-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-song-item {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 1.1em;
+    color: #555;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar-song-item:hover {
+    background-color: #ddd;
+}
+
+.sidebar-song-item.active {
+    background-color: var(--color-acento);
+    color: white;
+    font-weight: bold;
+}
+
+/* --- Botones flotantes de Scroll --- */
+.scroll-buttons-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.scroll-btn {
+    background-color: var(--color-principal);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+}
+
+.scroll-btn:hover {
+    background-color: var(--color-acento);
+}
+
+.instrument-checkbox-item {
+    display: flex;
+    align-items: center;
 }

@@ -1,0 +1,577 @@
+[
+    {
+        "id": 1,
+        "titulo": "¡Oh Bienvenido Seas!",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Descripción del canto.",
+        "audio": "media/¡Oh Bienvenido Seas!.mp3",
+        "letras_acordes": null,
+        "partitura": "media/¡Oh Bienvenido Seas!.musicxml",
+        "tags": [
+            "Liturgia de las Horas",
+            "Espíritu Santo",
+            "Tiempos Litúrgicos: Pentecostés"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 2,
+        "titulo": "De Profundis",
+        "musica": "Felipe Rodríguez",
+        "letra": "Salmo 130",
+        "adaptacion": "Felipe Rodríguez",
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Musicalización del Salmo 130 (129).",
+        "audio": "media/De Profundis.mp3",
+        "letras_acordes": null,
+        "partitura": "media/De Profundis.musicxml",
+        "tags": [
+            "Cantos Bíblicos: Salmos"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 3,
+        "titulo": "Kyrie",
+        "musica": "Felipe Rodríguez",
+        "letra": "Ordinario de la Misa",
+        "adaptacion": null,
+        "idioma": "Griego",
+        "anio": 2024,
+        "descripcion": "Parte del ordinario de la Misa.",
+        "audio": "media/Kyrie.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Kyrie.musicxml",
+        "tags": [
+            "Santa Misa: Señor ten Piedad"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 4,
+        "titulo": "Santo",
+        "musica": "Felipe Rodríguez",
+        "letra": "Ordinario de la Misa",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "El Sanctus, parte del ordinario de la Misa.",
+        "audio": "media/Santo.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Santo.musicxml",
+        "tags": [
+            "Santa Misa: Santo"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 5,
+        "titulo": "Señor, ten Piedad",
+        "musica": "Felipe Rodríguez",
+        "letra": "Ordinario de la Misa",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Canto del Señor ten Piedad.",
+        "audio": "media/Señor, ten Piedad.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Señor, ten Piedad.musicxml",
+        "tags": [
+            "Santa Misa: Señor ten Piedad"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 6,
+        "titulo": "Pastores de Belén",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Instrumental",
+        "anio": 2023,
+        "descripcion": "Composición y arreglo de \"Pastores de Belén\".",
+        "audio": "",
+        "letras_acordes": "",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Evangelios",
+            "Tiempos Litúrgicos: Navidad"
+        ],
+        "tipo": "youtube_selectable",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/N-NbPumDRxA?si=rZMWWiTpZuCPNWV1\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/v_kBycuLVTY?si=4bygFyP_lJmSoR6_\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>"
+    },
+    {
+        "id": 7,
+        "titulo": "Mi Buen Pastor",
+        "musica": "Hna. María Camila Chaparro",
+        "letra": "Hna. María Camila Chaparro",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Arreglo del canto \"Mi Buen Pastor\" disponible en YouTube.",
+        "audio": "",
+        "letras_acordes": "",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Evangelios"
+        ],
+        "tipo": "youtube_selectable",
+        "categorias": [
+            "Arreglo"
+        ],
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>"
+    },
+    {
+        "id": 8,
+        "titulo": "Cristo en Todas las Almas",
+        "musica": "Felipe Rodríguez y Colomba Barahona",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Cristo en Todas las Almas.mp3",
+        "letras_acordes": "media/Cristo en Todas las Almas.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Adoración Eucarística"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 9,
+        "titulo": "El Sembrador",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Canto sobre la parábola del sembrador.",
+        "audio": "media/El Sembrador.mp3",
+        "letras_acordes": "media/El Sembrador.pdf",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Evangelios"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 10,
+        "titulo": "El Trigo y la Cizaña",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Canto sobre la parábola del trigo y la cizaña.",
+        "audio": "media/El Trigo y la Cizaña.mp3",
+        "letras_acordes": "media/El Trigo y la Cizaña.pdf",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Evangelios"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 11,
+        "titulo": "Emprenda la Esperanza Raudo Vuelo",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Emprenda la Esperanza Raudo Vuelo.m4a",
+        "letras_acordes": "media/Emprenda la Esperanza Raudo Vuelo.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 12,
+        "titulo": "Esaú y Jacob",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2022,
+        "descripcion": "Canto sobre la historia de Esaú y Jacob.",
+        "audio": "media/Esaú y Jacob.mp3",
+        "letras_acordes": "media/Esaú y Jacob.pdf",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Génesis"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 13,
+        "titulo": "Estate Señor Conmigo",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Estate Señor Conmigo.m4a",
+        "letras_acordes": "media/Estate Señor Conmigo.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Adoración Eucarística"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 14,
+        "titulo": "Invocación al Espíritu Santo",
+        "musica": "Felipe Rodríguez",
+        "letra": "Invocación al Espíritu Santo",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Invocación al Espíritu Santo.mp3",
+        "letras_acordes": "media/Invocación al Espíritu Santo.pdf",
+        "partitura": null,
+        "tags": [
+            "Espíritu Santo",
+            "Tiempos Litúrgicos: Pentecostés"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 15,
+        "titulo": "La Esperanza",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/La Esperanza.m4a",
+        "letras_acordes": "media/La Esperanza.pdf",
+        "partitura": null,
+        "tags": [
+            ""
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 16,
+        "titulo": "La Palabra de Dios Crucificada",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/La Palabra de Dios Crucificada.mp3",
+        "letras_acordes": "media/La Palabra de Dios Crucificada.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Tiempos Litúrgicos: Semana Santa"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 17,
+        "titulo": "Luz de Navidad",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Luz de Navidad.mp3",
+        "letras_acordes": "media/Luz de Navidad.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Tiempos Litúrgicos: Navidad"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 18,
+        "titulo": "María",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/María.m4a",
+        "letras_acordes": "media/María.pdf",
+        "partitura": null,
+        "tags": [
+            "Virgen María"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 19,
+        "titulo": "Nos Apremia el Amor Vírgenes Santas",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Nos Apremia el Amor Vírgenes Santas.mp3",
+        "letras_acordes": "media/Nos Apremia el Amor Vírgenes Santas.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Cantos Bíblicos: Evangelios"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 20,
+        "titulo": "Octavas de Pascua",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Octavas de Pascua.mp3",
+        "letras_acordes": "media/Octavas de Pascua.pdf",
+        "partitura": null,
+        "tags": [
+            "Tiempos Litúrgicos: Pascua"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 21,
+        "titulo": "Oveja Perdida Ven",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Oveja Perdida Ven.mp3",
+        "letras_acordes": "media/Oveja Perdida Ven.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Cantos Bíblicos: Evangelios",
+            "Adoración Eucarística"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 22,
+        "titulo": "Rosa Mística",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Rosa Mística.mp3",
+        "letras_acordes": "media/Rosa Mística.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Virgen María"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 23,
+        "titulo": "Secuencia de Pascua",
+        "musica": "Felipe Rodríguez",
+        "letra": "Secuencia de Pascua",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Secuencia de Pascua.mp3",
+        "letras_acordes": "media/Secuencia de Pascua.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas",
+            "Tiempos Litúrgicos: Pascua"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 24,
+        "titulo": "Ven Señor Jesús",
+        "musica": "Felipe Rodríguez",
+        "letra": "Felipe Rodríguez",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2023,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Ven Señor Jesús.mp3",
+        "letras_acordes": "media/Ven Señor Jesús.pdf",
+        "partitura": null,
+        "tags": [
+            "Cantos Bíblicos: Apocalipsis",
+            "Tiempos Litúrgicos: Adviento"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 25,
+        "titulo": "Cordero Nortino",
+        "musica": "Felipe Rodríguez",
+        "letra": "Ordinario de la Misa",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2024,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Cordero Nortino.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Cordero Nortino.musicxml",
+        "tags": [
+            "Santa Misa: Cordero de Dios"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    }
+]

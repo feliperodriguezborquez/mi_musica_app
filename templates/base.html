@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Añadimos la biblioteca OpenSheetMusicDisplay (OSMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.8.3/build/opensheetmusicdisplay.min.js"></script>
+    <!-- Añadimos el reproductor de audio para OSMD -->
+    <script src="https://cdn.jsdelivr.net/npm/osmd-audio-player@0.5.0/dist/osmd-audio-player.min.js"></script>
 </head>
 <body>
     <header>
@@ -16,12 +20,14 @@
             <ul>
                 <li><a href="{{ url_for('ver_composiciones') }}">Composiciones</a></li>
                 <li><a href="{{ url_for('ver_arreglos') }}">Arreglos</a></li>
-                <li class="nav-separator"></li> <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
+                <li class="nav-separator"></li>
+                <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
+                <li class="nav-separator nav-separator-thick"></li>
                 
                 {% if session.logged_in %}
-                    <li><a href="{{ url_for('logout') }}" class="login-link">Logout</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="login-link">Salir</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('login') }}" class="login-link">Login</a></li>
+                    <li><a href="{{ url_for('login') }}" class="login-link">Entrar</a></li>
                 {% endif %}
             </ul>
         </nav>

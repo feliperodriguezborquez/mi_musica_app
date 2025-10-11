@@ -20,7 +20,7 @@
                     <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver Todas</a>
 
                     {% for sub_tag in sub_etiquetas %}
-                        <a href="{{ url_for('ver_tag', tag_name=categoria + ': ' + sub_tag) }}" class="tag-link">{{ sub_tag }}</a>
+                        <a href="{{ url_for('ver_tag', tag_name=categoria + ':' + sub_tag) }}" class="tag-link">{{ sub_tag }}</a>
                     {% endfor %}
                 </div>
             </div>

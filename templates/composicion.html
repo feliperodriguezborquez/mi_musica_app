@@ -1,28 +1,89 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <!-- Botón para abrir el menú lateral -->
+    <button id="open-playlist-btn" class="playlist-toggle-btn">☰</button>
+
+    <!-- Menú lateral de la playlist -->
+    <div id="playlist-sidebar" class="sidebar">
+        <a href="javascript:void(0)" id="close-playlist-btn" class="close-btn">×</a>
+        <a href="{{ playlist_url }}" class="sidebar-title-link"><h4>{{ playlist_title }}</h4></a>
+        <div class="sidebar-song-list">
+            {% for song in playlist %}
+                <a href="{{ url_for('ver_composicion', comp_id=song.id, context=request.args.get('context'), tag_name=request.args.get('tag_name'), search=request.args.get('search')) }}" 
+                   class="sidebar-song-item {% if song.id == obra.id %}active{% endif %}">
+                    <span class="song-number">{{ loop.index }}.</span>
+                    <span class="song-title">{{ song.titulo }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="detalle-obra">
         <div class="detalle-header">
-            <a href="{{ url_for('index') }}" class="btn-volver">← Volver al Catálogo</a>
-            {% if session.logged_in %}
-                <a href="{{ url_for('edit_cancion', comp_id=obra.id) }}" class="btn-editar">✏️ Editar</a>
+            {% if prev_song_url %}
+                <a href="{{ prev_song_url }}" class="btn-nav">← Anterior</a>
+            {% else %}
+                <span class="btn-nav-disabled">← Anterior</span>
+            {% endif %}
+            {% if next_song_url %}
+                <a href="{{ next_song_url }}" class="btn-nav">Siguiente →</a>
+            {% else %}
+                <span class="btn-nav-disabled">Siguiente →</span>
             {% endif %}
         </div>
 
-        <h2>{{ obra.titulo }}</h2>
+        {% if session.logged_in %}
+            <a href="{{ url_for('edit_cancion', comp_id=obra.id) }}" class="btn-editar" title="Editar Canción">✏️</a>
+        {% endif %}
+
+        <div class="title-container">
+            <h2>{{ obra.titulo }}</h2>
+            {% if obra.descripcion %}
+                <p class="song-subtitle">{{ obra.descripcion }}</p>
+            {% endif %}
+        </div>
         
         <div class="metadata-grid">
-            <span class="metadata-label">Música</span>
-            <span class="metadata-value">{{ obra.musica }}</span>
-            <span class="metadata-label">Letra</span>
-            <span class="metadata-value">{{ obra.letra }}</span>
-            <span class="metadata-label">Idioma</span>
-            <span class="metadata-value">{{ obra.idioma }}</span>
-            <span class="metadata-label">Año</span>
-            <span class="metadata-value">{{ obra.anio }}</span>
-            <span class="metadata-label">Descripción</span>
-            <span class="metadata-value">{{ obra.descripcion }}</span>
+            <!-- Columna Izquierda -->
+            <div class="metadata-column">
+                <p><span class="metadata-label">Música:</span> <span class="metadata-value">{{ obra.musica }}</span></p>
+                <p><span class="metadata-label">Letra:</span> <span class="metadata-value">{{ obra.letra }}</span></p>
+                {% if obra.adaptacion %}
+                    <p><span class="metadata-label">Adaptación:</span> <span class="metadata-value">{{ obra.adaptacion }}</span></p>
+                {% endif %}
+            </div>
+            <!-- Columna Derecha -->
+            <div class="metadata-column">
+                <p><span class="metadata-label">Idioma:</span> <span class="metadata-value">{{ obra.idioma }}</span></p>
+                <p><span class="metadata-label">Año:</span> <span class="metadata-value">{{ obra.anio }}</span></p>
+            </div>
         </div>
+
+        <!-- Botones flotantes para scroll -->
+        <div class="scroll-buttons-container">
+            <button id="scroll-to-top-btn" class="scroll-btn" title="Ir al inicio">▲</button>
+            <button id="scroll-to-bottom-btn" class="scroll-btn" title="Ir al final">▼</button>
+        </div>
+
+        <script>
+            // Lógica para el menú lateral de la playlist
+            document.getElementById('open-playlist-btn').addEventListener('click', function() {
+                document.getElementById('playlist-sidebar').style.width = '300px';
+            });
+
+            document.getElementById('close-playlist-btn').addEventListener('click', function() {
+                document.getElementById('playlist-sidebar').style.width = '0';
+            });
+
+            // Lógica para los botones de scroll
+            document.getElementById('scroll-to-top-btn').addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            document.getElementById('scroll-to-bottom-btn').addEventListener('click', function() {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            });
+        </script>
 
         {% if obra.tipo == 'local' %}
             <h4>Audio</h4>
@@ -30,15 +91,224 @@
                 <source src="{{ url_for('static', filename=obra.audio) }}" type="audio/mpeg">
                 Tu navegador no soporta el elemento de audio.
             </audio>
+
             {% if obra.partitura %}
-                <h4>Partitura</h4>
-                <embed src="{{ url_for('static', filename=obra.partitura) }}" type="application/pdf" width="100%" height="700px" />
+    <div class="partitura-header">
+        <h4>Partitura</h4>
+    </div>
+    
+    <!-- Contenedor para los controles de selección de instrumentos -->
+    <div id="instrument-controls" class="instrument-controls-container"></div>
+
+    <div class="osmd-controls">
+        <button id="zoom-out-btn" title="Alejar">-</button>
+        <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
+        <button id="zoom-in-btn" title="Acercar">+</button>
+    </div>
+
+    <!-- Contenedor para la partitura -->
+    <div id="osmd-container"></div>
+    
+    <script>
+        const musicXmlUrl = "{{ url_for('static', filename=obra.partitura) }}";
+        const container = document.getElementById('osmd-container');
+        const zoomDisplay = document.getElementById('zoom-display-btn');
+        let osmd;
+        
+        // Niveles de zoom predefinidos para asegurar un paso por 100%
+        const zoomLevels = [0.5, 0.75, 0.9, 1.0, 1.1, 1.25, 1.5, 2.0];
+
+        // Función para actualizar el valor del input de zoom
+        function updateZoomDisplay() {
+            zoomDisplay.textContent = Math.round(osmd.zoom * 100) + '%';
+        }
+        
+        // Inicializa OSMD con la vista paginada por defecto
+        osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmd-container", {
+            autoResize: true,
+            backend: "svg",
+            drawTitle: false,
+            drawComposer: false,
+            renderMultimeasureRests: true // ¡CLAVE! Agrupa los compases de silencio.
+        });
+
+        // Carga y renderiza la partitura
+        osmd.load(musicXmlUrl)
+            .then(() => {
+                osmd.render();
+                console.log("Partitura cargada correctamente");
+
+                // --- Lógica para la selección de instrumentos ---
+                const instrumentControlsContainer = document.getElementById('instrument-controls');
+
+                // --- CLASIFICADOR DE FAMILIAS DE INSTRUMENTOS ---
+                // Esta función determina la familia de un instrumento basándose en palabras clave.
+                // Maneja variaciones como "Flauta 1", "Violin II", etc.
+                function getInstrumentFamily(instrumentName) {
+                    const name = instrumentName.toLowerCase().replace(' ii', ' 2').replace(' i', ' 1');
+                    // Familias por tipo de instrumento
+                    if (['flaut', 'piccolo', 'oboe', 'corno', 'clarinete', 'fagot', 'saxof', 'trompeta', 'trombón', 'tuba', 'quena', 'zampoña'].some(v => name.includes(v))) return 'Vientos';
+                    if (['violín', 'violin', 'viola', 'violonchelo', 'cello', 'contrabajo', 'double bass', 'guitarra', 'arpa', 'charango'].some(v => name.includes(v))) return 'Cuerdas';
+                    if (['soprano', 'alto', 'tenor', 'bajo', 'bass','voz', 'voice', 'coro', 'mezzo', 'baritono', 'hombre', 'mujer'].some(v => name.includes(v))) return 'Coro';
+                    if (['timbal', 'pandereta', 'bombo', 'batería', 'platillo', 'xilófono', 'marimba', 'glockenspiel', 'percusión', 'percussion', 'pandero'].some(v => name.includes(v))) return 'Percusión';
+                    if (['piano', 'órgano', 'keyboard', 'celesta'].some(v => name.includes(v))) return 'Teclados';
+                    
+                    return 'Otros'; // Familia por defecto
+                }
+
+                if (osmd.sheet.Instruments.length > 1) { // Solo mostrar si hay más de un instrumento
+                    // Crear botones de "Todos" y "Ninguno"
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.className = 'instrument-select-all-controls';
+                    controlsDiv.innerHTML = `
+                        <div class="instrument-checkbox-item master">
+                            <input type="checkbox" id="toggle-all-instr-check" checked>
+                            <label for="toggle-all-instr-check">Todos</label>
+                        </div>
+                    `;
+                    instrumentControlsContainer.appendChild(controlsDiv);
+
+                    document.getElementById('toggle-all-instr-check').addEventListener('change', (event) => {
+                        const isChecked = event.target.checked;
+                        // Actualizar la visibilidad de todos los instrumentos en OSMD
+                        osmd.sheet.Instruments.forEach(instrument => instrument.Visible = isChecked);
+                        // Actualizar el estado visual de todos los demás checkboxes
+                        instrumentControlsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.checked = isChecked;
+                        });
+                        osmd.render();
+                    });
+
+                    // 1. Agrupar instrumentos por familia
+                    const groupedInstruments = {};
+                    osmd.sheet.Instruments.forEach((instrument, index) => {
+                        const family = getInstrumentFamily(instrument.Name);
+                        if (!groupedInstruments[family]) {
+                            groupedInstruments[family] = [];
+                        }
+                        groupedInstruments[family].push({ instrument, index });
+                    });
+
+                    // 2. Crear los checkboxes para cada grupo
+                    for (const family in groupedInstruments) {
+                        const familyContainer = document.createElement('div');
+                        familyContainer.className = 'instrument-family-group';
+
+                        // Checkbox maestro para la familia
+                        familyContainer.innerHTML += `
+                            <div class="instrument-checkbox-item master">
+                                <input type="checkbox" id="family-check-${family}" data-family="${family}" checked>
+                                <label for="family-check-${family}">${family}</label>
+                            </div>
+                            <div class="family-separator"></div>
+                        `;
+
+                        // Checkboxes para instrumentos individuales
+                        groupedInstruments[family].forEach(item => {
+                            const { instrument, index } = item;
+                            familyContainer.innerHTML += `
+                                <div class="instrument-checkbox-item">
+                                    <input type="checkbox" id="instr-check-${index}" data-instrument-index="${index}" data-family-member="${family}" checked>
+                                    <label for="instr-check-${index}">${instrument.Name}</label>
+                                </div>
+                            `;
+                        });
+
+                        instrumentControlsContainer.appendChild(familyContainer);
+                    }
+
+                    // --- Función para actualizar los checkboxes maestros ---
+                    function updateMasterCheckboxes() {
+                        // Actualizar el checkbox "Todos"
+                        const allInstrumentCheckboxes = document.querySelectorAll('input[data-instrument-index]');
+                        const allInstrumentsChecked = Array.from(allInstrumentCheckboxes).every(cb => cb.checked);
+                        document.getElementById('toggle-all-instr-check').checked = allInstrumentsChecked;
+
+                        // Actualizar cada checkbox de familia
+                        document.querySelectorAll('input[data-family]').forEach(familyCheckbox => {
+                            const family = familyCheckbox.dataset.family;
+                            const familyMemberCheckboxes = document.querySelectorAll(`input[data-family-member="${family}"]`);
+                            const allFamilyMembersChecked = Array.from(familyMemberCheckboxes).every(cb => cb.checked);
+                            familyCheckbox.checked = allFamilyMembersChecked;
+                        });
+                    }
+
+                    // 3. Lógica para los checkboxes
+                    instrumentControlsContainer.addEventListener('change', (event) => {
+                        if (event.target.type === 'checkbox') {
+                            const isChecked = event.target.checked;
+
+                            // Checkbox maestro de familia
+                            if (event.target.dataset.family) {
+                                const family = event.target.dataset.family;
+                                document.querySelectorAll(`input[data-family-member="${family}"]`).forEach(childCheckbox => {
+                                    childCheckbox.checked = isChecked;
+                                    const index = parseInt(childCheckbox.dataset.instrumentIndex, 10);
+                                    if (osmd.sheet.Instruments[index]) osmd.sheet.Instruments[index].Visible = isChecked;
+                                });
+                                updateMasterCheckboxes();
+                            } 
+                            // Checkbox de instrumento individual
+                            else if (event.target.dataset.instrumentIndex) {
+                                const index = parseInt(event.target.dataset.instrumentIndex, 10);
+                                if (osmd.sheet.Instruments[index]) osmd.sheet.Instruments[index].Visible = isChecked;
+                                // Si se deselecciona un instrumento, actualizamos los maestros
+                                updateMasterCheckboxes();
+                            }
+
+                            osmd.render(); // Re-renderizar la partitura con los cambios
+                        }
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Error al cargar la partitura:", error);
+                container.innerHTML = '<p style="color: red;">Error al cargar la partitura</p>';
+            });
+
+        // --- Controles de Zoom ---
+        document.getElementById('zoom-in-btn').addEventListener('click', function() {
+            if (!osmd) return;
+            const currentZoom = osmd.zoom;
+            // Encuentra el siguiente nivel de zoom más alto
+            let nextZoom = zoomLevels.find(level => level > currentZoom);
+            if (!nextZoom) nextZoom = zoomLevels[zoomLevels.length - 1]; // Si ya es el máximo, se queda ahí
+            osmd.zoom = nextZoom;
+            osmd.render();
+            updateZoomDisplay();
+        });
+        
+        document.getElementById('zoom-out-btn').addEventListener('click', function() {
+            if (!osmd) return;
+            const currentZoom = osmd.zoom;
+            // Encuentra el siguiente nivel de zoom más bajo
+            let prevZoom = [...zoomLevels].reverse().find(level => level < currentZoom);
+            if (!prevZoom) prevZoom = zoomLevels[0]; // Si ya es el mínimo, se queda ahí
+            osmd.zoom = prevZoom;
+            osmd.render();
+            updateZoomDisplay();
+        });
+        
+        // --- Lógica para el botón de reseteo de zoom ---
+        zoomDisplay.addEventListener('click', function() {
+            if (!osmd) return;
+            osmd.zoom = 1.0;
+            osmd.render();
+            updateZoomDisplay();
+        });
+
+    </script>
+            {% endif %}
+
+            {% if obra.letras_acordes %}
+                <h4>Letras y Acordes</h4>
+                <embed src="{{ url_for('static', filename=obra.letras_acordes) }}" type="application/pdf" width="100%" height="700px" />
             {% endif %}
         
         {% elif obra.tipo == 'youtube_selectable' %}
             <h4>Reproductor</h4>
             <div class="player-selection-buttons">
-                <button class="player-button" onclick="showPlayer('audio')">Escuchar Canción</button>
+                <button class="player-button active" onclick="showPlayer('audio')">Escuchar Canción</button>
                 <button class="player-button" onclick="showPlayer('video')">Ver Video</button>
             </div>
             <div id="audioPlayer" class="embed-container">
@@ -65,9 +335,6 @@
                         videoButton.classList.remove('active');
                     }
                 }
-                document.addEventListener('DOMContentLoaded', () => {
-                    showPlayer('audio');
-                });
             </script>
         {% endif %}
 
@@ -82,7 +349,7 @@
                         {% set categoria = parts[0] | trim %}
                         {% set sub_etiqueta = parts[1] | trim %}
                         
-                        <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link">{{ categoria }}</a>
+                        <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">{{ categoria }}</a>
                         
                         <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ sub_etiqueta }}</a>
 

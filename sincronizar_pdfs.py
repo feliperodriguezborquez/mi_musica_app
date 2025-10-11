@@ -1,5 +1,6 @@
 import os
 from app import app, db, Cancion
+from unidecode import unidecode
 
 def sincronizar():
     """
@@ -13,26 +14,29 @@ def sincronizar():
         
         # Obtenemos la lista de todos los archivos PDF que realmente existen en la carpeta
         media_path = os.path.join('static', 'media')
-        pdfs_disponibles = {f for f in os.listdir(media_path) if f.endswith('.pdf')}
+        # Normalizamos los nombres de archivo para una comparación más robusta
+        pdfs_disponibles = {
+            unidecode(f.lower()): f for f in os.listdir(media_path) if f.lower().endswith('.pdf')
+        }
         
-        print("Iniciando sincronización de partituras PDF...")
+        print("Iniciando sincronización de 'Letras y Acordes' (PDF)...")
         contador_actualizados = 0
 
         # Recorremos cada canción para verificar y corregir
         for cancion in canciones:
-            # Solo actuamos si el campo de partitura está vacío
-            if not cancion.partitura:
+            # Solo actuamos si el campo de letras_acordes (PDF) está vacío
+            if not cancion.letras_acordes:
                 # Construimos el nombre de archivo PDF que esperamos encontrar
-                nombre_pdf_esperado = f"{cancion.titulo}.pdf"
+                # Normalizamos también el título para la búsqueda
+                nombre_pdf_esperado_normalizado = unidecode(f"{cancion.titulo}.pdf".lower())
                 
                 # Verificamos si ese archivo PDF realmente existe en nuestra carpeta
-                if nombre_pdf_esperado in pdfs_disponibles:
-                    ruta_completa_pdf = f"media/{nombre_pdf_esperado}"
-                    cancion.partitura = ruta_completa_pdf
-                    print(f"  - ACTUALIZANDO '{cancion.titulo}': Se asignó la partitura '{ruta_completa_pdf}'")
+                if nombre_pdf_esperado_normalizado in pdfs_disponibles:
+                    nombre_real_archivo = pdfs_disponibles[nombre_pdf_esperado_normalizado]
+                    ruta_completa_pdf = f"media/{nombre_real_archivo}"
+                    cancion.letras_acordes = ruta_completa_pdf
+                    print(f"  - ACTUALIZANDO '{cancion.titulo}': Se asignó el PDF '{ruta_completa_pdf}'")
                     contador_actualizados += 1
-                else:
-                    print(f"  - AVISO: No se encontró '{nombre_pdf_esperado}' para la canción '{cancion.titulo}'.")
         
         # Si hicimos cambios, los guardamos en la base de datos
         if contador_actualizados > 0:

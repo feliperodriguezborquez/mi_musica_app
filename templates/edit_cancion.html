@@ -18,6 +18,11 @@
             <label for="letra">Letra</label>
             <input type="text" id="letra" name="letra" value="{{ cancion.letra or '' }}">
         </div>
+
+        <div class="form-group">
+            <label for="adaptacion">Adaptación</label>
+            <input type="text" id="adaptacion" name="adaptacion" value="{{ cancion.adaptacion or '' }}">
+        </div>
         
         <div class="form-group">
             <label for="idioma">Idioma</label>
@@ -40,7 +45,12 @@
         </div>
         
         <div class="form-group">
-            <label for="partitura">Archivo de Partitura (ej: media/Santo.pdf)</label>
+            <label for="letras_acordes">Letras y Acordes (PDF, ej: media/Santo.pdf)</label>
+            <input type="text" id="letras_acordes" name="letras_acordes" value="{{ cancion.letras_acordes or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="partitura">Partitura (MusicXML, ej: media/Santo.musicxml)</label>
             <input type="text" id="partitura" name="partitura" value="{{ cancion.partitura or '' }}">
         </div>
 
