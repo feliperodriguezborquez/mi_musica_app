@@ -6,8 +6,9 @@ __pycache__/
 *.pyc
 
 # Bases de datos de SQLite
-*.db
+# *.db
 *.db-journal
 
 # Archivos de configuración de VS Code (opcional)
 .vscode/
+.env

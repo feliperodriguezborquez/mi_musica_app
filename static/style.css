@@ -147,3 +147,36 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .tag-link .tag-name {
     font-weight: normal;
 }
+
+/* Estilos para la cabecera y borrado de comentarios */
+.comentario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.comentario-header p {
+    margin: 0;
+}
+
+.comentario-contenido {
+    margin: 0;
+    padding-left: 5px; /* Pequeña indentación */
+}
+
+.btn-borrar-comentario {
+    background: none;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    padding: 2px 8px;
+    font-size: 0.8em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-borrar-comentario:hover {
+    background-color: #e74c3c;
+    color: white;
+}

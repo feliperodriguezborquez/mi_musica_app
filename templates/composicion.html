@@ -105,8 +105,16 @@
             <div class="lista-comentarios">
                 {% for comentario in comentarios %}
                     <div class="comentario">
-                        <p><strong>{{ comentario.autor }}</strong> <span class="fecha-comentario">{{ comentario.fecha_creacion.strftime('%d-%m-%Y') }}</span></p>
-                        <p>{{ comentario.contenido }}</p>
+                        <div class="comentario-header">
+                            <p><strong>{{ comentario.autor }}</strong> <span class="fecha-comentario">{{ comentario.fecha_creacion.strftime('%d-%m-%Y') }}</span></p>
+                            
+                            {% if session.logged_in %}
+                                <form method="post" action="{{ url_for('delete_comment', comment_id=comentario.id) }}" onsubmit="return confirm('¿Estás seguro de que quieres borrar este comentario?');">
+                                    <button type="submit" class="btn-borrar-comentario">Borrar</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <p class="comentario-contenido">{{ comentario.contenido }}</p>
                     </div>
                 {% else %}
                     <p>Aún no hay comentarios. ¡Sé el primero!</p>

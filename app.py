@@ -5,11 +5,16 @@ import json
 from functools import wraps
 from collections import defaultdict
 from unidecode import unidecode
+import os # <-- Importamos la librería 'os'
+from dotenv import load_dotenv # <-- Importamos la nueva librería
+
+load_dotenv() # <-- Esto carga las variables del archivo .env
 
 app = Flask(__name__)
-# --- Configuración (sin cambios) ---
-app.config['SECRET_KEY'] = 'escribe-aqui-una-clave-muy-secreta-y-larga'
-app.config['ADMIN_PASSWORD'] = 'tu-contraseña-maestra'
+# --- CONFIGURACIÓN DE SEGURIDAD ACTUALIZADA ---
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comentarios.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -201,6 +206,22 @@ def add_comment(comp_id):
         db.session.add(nuevo_comentario)
         db.session.commit()
     return redirect(url_for('ver_composicion', comp_id=comp_id))
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    # Busca el comentario por su ID o muestra un error 404 si no lo encuentra
+    comentario_a_borrar = Comentario.query.get_or_404(comment_id)
+    
+    # Guardamos el ID de la canción para saber a dónde volver
+    obra_id = comentario_a_borrar.obra_id
+    
+    # Borramos el comentario de la base de datos
+    db.session.delete(comentario_a_borrar)
+    db.session.commit()
+    
+    flash('Comentario borrado con éxito.', 'success')
+    return redirect(url_for('ver_composicion', comp_id=obra_id))
 
 
 with app.app_context():
