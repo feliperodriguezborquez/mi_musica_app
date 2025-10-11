@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Lista: {{ tag_nombre }}</h2>
-    <a href="{{ url_for('index') }}" class="btn-volver" style="margin-bottom: 2rem;">&larr; Volver al Catálogo Principal</a>
+    {# Extraemos la sub-etiqueta si el tag es jerárquico #}
+    {% set display_title = tag_nombre.split(':')[-1] | trim %}
 
-    <div class="lista-scroll" style="height: 60vh;">
-        <div class="lista-composiciones">
-            {% for obra in obras %}
-                <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
-                    <div class="info-tarjeta">
-                        <h3>{{ obra.titulo }}</h3>
-                        <p>{{ obra.musica }}</p>
-                    </div>
-                </a>
-            {% else %}
-                <p>No hay canciones con esta etiqueta.</p>
-            {% endfor %}
-        </div>
+    <h2>{{ display_title }}</h2>
+    
+    {% include '_filters.html' %}
+
+    <div class="lista-scroll" id="song-list-container">
+        {% include '_song_list.html' %}
+    </div>
+    
+    {# Añadimos un botón de "Volver a Listas" para una mejor navegación #}
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('ver_listas') }}" class="btn-volver">← Volver a todas las Listas</a>
     </div>
 {% endblock %}

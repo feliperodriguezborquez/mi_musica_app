@@ -1,20 +1,20 @@
-from flask import Flask, render_template, abort, request, redirect, url_for
+from flask import Flask, render_template, abort, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-
-# ... tus otras importaciones ...
-from werkzeug.middleware.proxy_fix import ProxyFix # <-- AÑADE ESTA LÍNEA
+import json
+from functools import wraps
+from collections import defaultdict
+from unidecode import unidecode
 
 app = Flask(__name__)
-# --- AÑADE ESTA LÍNEA JUSTO DESPUÉS DE INICIALIZAR LA APP ---
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-
-# --- Configuración de la Base de Datos ---
+# --- Configuración (sin cambios) ---
+app.config['SECRET_KEY'] = 'escribe-aqui-una-clave-muy-secreta-y-larga'
+app.config['ADMIN_PASSWORD'] = 'tu-contraseña-maestra'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comentarios.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- Modelo de la Base de Datos para los Comentarios ---
+# --- Modelos de la Base de Datos (sin cambios) ---
 class Comentario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     obra_id = db.Column(db.Integer, nullable=False)
@@ -22,167 +22,187 @@ class Comentario(db.Model):
     contenido = db.Column(db.Text, nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __repr__(self):
-        return f'<Comentario {self.autor}>'
+class Cancion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(150), nullable=False)
+    musica = db.Column(db.String(100))
+    letra = db.Column(db.String(100))
+    idioma = db.Column(db.String(50))
+    anio = db.Column(db.Integer)
+    descripcion = db.Column(db.Text)
+    audio = db.Column(db.String(150))
+    partitura = db.Column(db.String(150))
+    tags_json = db.Column(db.String(500))
+    tipo = db.Column(db.String(50), nullable=False, default='local')
+    categorias_json = db.Column(db.String(200))
+    youtube_video_embed = db.Column(db.Text)
+    youtube_audio_embed = db.Column(db.Text)
+    @property
+    def tags(self):
+        return json.loads(self.tags_json) if self.tags_json else []
+    @property
+    def categorias(self):
+        return json.loads(self.categorias_json) if self.categorias_json else []
 
-# --- Tu lista de composiciones ---
-composiciones = [
-    {
-        'id': 1,
-        'titulo': '¡Oh Bienvenido Seas!',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'Liturgia de las Horas',
-        'idioma': 'Español',
-        'anio': 2024,
-        'descripcion': 'Canto de entrada para el tiempo de Adviento.',
-        'audio': 'media/¡Oh Bienvenido Seas!.mp3',
-        'partitura': 'media/¡Oh Bienvenido Seas!.pdf',
-        'tags': ['Liturgia de las Horas', 'Cantos Bíblicos'],
-        'tipo': 'local',
-        'categorias': ['Composición']
-    },
-    {
-        'id': 2,
-        'titulo': 'De Profundis',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'Salmo 130',
-        'idioma': 'Español',
-        'anio': 2024,
-        'descripcion': 'Musicalización del Salmo 130 (129).',
-        'audio': 'media/De Profundis.mp3',
-        'partitura': 'media/De Profundis.pdf',
-        'tags': ['Cantos Bíblicos'],
-        'tipo': 'local',
-        'categorias': ['Composición']
-    },
-    {
-        'id': 3,
-        'titulo': 'Kyrie',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'Ordinario de la Misa',
-        'idioma': 'Griego',
-        'anio': 2024,
-        'descripcion': 'Parte del ordinario de la Misa.',
-        'audio': 'media/Kyrie.mp3',
-        'partitura': 'media/Kyrie.pdf',
-        'tags': ['Santa Misa', 'Kyrie'],
-        'tipo': 'local',
-        'categorias': ['Composición']
-    },
-    {
-        'id': 4,
-        'titulo': 'Santo',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'Litúrgico',
-        'idioma': 'Español',
-        'anio': 2024,
-        'descripcion': 'El Sanctus, parte del ordinario de la Misa.',
-        'audio': 'media/Santo.mp3',
-        'partitura': 'media/Santo.pdf',
-        'tags': ['Santa Misa', 'Sanctus'],
-        'tipo': 'local',
-        'categorias': ['Composición']
-    },
-    {
-        'id': 5,
-        'titulo': 'Señor, ten Piedad',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'Litúrgico',
-        'idioma': 'Español',
-        'anio': 2024,
-        'descripcion': 'Versión en español del Kyrie eleison.',
-        'audio': 'media/Señor, ten Piedad.mp3',
-        'partitura': 'media/Señor, ten Piedad.pdf',
-        'tags': ['Santa Misa', 'Kyrie'],
-        'tipo': 'local',
-        'categorias': ['Composición']
-    },
-    {
-        'id': 6,
-        'titulo': 'Pastores de Belén',
-        'musica': 'Felipe Rodríguez',
-        'letra': 'N/A',
-        'idioma': 'Instrumental',
-        'anio': 2024,
-        'descripcion': 'Composición y arreglo de "Pastores de Belén".',
-        'tags': ['Arreglos', 'Cantos Bíblicos', 'Grabaciones', 'YouTube'],
-        'tipo': 'youtube_selectable',
-        'youtube_video_embed': '<iframe width="560" height="315" src="https://www.youtube.com/embed/N-NbPumDRxA?si=rZMWWiTpZuCPNWV1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
-        'youtube_audio_embed': '<iframe width="560" height="315" src="https://www.youtube.com/embed/v_kBycuLVTY?si=4bygFyP_lJmSoR6_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
-        'categorias': ['Composición', 'Arreglo']
-    },
-    {
-        'id': 7,
-        'titulo': 'Mi Buen Pastor',
-        'musica': 'Hna. María Camila Chaparro',
-        'letra': 'Hna. María Camila Chaparro',
-        'idioma': 'Español',
-        'anio': 2024,
-        'descripcion': 'Arreglo del canto "Mi Buen Pastor" disponible en YouTube.',
-        'tags': ['Arreglos', 'Cantos Bíblicos', 'YouTube'],
-        'tipo': 'youtube_selectable',
-        'youtube_video_embed': '<iframe width="560" height="315" src="https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
-        'youtube_audio_embed': '<iframe width="560" height="315" src="https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
-        'categorias': ['Arreglo']
-    }
-]
 
-# --- Rutas de la Aplicación ---
+# --- Lógica de Autenticación y Búsqueda (sin cambios) ---
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def search_songs(base_songs):
+    search_query = request.args.get('search', '').strip()
+    if not search_query:
+        return base_songs, search_query
+    normalized_search = unidecode(search_query.lower())
+    filtered_songs = []
+    for song in base_songs:
+        full_text = ' '.join(filter(None, [song.titulo, song.musica, song.letra, song.descripcion]))
+        normalized_song_text = unidecode(full_text.lower())
+        if normalized_search in normalized_song_text:
+            filtered_songs.append(song)
+    return filtered_songs, search_query
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form['password'] == app.config['ADMIN_PASSWORD']:
+            session['logged_in'] = True
+            flash('¡Has iniciado sesión correctamente!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Contraseña incorrecta.', 'danger')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('Has cerrado sesión.', 'info')
+    return redirect(url_for('index'))
+
+# --- RUTAS PRINCIPALES (CON ORDENAMIENTO CORREGIDO) ---
+
 @app.route('/')
 def index():
-    return render_template('index.html', composiciones=composiciones)
+    base_songs = Cancion.query.all()
+    filtered_songs, search_query = search_songs(base_songs)
+    # CORRECCIÓN: Regla de ordenamiento personalizada
+    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    return render_template('index.html', composiciones=filtered_songs, search_query=search_query)
 
 @app.route('/composiciones')
 def ver_composiciones():
-    obras_composiciones = [
-        obra for obra in composiciones if 'Composición' in obra.get('categorias', [])
-    ]
-    return render_template('composiciones.html', obras=obras_composiciones)
+    todas_las_canciones = Cancion.query.all()
+    base_songs = [obra for obra in todas_las_canciones if 'Composición' in obra.categorias]
+    filtered_songs, search_query = search_songs(base_songs)
+    # CORRECCIÓN: Regla de ordenamiento personalizada
+    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    return render_template('composiciones.html', composiciones=filtered_songs, search_query=search_query)
 
-# --- ESTA ES LA ÚNICA Y CORRECTA VERSIÓN DE 'ver_composicion' ---
+@app.route('/arreglos')
+def ver_arreglos():
+    todas_las_canciones = Cancion.query.all()
+    base_songs = [obra for obra in todas_las_canciones if 'Arreglo' in obra.categorias]
+    filtered_songs, search_query = search_songs(base_songs)
+    # CORRECCIÓN: Regla de ordenamiento personalizada
+    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    return render_template('arreglos.html', composiciones=filtered_songs, search_query=search_query)
+
+@app.route('/tag/<tag_name>')
+def ver_tag(tag_name):
+    todas_las_canciones = Cancion.query.all()
+    obras_con_tag = []
+    if ':' not in tag_name:
+        for obra in todas_las_canciones:
+            for tag in obra.tags:
+                if tag == tag_name or tag.startswith(tag_name + ':'):
+                    obras_con_tag.append(obra)
+                    break
+    else:
+        obras_con_tag = [obra for obra in todas_las_canciones if tag_name in obra.tags]
+    filtered_songs, search_query = search_songs(obras_con_tag)
+    # CORRECCIÓN: Regla de ordenamiento personalizada
+    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query)
+
+# --- Ruta para la búsqueda en vivo (con ordenamiento corregido) ---
+@app.route('/filter')
+def filter_songs():
+    base_songs = Cancion.query.all()
+    filtered_songs, _ = search_songs(base_songs)
+    # CORRECCIÓN: Regla de ordenamiento personalizada
+    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    return render_template('_song_list.html', composiciones=filtered_songs)
+
+# --- Rutas de detalle, edición, etc. (sin cambios) ---
 @app.route('/composicion/<int:comp_id>')
 def ver_composicion(comp_id):
-    obra_encontrada = next((obra for obra in composiciones if obra['id'] == comp_id), None)
-    if obra_encontrada is None:
-        abort(404)
-    
-    # Buscamos los comentarios para esta obra en la base de datos
+    obra_encontrada = Cancion.query.get_or_404(comp_id)
     comentarios_obra = Comentario.query.filter_by(obra_id=comp_id).order_by(Comentario.fecha_creacion.desc()).all()
-    
     return render_template('composicion.html', obra=obra_encontrada, comentarios=comentarios_obra)
+
+@app.route('/composicion/<int:comp_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_cancion(comp_id):
+    cancion_a_editar = Cancion.query.get_or_404(comp_id)
+    if request.method == 'POST':
+        cancion_a_editar.titulo = request.form['titulo']
+        cancion_a_editar.musica = request.form['musica']
+        cancion_a_editar.letra = request.form['letra']
+        cancion_a_editar.idioma = request.form['idioma']
+        cancion_a_editar.anio = request.form['anio']
+        cancion_a_editar.descripcion = request.form['descripcion']
+        cancion_a_editar.audio = request.form['audio']
+        cancion_a_editar.partitura = request.form['partitura']
+        cancion_a_editar.tags_json = json.dumps([tag.strip() for tag in request.form['tags'].split(',') if tag.strip()])
+        cancion_a_editar.categorias_json = json.dumps([cat.strip() for cat in request.form['categorias'].split(',') if cat.strip()])
+        db.session.commit()
+        return redirect(url_for('ver_composicion', comp_id=cancion_a_editar.id))
+    return render_template('edit_cancion.html', cancion=cancion_a_editar)
+
+@app.route('/composicion/<int:comp_id>/delete', methods=['POST'])
+@login_required
+def delete_cancion(comp_id):
+    cancion_a_borrar = Cancion.query.get_or_404(comp_id)
+    db.session.delete(cancion_a_borrar)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/listas')
+def ver_listas():
+    todas_las_canciones = Cancion.query.all()
+    set_de_tags = set()
+    for cancion in todas_las_canciones:
+        for tag in cancion.tags:
+            if tag and tag.strip():
+                set_de_tags.add(tag)
+    simple_tags = sorted([tag for tag in set_de_tags if ':' not in tag])
+    hierarchical_tags = defaultdict(list)
+    for tag in set_de_tags:
+        if ':' in tag:
+            categoria, sub_etiqueta = tag.split(':', 1)
+            hierarchical_tags[categoria.strip()].append(sub_etiqueta.strip())
+    for categoria in hierarchical_tags:
+        hierarchical_tags[categoria].sort()
+    return render_template('listas.html', 
+                           simple_tags=simple_tags, 
+                           hierarchical_tags=dict(sorted(hierarchical_tags.items())))
 
 @app.route('/composicion/<int:comp_id>/add_comment', methods=['POST'])
 def add_comment(comp_id):
     autor = request.form.get('autor')
     contenido = request.form.get('contenido')
-
     if autor and contenido:
         nuevo_comentario = Comentario(obra_id=comp_id, autor=autor, contenido=contenido)
         db.session.add(nuevo_comentario)
         db.session.commit()
-
     return redirect(url_for('ver_composicion', comp_id=comp_id))
 
-@app.route('/tag/<tag_name>')
-def ver_tag(tag_name):
-    obras_con_tag = [obra for obra in composiciones if tag_name in obra.get('tags', [])]
-    return render_template('vista_tag.html', obras=obras_con_tag, tag_nombre=tag_name)
 
-@app.route('/listas')
-def ver_listas():
-    listas_principales = ['Cantos Bíblicos', 'Liturgia de las Horas', 'Santa Misa', 'Arreglos', 'Grabaciones', 'YouTube']
-    momentos_liturgicos = ['Kyrie', 'Sanctus']
-    return render_template('listas.html', 
-                           listas_principales=listas_principales, 
-                           momentos_liturgicos=momentos_liturgicos)
-
-@app.route('/arreglos')
-def ver_arreglos():
-    obras_arreglos = [obra for obra in composiciones if 'Arreglos' in obra.get('tags', [])]
-    return render_template('arreglos.html', obras=obras_arreglos)
-
-
-# --- Comando para crear la base de datos ---
 with app.app_context():
     db.create_all()
 

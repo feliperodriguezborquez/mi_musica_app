@@ -4,15 +4,26 @@
     <h2>Listas de Reproducción</h2>
     <p>Selecciona una etiqueta para ver todas las composiciones asociadas.</p>
     
-    <div class="tags-container" style="text-align: left; margin-top: 2rem;">
-        <h3>Listas Principales</h3>
-        {% for tag in listas_principales %}
-            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
-        {% endfor %}
-        
-        <h3 style="margin-top: 2rem;">Momentos Litúrgicos</h3>
-        {% for tag in momentos_liturgicos %}
-            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+    <div class="listas-secciones-container">
+        {% if simple_tags %}
+            <div class="tags-container seccion-lista">
+                {% for tag in simple_tags %}
+                    <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% for categoria, sub_etiquetas in hierarchical_tags.items() %}
+            <div class="seccion-lista">
+                <h3>{{ categoria }}</h3>
+                <div class="tags-container">
+                    <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver Todas</a>
+
+                    {% for sub_tag in sub_etiquetas %}
+                        <a href="{{ url_for('ver_tag', tag_name=categoria + ': ' + sub_tag) }}" class="tag-link">{{ sub_tag }}</a>
+                    {% endfor %}
+                </div>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Editar: {{ cancion.titulo }}</h2>
+
+    <form method="post" class="edit-form">
+        <div class="form-group">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" value="{{ cancion.titulo }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="musica">Música</label>
+            <input type="text" id="musica" name="musica" value="{{ cancion.musica or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="letra">Letra</label>
+            <input type="text" id="letra" name="letra" value="{{ cancion.letra or '' }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="idioma">Idioma</label>
+            <input type="text" id="idioma" name="idioma" value="{{ cancion.idioma or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="anio">Año</label>
+            <input type="number" id="anio" name="anio" value="{{ cancion.anio or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="5">{{ cancion.descripcion or '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="audio">Archivo de Audio (ej: media/Santo.mp3)</label>
+            <input type="text" id="audio" name="audio" value="{{ cancion.audio or '' }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="partitura">Archivo de Partitura (ej: media/Santo.pdf)</label>
+            <input type="text" id="partitura" name="partitura" value="{{ cancion.partitura or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Etiquetas (separadas por comas)</label>
+            <input type="text" id="tags" name="tags" value="{{ cancion.tags | join(', ') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="categorias">Categorías (separadas por comas)</label>
+            <input type="text" id="categorias" name="categorias" value="{{ cancion.categorias | join(', ') }}">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            <a href="{{ url_for('ver_composicion', comp_id=cancion.id) }}" class="btn-cancelar">Cancelar</a>
+        </div>
+    </form>
+    <hr>
+    <form method="post" action="{{ url_for('delete_cancion', comp_id=cancion.id) }}" onsubmit="return confirm('¿Estás seguro de que quieres borrar esta canción? Esta acción no se puede deshacer.');" class="delete-form">
+        <button type="submit" class="btn-borrar">Borrar Canción</button>
+    </form>
+
+{% endblock %}

@@ -22,91 +22,51 @@ body {
     padding: 0 20px;
 }
 
-/* Header y Navegación */
-header {
-    background-color: var(--color-principal);
-    color: var(--color-blanco);
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+/* ... (Header, Footer, Búsqueda, etc. sin cambios) ... */
+header { background-color: var(--color-principal); color: var(--color-blanco); padding: 1rem 0; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+nav { display: flex; justify-content: space-between; align-items: center; }
+.brand-logo { font-size: 1.5em; font-weight: bold; color: var(--color-blanco); text-decoration: none; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
+nav ul li { margin-left: 20px; }
+nav ul li a { color: var(--color-blanco); text-decoration: none; font-weight: bold; transition: color 0.2s; padding: 5px 0; border-bottom: 2px solid transparent; }
+nav ul li a:hover { border-bottom-color: var(--color-blanco); }
+.nav-separator { border-left: 1px solid rgba(255, 255, 255, 0.3); margin: 0 15px; height: 20px; }
+footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: var(--color-principal); color: var(--color-blanco); }
+.filter-container { margin-bottom: 20px; }
+.search-bar input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.1em; box-sizing: border-box; }
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+/* --- ESTILOS RESTAURADOS PARA LA LISTA CON SCROLL --- */
 
-.brand-logo {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: var(--color-blanco);
-    text-decoration: none;
-}
-
-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-nav ul li {
-    margin-left: 20px;
-}
-
-nav ul li a {
-    color: var(--color-blanco);
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.2s;
-    padding: 5px 0;
-    border-bottom: 2px solid transparent;
-}
-
-nav ul li a:hover {
-    border-bottom-color: var(--color-blanco);
-}
-
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: var(--color-principal);
-    color: var(--color-blanco);
-}
-
-/* Lista Vertical con Scroll */
 .lista-scroll {
+    height: 65vh; /* Altura del 65% de la ventana */
+    overflow-y: auto; /* Scroll vertical si es necesario */
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 10px;
     background-color: var(--color-blanco);
-    overflow-y: auto;
+}
+
+#song-list-container {
+    /* El contenedor interno ya no necesita estilos propios */
 }
 
 .lista-composiciones {
     display: block; 
+    padding: 10px;
 }
 
-/* --- ESTILOS ACTUALIZADOS PARA LA TARJETA --- */
 .tarjeta-obra {
-    display: flex; /* <-- CAMBIO CLAVE: usamos Flexbox */
-    justify-content: space-between; /* <-- Para empujar los elementos a los extremos */
-    align-items: center; /* <-- Para centrarlos verticalmente */
-    border: 1px solid #eee;
-    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
     text-decoration: none;
     color: var(--color-texto);
     transition: background-color 0.2s;
-    margin-bottom: 10px;
-    padding: 15px; /* <-- Movemos el padding aquí */
+    padding: 15px;
 }
 
 .tarjeta-obra:last-child {
-    margin-bottom: 0;
+    border-bottom: none;
 }
 
 .tarjeta-obra:hover {
@@ -114,177 +74,76 @@ footer {
 }
 
 .info-tarjeta {
-    padding: 0; /* <-- Quitamos el padding de aquí ya que está en el padre */
+    padding: 0;
 }
+.info-tarjeta h3 { margin: 0 0 5px 0; font-size: 1.1em; }
+.info-tarjeta p { margin: 0; color: #777; font-size: 0.9em; }
+.categoria-tags-container { display: flex; gap: 5px; }
+.categoria-tag { background-color: #e0e0e0; color: #555; font-size: 0.8em; font-weight: bold; padding: 4px 10px; border-radius: 12px; margin-left: 15px; white-space: nowrap; }
 
-.info-tarjeta h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.1em;
-}
+/* --- ESTILOS DE PÁGINA DE DETALLE --- */
+.detalle-obra { background-color: var(--color-blanco); padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto; }
+.detalle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.detalle-obra h2 { text-align: center; font-size: 2.5em; margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 10px; border-bottom: 3px solid var(--color-principal); }
+.metadata-grid { display: grid; grid-template-columns: 120px auto; gap: 8px 15px; max-width: 550px; margin: 0 auto 2.5rem auto; font-size: 1em; align-items: start; }
+.metadata-label { font-weight: bold; color: var(--color-texto); text-align: right; padding-right: 15px; }
+.metadata-value { color: #555; font-style: italic; }
+.metadata-value.metadata-fullwidth { font-style: italic; text-align: left; }
+.metadata-fullwidth { grid-column: 1 / -1; text-align: left; }
+.metadata-fullwidth.metadata-label { margin-bottom: -5px; }
+.detalle-obra h4 { font-size: 1.2em; border-bottom: 2px solid var(--color-principal); padding-bottom: 8px; margin-top: 40px; margin-bottom: 20px; }
+.tags-container { text-align: left; padding: 0; margin: 0 0 20px 0; border: none; }
+.reproductor { width: 100%; max-width: 500px; margin: 20px auto; display: block; }
+.btn-volver { display: inline-block; text-decoration: none; background-color: var(--color-principal); color: white; padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s; }
+.btn-editar { text-decoration: none; padding: 8px 15px; background-color: #f0f0f0; color: #333; border-radius: 5px; font-size: 0.9em; border: 1px solid #ddd; transition: background-color 0.2s; }
+.btn-editar:hover { background-color: #e0e0e0; }
+.seccion-lista { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; }
+.seccion-lista h3 { margin-top: 0; border-bottom: 2px solid var(--color-principal); padding-bottom: 10px; }
+.seccion-lista .tags-container { text-align: left; border: none; padding: 0; }
+.tag-link { display: inline-block; background-color: #e0e0e0; color: #333; padding: 5px 12px; margin: 5px; border-radius: 15px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s, color 0.2s; }
+.tag-link:hover { background-color: var(--color-principal); color: #fff; }
+.tag-link-todas { background-color: var(--color-principal) !important; color: var(--color-blanco) !important; font-weight: bold; }
+.edit-form { background-color: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-top: 2rem; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; box-sizing: border-box; }
+.form-actions { margin-top: 20px; display: flex; gap: 10px; }
+.btn-guardar, .btn-cancelar, .btn-borrar { padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; cursor: pointer; border: none; text-align: center; }
+.btn-guardar { background-color: var(--color-principal); color: var(--color-blanco); }
+.btn-cancelar { background-color: #777; color: var(--color-blanco); }
+.btn-borrar { background-color: #e74c3c; color: var(--color-blanco); width: 100%; margin-top: 1rem; }
+.player-selection-buttons { text-align: center; margin: 20px 0; }
+.player-button { background-color: #f0f0f0; border: 1px solid #ddd; padding: 10px 20px; margin: 0 5px; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.2s, border-color 0.2s; }
+.player-button:hover { background-color: #e0e0e0; }
+.player-button.active { background-color: var(--color-principal); color: var(--color-blanco); border-color: var(--color-principal); }
+.player-button.active:hover { background-color: var(--color-acento); border-color: var(--color-acento); }
+.embed-container { margin-top: 2rem; }
+.embed-container iframe { width: 100%; height: 380px; border: 0; border-radius: 12px; }
+.comentarios-seccion { margin-top: 30px; }
+.comentario-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+.comentario-form input, .comentario-form textarea { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Roboto', sans-serif; font-size: 1em; }
+.comentario-form button { background-color: var(--color-principal); color: var(--color-blanco); border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.2s; }
+.comentario-form button:hover { background-color: var(--color-acento); }
+.comentario { border-bottom: 1px solid #eee; padding: 15px 0; }
+.comentario:last-child { border-bottom: none; }
+.fecha-comentario { color: #999; font-size: 0.8em; margin-left: 10px; }
+.login-form { max-width: 400px; margin: 2rem auto; padding: 20px; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+.login-form label { display: block; margin-bottom: 8px; }
+.login-form input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 20px; }
+.login-form button { width: 100%; padding: 12px; background-color: var(--color-principal); color: var(--color-blanco); border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; }
+.login-link { background-color: rgba(0,0,0,0.1); padding: 5px 10px !important; border-radius: 5px; border-bottom: 2px solid transparent !important; }
+.flash-message { padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center; }
+.flash-message.success { background-color: #d4edda; color: #155724; }
+.flash-message.danger { background-color: #f8d7da; color: #721c24; }
+.flash-message.info { background-color: #cce5ff; color: #004085; }
 
-.info-tarjeta p {
-    margin: 0;
-    color: #777;
-    font-size: 0.9em;
-}
-
-/* --- NUEVO ESTILO PARA LA ETIQUETA DE CATEGORÍA --- */
-.categoria-tag {
-    background-color: #e0e0e0;
-    color: #555;
-    font-size: 0.8em;
+/* Estilos para la separación visual de tags jerárquicos */
+.tag-link .tag-category {
     font-weight: bold;
-    padding: 4px 10px;
-    border-radius: 12px;
-    margin-left: 15px; /* Espacio entre el texto y la etiqueta */
-    white-space: nowrap; /* Evita que el texto de la etiqueta se parta */
+    opacity: 0.7; /* Lo hace un poco más sutil */
+    margin-right: 4px; /* Pequeño espacio entre las partes */
 }
 
-
-/* Página de Detalle de la Composición */
-.detalle-obra {
-    background-color: var(--color-blanco);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* ... (el resto del CSS sigue igual) ... */
-
-.detalle-obra h2, .detalle-obra h3 {
-    text-align: center;
-}
-.descripcion {
-    font-size: 1.1em;
-    color: #555;
-    max-width: 600px;
-    margin: 20px auto;
-    text-align: center;
-}
-.reproductor {
-    width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
-    display: block;
-}
-.btn-volver {
-    display: inline-block;
-    margin-bottom: 20px;
-    text-decoration: none;
-    background-color: var(--color-principal);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-}
-.btn-volver:hover {
-    background-color: var(--color-acento);
-}
-.tags-container {
-    margin: 20px 0;
-    text-align: center;
-}
-.tag-link {
-    display: inline-block;
-    background-color: #e0e0e0;
-    color: #333;
-    padding: 5px 12px;
-    margin: 5px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-size: 0.9em;
-    transition: background-color 0.2s, color 0.2s;
-}
-.tag-link:hover {
-    background-color: var(--color-principal);
-    color: #fff;
-}
-.player-selection-buttons {
-    text-align: center;
-    margin: 20px 0;
-}
-.player-button {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-.player-button:hover {
-    background-color: #e0e0e0;
-}
-.player-button.active {
-    background-color: var(--color-principal);
-    color: var(--color-blanco);
-    border-color: var(--color-principal);
-}
-.player-button.active:hover {
-    background-color: var(--color-acento);
-    border-color: var(--color-acento);
-}
-.embed-container {
-    margin-top: 2rem;
-}
-.embed-container iframe {
-    width: 100%;
-    height: 380px;
-    border: 0;
-    border-radius: 12px;
-}
-
-.categoria-tags-container {
-    display: flex;
-    gap: 5px; /* Espacio entre etiquetas si hay más de una */
-}
-
-
-
-/* Estilos para la Sección de Comentarios */
-.comentarios-seccion {
-    margin-top: 30px;
-}
-.comentario-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-.comentario-form input,
-.comentario-form textarea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1em;
-}
-.comentario-form button {
-    background-color: var(--color-principal);
-    color: var(--color-blanco);
-    border: none;
-    padding: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-.comentario-form button:hover {
-    background-color: var(--color-acento);
-}
-.comentario {
-    border-bottom: 1px solid #eee;
-    padding: 15px 0;
-}
-.comentario:last-child {
-    border-bottom: none;
-}
-.fecha-comentario {
-    color: #999;
-    font-size: 0.8em;
-    margin-left: 10px;
+.tag-link .tag-name {
+    font-weight: normal;
 }

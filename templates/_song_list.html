@@ -1,0 +1,19 @@
+<div class="lista-composiciones">
+    {% for obra in composiciones %}
+        <a href="{{ url_for('ver_composicion', comp_id=obra.id) }}" class="tarjeta-obra">
+            <div class="info-tarjeta">
+                <h3>{{ obra.titulo }}</h3>
+                <p>{{ obra.musica }}</p>
+            </div>
+            <div class="categoria-tags-container">
+                {% if obra.categorias %}
+                    {% for cat in obra.categorias %}
+                        <span class="categoria-tag">{{ cat }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </a>
+    {% else %}
+        <p style="padding: 20px;">No se encontraron canciones que coincidan con tu búsqueda.</p>
+    {% endfor %}
+</div>
