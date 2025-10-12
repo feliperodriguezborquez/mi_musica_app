@@ -266,8 +266,10 @@ def ver_composicion(comp_id):
          playlist_url = url_for('index', search=search_query)
 
     obra_encontrada = Cancion.query.get_or_404(comp_id)
+    partitura_path = obra_encontrada.partitura
+
     comentarios_obra = Comentario.query.filter_by(obra_id=comp_id).order_by(Comentario.fecha_creacion.desc()).all()
-    return render_template('composicion.html', obra=obra_encontrada, comentarios=comentarios_obra, prev_song_url=prev_song_url, next_song_url=next_song_url, playlist=playlist, playlist_title=playlist_title, playlist_url=playlist_url)
+    return render_template('composicion.html', obra=obra_encontrada, partitura_path=partitura_path, comentarios=comentarios_obra, prev_song_url=prev_song_url, next_song_url=next_song_url, playlist=playlist, playlist_title=playlist_title, playlist_url=playlist_url)
 
 @app.route('/composicion/<int:comp_id>/edit', methods=['GET', 'POST'])
 @login_required

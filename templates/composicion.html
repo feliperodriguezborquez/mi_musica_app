@@ -83,6 +83,34 @@
             document.getElementById('scroll-to-bottom-btn').addEventListener('click', function() {
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             });
+
+            // Lógica para mover el botón de la playlist al hacer scroll
+            document.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                const playlistBtn = document.getElementById('open-playlist-btn');
+
+                if (!header || !playlistBtn) return;
+
+                const headerHeight = header.offsetHeight;
+                const scrollPosition = window.scrollY;
+
+                const startTop = 150; // Posición inicial en px
+                const endTop = 20;    // Posición final en px
+                const travelDistance = startTop - endTop;
+
+                // Calculamos el progreso del scroll dentro de la altura del header.
+                // 'progress' irá de 0 a 1 exactamente mientras el header desaparece de la vista.
+                // Usamos Math.min para que el valor no pase de 1 cuando ya hemos bajado más.
+                const progress = Math.min(1, scrollPosition / headerHeight);
+
+                // Calculamos la nueva posición 'top' de forma progresiva.
+                // Cuando progress es 0, newTop = 150.
+                // Cuando progress es 1, newTop = 20.
+                const newTop = startTop - (travelDistance * progress);
+
+                // Aplicamos el nuevo estilo.
+                playlistBtn.style.top = `${newTop}px`;
+            });
         </script>
 
         {% if obra.tipo == 'local' %}
@@ -153,6 +181,8 @@
             .then(() => {
                 // Limpiamos los controles de instrumentos antes de volver a crearlos
                 document.getElementById('instrument-controls').innerHTML = '';
+
+                // Renderizamos la partitura.
                 osmd.render();
                 console.log("Partitura cargada correctamente");
 

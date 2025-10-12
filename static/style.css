@@ -485,6 +485,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     cursor: pointer;
     z-index: 1001;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: top 0.3s ease-in-out; /* Transición suave para el cambio de posición */
 }
 
 .sidebar {
