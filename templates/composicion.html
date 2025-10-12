@@ -104,6 +104,8 @@
         <button id="zoom-out-btn" title="Alejar">-</button>
         <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
         <button id="zoom-in-btn" title="Acercar">+</button>
+        <span class="osmd-control-separator"></span>
+        <button id="toggle-view-btn" title="Cambiar Vista">Vertical</button>
     </div>
 
     <!-- Contenedor para la partitura -->
@@ -114,6 +116,7 @@
         const container = document.getElementById('osmd-container');
         const zoomDisplay = document.getElementById('zoom-display-btn');
         let osmd;
+        let isHorizontalView = false; // Estado para controlar la vista
         
         // Niveles de zoom predefinidos para asegurar un paso por 100%
         const zoomLevels = [0.5, 0.75, 0.9, 1.0, 1.1, 1.25, 1.5, 2.0];
@@ -123,18 +126,33 @@
             zoomDisplay.textContent = Math.round(osmd.zoom * 100) + '%';
         }
         
-        // Inicializa OSMD con la vista paginada por defecto
-        osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmd-container", {
-            autoResize: true,
-            backend: "svg",
-            drawTitle: false,
-            drawComposer: false,
-            renderMultimeasureRests: true // ¡CLAVE! Agrupa los compases de silencio.
-        });
+        // Función para cargar y renderizar la partitura
+        function loadAndRenderScore() {
+            let options;
+            if (isHorizontalView) {
+                // Opciones para la VISTA HORIZONTAL
+                options = {
+                    autoResize: false, // ¡CLAVE! Desactivamos el auto-ajuste
+                    backend: "svg",
+                    drawTitle: false,
+                    // ¡LA OPCIÓN MÁGICA PARA LA VISTA HORIZONTAL!
+                    renderSingleHorizontalStaffline: true
+                };
+            } else {
+                // Opciones para la VISTA PAGINADA (por defecto)
+                options = {
+                    autoResize: true, backend: "svg", drawTitle: false, drawComposer: false, renderMultimeasureRests: true };
+            }
 
-        // Carga y renderiza la partitura
-        osmd.load(musicXmlUrl)
+            osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmd-container", options);
+
+            // Aplicar la clase para el scroll si es vista horizontal
+            container.classList.toggle('horizontal-scroll', isHorizontalView);
+
+            osmd.load(musicXmlUrl)
             .then(() => {
+                // Limpiamos los controles de instrumentos antes de volver a crearlos
+                document.getElementById('instrument-controls').innerHTML = '';
                 osmd.render();
                 console.log("Partitura cargada correctamente");
 
@@ -265,6 +283,7 @@
                 console.error("Error al cargar la partitura:", error);
                 container.innerHTML = '<p style="color: red;">Error al cargar la partitura</p>';
             });
+        }
 
         // --- Controles de Zoom ---
         document.getElementById('zoom-in-btn').addEventListener('click', function() {
@@ -296,6 +315,19 @@
             osmd.render();
             updateZoomDisplay();
         });
+
+        // --- Lógica para cambiar de vista ---
+        document.getElementById('toggle-view-btn').addEventListener('click', function() {
+            isHorizontalView = !isHorizontalView; // Cambia el estado
+            this.textContent = isHorizontalView ? 'Horizontal' : 'Vertical';
+            
+            // Limpia el contenedor y vuelve a cargar la partitura con la nueva configuración
+            container.innerHTML = '';
+            loadAndRenderScore();
+        });
+
+        // Carga inicial de la partitura
+        loadAndRenderScore();
 
     </script>
             {% endif %}

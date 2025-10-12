@@ -342,6 +342,19 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     background-color: #d0d0d0;
 }
 
+/* Separador para los controles de OSMD */
+.osmd-control-separator {
+    border-left: 2px solid #ddd;
+    height: 20px;
+    align-self: center;
+    margin: 0 15px; /* Añadimos margen a ambos lados del separador */
+}
+
+/* Separación para el botón de cambio de vista */
+#toggle-view-btn {
+    /* El margen ahora está en el separador, así que eliminamos este */
+}
+
 /* Contenedor de la partitura */
 #osmd-container {
     width: 100%;
@@ -355,7 +368,12 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     overflow-x: auto !important;
     overflow-y: hidden !important;
     white-space: nowrap;
-    padding-bottom: 20px;
+    padding: 20px; /* Añadimos padding en todos los lados */
+    border: 1px solid #ddd; /* El marco que pediste */
+    border-radius: 8px; /* Bordes redondeados para que coincida con el estilo */
+    background-color: var(--color-blanco); /* Fondo blanco para que destaque */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Una sombra sutil */
+    box-sizing: border-box; /* ¡LA SOLUCIÓN! Incluye padding y borde en el ancho total */
 }
 
 #osmd-container.horizontal-scroll > svg {
