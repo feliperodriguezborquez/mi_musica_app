@@ -1,29 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Listas de Reproducción</h2>
-    <p>Selecciona una etiqueta para ver todas las composiciones asociadas.</p>
-    
-    <div class="listas-secciones-container">
-        {% if simple_tags %}
-            <div class="tags-container seccion-lista">
-                {% for tag in simple_tags %}
-                    <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
-                {% endfor %}
-            </div>
+    <div class="container">
+        <h2>Listas de Reproducción</h2>
+
+        {% if hierarchical_tags %}
+            {% for categoria, sub_etiquetas in hierarchical_tags.items() %}
+                <div class="seccion-lista">
+                    <h3>{{ categoria }}</h3>
+                    <div class="tags-container">
+                        <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver todas</a>
+                        
+                        {# Solo mostramos el separador si hay sub-etiquetas #}
+                        {% if sub_etiquetas %}
+                            <span class="tag-separator">|</span>
+                        {% endif %}
+
+                        {% for sub_etiqueta in sub_etiquetas %}
+                            <a href="{{ url_for('ver_tag', tag_name=categoria ~ ':' ~ sub_etiqueta) }}" class="tag-link">{{ sub_etiqueta }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
         {% endif %}
 
-        {% for categoria, sub_etiquetas in hierarchical_tags.items() %}
+        {% if simple_tags %}
             <div class="seccion-lista">
-                <h3>{{ categoria }}</h3>
+                <h3>Más</h3>
                 <div class="tags-container">
-                    <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver Todas</a>
-
-                    {% for sub_tag in sub_etiquetas %}
-                        <a href="{{ url_for('ver_tag', tag_name=categoria + ':' + sub_tag) }}" class="tag-link">{{ sub_tag }}</a>
+                    {% for tag in simple_tags %}
+                        <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
                     {% endfor %}
                 </div>
             </div>
-        {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

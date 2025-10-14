@@ -1,6 +1,6 @@
 <div class="lista-composiciones">
     {% for obra in composiciones %}
-        <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query) }}" class="tarjeta-obra">
+        <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query, sort_by=sort_by) }}" class="tarjeta-obra">
             <div class="info-tarjeta">
                 <div class="song-title-with-number">
                     <span class="song-number">{{ loop.index }}.</span>

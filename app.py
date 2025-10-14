@@ -64,6 +64,106 @@ def sort_categories_for_page(categories, page_context='default'):
         sorted_cats.sort(key=lambda x: (x != 'Arreglo', x != 'Composición'))
     return sorted_cats
 
+# --- LÓGICA DE ORDENAMIENTO BÍBLICO AVANZADO ---
+import re
+
+# 1. Orden canónico completo de los libros de la Biblia.
+ORDEN_LIBROS_BIBLIA = {
+    # Antiguo Testamento
+    "Génesis": 1, "Éxodo": 2, "Levítico": 3, "Números": 4, "Deuteronomio": 5, "Josué": 6, "Jueces": 7, "Rut": 8,
+    "1 Samuel": 9, "2 Samuel": 10, "1 Reyes": 11, "2 Reyes": 12, "1 Crónicas": 13, "2 Crónicas": 14, "Esdras": 15,
+    "Nehemías": 16, "Tobías": 17, "Judit": 18, "Ester": 19, "1 Macabeos": 20, "2 Macabeos": 21, "Job": 22, "Salmos": 23,
+    "Proverbios": 24, "Eclesiastés": 25, "Cantar de los Cantares": 26, "Sabiduría": 27, "Eclesiástico": 28,
+    "Isaías": 29, "Jeremías": 30, "Lamentaciones": 31, "Baruc": 32, "Ezequiel": 33, "Daniel": 34, "Oseas": 35,
+    "Joel": 36, "Amós": 37, "Abdías": 38, "Jonás": 39, "Miqueas": 40, "Nahúm": 41, "Habacuc": 42, "Sofonías": 43,
+    "Hageo": 44, "Zacarías": 45, "Malaquías": 46,
+    # Nuevo Testamento
+    "Mateo": 47, "Marcos": 48, "Lucas": 49, "Juan": 50, "Hechos de los Apóstoles": 51, "Romanos": 52,
+    "1 Corintios": 53, "2 Corintios": 54, "Gálatas": 55, "Efesios": 56, "Filipenses": 57, "Colosenses": 58,
+    "1 Tesalonicenses": 59, "2 Tesalonicenses": 60, "1 Timoteo": 61, "2 Timoteo": 62, "Tito": 63, "Filemón": 64,
+    "Hebreos": 65, "Santiago": 66, "1 Pedro": 67, "2 Pedro": 68, "1 Juan": 69, "2 Juan": 70, "3 Juan": 71,
+    "Judas": 72, "Apocalipsis": 73
+}
+
+# 2. Mapeo de abreviaturas y nombres alternativos al nombre canónico.
+MAPEO_LIBROS_BIBLIA = {
+    # Antiguo Testamento
+    'génesis': 'Génesis', 'gen': 'Génesis', 'gn': 'Génesis', 'éxodo': 'Éxodo', 'ex': 'Éxodo', 'levítico': 'Levítico', 'lv': 'Levítico',
+    'números': 'Números', 'num': 'Números', 'nm': 'Números', 'deuteronomio': 'Deuteronomio', 'dt': 'Deuteronomio', 'josué': 'Josué', 'jos': 'Josué',
+    'jueces': 'Jueces', 'jue': 'Jueces', 'rut': 'Rut', 'rt': 'Rut', '1 samuel': '1 Samuel', '1 sam': '1 Samuel', '1 sa': '1 Samuel',
+    '2 samuel': '2 Samuel', '2 sam': '2 Samuel', '2 sa': '2 Samuel', '1 reyes': '1 Reyes', '1 re': '1 Reyes', '2 reyes': '2 Reyes', '2 re': '2 Reyes',
+    '1 crónicas': '1 Crónicas', '1 cro': '1 Crónicas', '1 cr': '1 Crónicas', '2 crónicas': '2 Crónicas', '2 cro': '2 Crónicas', '2 cr': '2 Crónicas',
+    'esdras': 'Esdras', 'esd': 'Esdras', 'nehemías': 'Nehemías', 'neh': 'Nehemías', 'tobías': 'Tobías', 'tob': 'Tobías', 'judit': 'Judit', 'jdt': 'Judit',
+    'ester': 'Ester', 'est': 'Ester', '1 macabeos': '1 Macabeos', '1 mac': '1 Macabeos', '2 macabeos': '2 Macabeos', '2 mac': '2 Macabeos',
+    'job': 'Job', 'jb': 'Job', 'salmos': 'Salmos', 'salmo': 'Salmos', 'Sal': 'Salmos', 'sal': 'Salmos', 'proverbios': 'Proverbios', 'prov': 'Proverbios', 'pr': 'Proverbios',
+    'eclesiastés': 'Eclesiastés', 'ecl': 'Eclesiastés', 'qo': 'Eclesiastés', 'cantar de los cantares': 'Cantar de los Cantares', 'cant': 'Cantar de los Cantares',
+    'sabiduría': 'Sabiduría', 'sab': 'Sabiduría', 'eclesiástico': 'Eclesiástico', 'eclo': 'Eclesiástico', 'si': 'Eclesiástico', 'isaías': 'Isaías', 'is': 'Isaías',
+    'jeremías': 'Jeremías', 'jer': 'Jeremías', 'lamentaciones': 'Lamentaciones', 'lam': 'Lamentaciones', 'baruc': 'Baruc', 'bar': 'Baruc',
+    'ezequiel': 'Ezequiel', 'ez': 'Ezequiel', 'daniel': 'Daniel', 'dan': 'Daniel', 'dn': 'Daniel', 'oseas': 'Oseas', 'os': 'Oseas', 'joel': 'Joel', 'jl': 'Joel',
+    'amós': 'Amós', 'am': 'Amós', 'abdías': 'Abdías', 'abd': 'Abdías', 'jonás': 'Jonás', 'jon': 'Jonás', 'miqueas': 'Miqueas', 'miq': 'Miqueas',
+    'nahúm': 'Nahúm', 'nah': 'Nahúm', 'habacuc': 'Habacuc', 'hab': 'Habacuc', 'sofonías': 'Sofonías', 'sof': 'Sofonías', 'hageo': 'Hageo', 'hag': 'Hageo',
+    'zacarías': 'Zacarías', 'zac': 'Zacarías', 'malaquías': 'Malaquías', 'mal': 'Malaquías',
+    # Nuevo Testamento
+    'mateo': 'Mateo', 'mt': 'Mateo', 'marcos': 'Marcos', 'mc': 'Marcos', 'lucas': 'Lucas', 'lc': 'Lucas', 'juan': 'Juan', 'jn': 'Juan',
+    'evangelios': 'Evangelios', 'hechos de los apóstoles': 'Hechos de los Apóstoles', 'hechos': 'Hechos de los Apóstoles', 'hch': 'Hechos de los Apóstoles',
+    'romanos': 'Romanos', 'rom': 'Romanos', '1 corintios': '1 Corintios', '1 cor': '1 Corintios', '2 corintios': '2 Corintios', '2 cor': '2 Corintios',
+    'gálatas': 'Gálatas', 'gal': 'Gálatas', 'efesios': 'Efesios', 'ef': 'Efesios', 'filipenses': 'Filipenses', 'flp': 'Filipenses',
+    'colosenses': 'Colosenses', 'col': 'Colosenses', '1 tesalonicenses': '1 Tesalonicenses', '1 tes': '1 Tesalonicenses',
+    '2 tesalonicenses': '2 Tesalonicenses', '2 tes': '2 Tesalonicenses', '1 timoteo': '1 Timoteo', '1 tim': '1 Timoteo',
+    '2 timoteo': '2 Timoteo', '2 tim': '2 Timoteo', 'tito': 'Tito', 'tit': 'Tito', 'filemón': 'Filemón', 'flm': 'Filemón',
+    'hebreos': 'Hebreos', 'heb': 'Hebreos', 'santiago': 'Santiago', 'stgo': 'Santiago', '1 pedro': '1 Pedro', '1 pe': '1 Pedro',
+    '2 pedro': '2 Pedro', '2 pe': '2 Pedro', '1 juan': '1 Juan', '1 jn': '1 Juan', '2 juan': '2 Juan', '2 jn': '2 Juan',
+    '3 juan': '3 Juan', '3 jn': '3 Juan', 'judas': 'Judas', 'jud': 'Judas', 'apocalipsis': 'Apocalipsis', 'ap': 'Apocalipsis'
+}
+
+# 3. Expresión regular para encontrar citas bíblicas.
+CITA_REGEX = re.compile(
+    r'((?:\d\s)?[A-Za-zÀ-ÿ\s]+?)\s*(\d+)(?:,\s*(\d+))?', 
+    re.IGNORECASE
+)
+
+def parse_cita_biblica(texto):
+    """
+    Busca una cita bíblica en un texto y devuelve una tupla para ordenar.
+    Devuelve (orden_libro, capítulo, versículo) o None si no encuentra nada.
+    """
+    if not texto:
+        return None
+    
+    match = CITA_REGEX.search(texto)
+    if not match:
+        return None
+
+    nombre_libro_raw, capitulo_str, versiculo_str = match.groups()
+    nombre_libro_limpio = unidecode(nombre_libro_raw.strip().lower())
+    
+    nombre_canonico = MAPEO_LIBROS_BIBLIA.get(nombre_libro_limpio)
+    if not nombre_canonico:
+        return None
+
+    orden_libro = ORDEN_LIBROS_BIBLIA.get(nombre_canonico, 999)
+    capitulo = int(capitulo_str)
+    versiculo = int(versiculo_str) if versiculo_str else 0
+
+    return (orden_libro, capitulo, versiculo)
+
+# --- LÓGICA DE ORDENAMIENTO PERSONALIZADO (CONSTANTES GLOBALES) ---
+# Se mueven aquí para ser accesibles desde múltiples rutas.
+ORDEN_TIEMPOS_LITURGICOS = {
+    "Adviento": 0, "Navidad": 1, "Cuaresma": 2, "Semana Santa": 3, 
+    "Pascua": 4, "Pentecostés": 5, "Tiempo Ordinario": 6
+}
+ORDEN_SANTA_MISA = {
+    "Entrada": 0, "Señor ten Piedad": 1, "Gloria": 2, "Salmo": 3, 
+    "Aleluya": 4, "Ofertorio": 5, "Santo": 6, "Aclamación Memorial": 7,
+    "Amén": 8, "Padre Nuestro": 9, "Cordero de Dios": 10, "Comunión": 11, "Salida": 12
+}
+ORDENES_PERSONALIZADOS = {
+    "Tiempos Litúrgicos": ORDEN_TIEMPOS_LITURGICOS,
+    "Santa Misa": ORDEN_SANTA_MISA,
+    "Cantos Bíblicos": ORDEN_LIBROS_BIBLIA # Usamos el diccionario completo
+}
+
 # --- Lógica de Autenticación y Búsqueda (sin cambios) ---
 def login_required(f):
     @wraps(f)
@@ -104,12 +204,13 @@ def search_by_category(category_name):
         song for song in all_songs if normalized_category in unidecode(str(song.categorias).lower())
     ]
 
-def get_playlist_songs(context, tag_name=None, search_query=None):
+def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='canonico'):
     """
     Reconstruye la lista de canciones (playlist) basada en el contexto y los filtros.
     Devuelve una lista ordenada de objetos Cancion.
     """
     base_songs = []
+    # 1. Obtener la lista base de canciones según el contexto
     if context == 'index':
         base_songs = Cancion.query.all()
     elif context == 'composiciones':
@@ -128,7 +229,7 @@ def get_playlist_songs(context, tag_name=None, search_query=None):
                 if any(t.replace(" ", "").lower() == normalized_tag_name for t in song.tags):
                     base_songs.append(song)
     
-    # Aplicar filtro de búsqueda si existe
+    # 2. Aplicar filtro de búsqueda de texto si existe
     if search_query:
         normalized_search = unidecode(search_query.lower())
         songs_after_search = []
@@ -138,7 +239,38 @@ def get_playlist_songs(context, tag_name=None, search_query=None):
                 songs_after_search.append(song)
         base_songs = songs_after_search
 
-    base_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    # Extraemos la categoría principal para la lógica de ordenamiento
+    main_category = tag_name.split(':')[0].strip() if tag_name else None
+
+    # 3. Aplicar el ordenamiento solicitado
+    if main_category == "Cantos Bíblicos" and sort_by == 'canonico':
+        def get_song_order_biblico(song):
+            cita_orden = parse_cita_biblica(song.letra)
+            if cita_orden: return (cita_orden[0], cita_orden[1], cita_orden[2])
+            for tag in song.tags:
+                if tag.startswith(main_category + ':'):
+                    sub_tag = tag.split(':', 1)[1].strip()
+                    orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
+                    return (orden_libro, 0, 0)
+            return (999, 0, 0)
+        base_songs.sort(key=lambda song: (get_song_order_biblico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+
+    elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
+        orden_categoria = ORDENES_PERSONALIZADOS[main_category]
+        def get_song_order(song):
+            min_order = 999
+            for tag in song.tags:
+                if tag.startswith(main_category + ':'):
+                    sub_tag = tag.split(':', 1)[1].strip()
+                    order = orden_categoria.get(sub_tag, 999)
+                    if order < min_order:
+                        min_order = order
+            return min_order
+        base_songs.sort(key=lambda song: (get_song_order(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+    
+    else: # Orden alfabético por defecto para el resto
+        base_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    
     return base_songs
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -202,8 +334,85 @@ def ver_tag(tag_name):
     
     # Aplicamos el filtro de búsqueda de texto y el ordenamiento sobre las canciones encontradas
     filtered_songs, search_query = search_songs(matching_songs)
-    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
-    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag')
+    
+    # Obtenemos el método de ordenamiento desde la URL, por defecto 'canonico'
+    sort_by = request.args.get('sort_by', 'canonico')
+    
+    # Extraemos la categoría principal para la lógica de ordenamiento
+    main_category = tag_name.split(':')[0].strip()
+
+    # --- LÓGICA DE ORDENAMIENTO DE CANCIONES DENTRO DE LA LISTA ---
+    # Solo aplicamos la lógica si la categoría tiene un orden personalizado y el usuario lo ha elegido.
+    if main_category == "Cantos Bíblicos" and sort_by == 'canonico':
+        def get_song_order_biblico(song):
+            # 1. Prioridad: Intentar parsear la cita desde el campo 'letra'.
+            cita_orden = parse_cita_biblica(song.letra)
+            if cita_orden:
+                # Devuelve una tupla de orden muy específica: (orden_libro, capítulo, versículo)
+                return (cita_orden[0], cita_orden[1], cita_orden[2])
+
+            # 2. Fallback: Si no hay cita, usar el tag de la canción.
+            for tag in song.tags:
+                if tag.startswith(main_category + ':'):
+                    sub_tag = tag.split(':', 1)[1].strip()
+                    # Usamos el orden del libro, pero capítulo y versículo en 0.
+                    orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
+                    return (orden_libro, 0, 0)
+            
+            # 3. Último recurso: Si no tiene ni cita ni tag, va al final.
+            return (999, 0, 0)
+
+        # Ordena por la tupla de orden y luego por título
+        filtered_songs.sort(key=lambda song: (get_song_order_biblico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+
+    elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
+        orden_categoria = ORDENES_PERSONALIZADOS[main_category]
+        
+        def get_song_order(song):
+            """
+            Encuentra el valor de orden más bajo para una canción dentro de una categoría.
+            Ej: Si una canción es de 'Adviento' y 'Navidad', usará el orden de 'Adviento'.
+            """
+            min_order = 999
+            for tag in song.tags:
+                if tag.startswith(main_category + ':'):
+                    sub_tag = tag.split(':', 1)[1].strip()
+                    order = orden_categoria.get(sub_tag, 999)
+                    if order < min_order:
+                        min_order = order
+            return min_order
+
+        # Ordena primero por el orden canónico y luego por título
+        filtered_songs.sort(key=lambda song: (get_song_order(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+    else:
+        # Ordenamiento alfabético estándar para el resto de las listas
+        # o si el usuario eligió explícitamente 'alfabetico'.
+        filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+
+    # Pasamos el método de ordenamiento actual a la plantilla
+    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys())
+
+@app.route('/get_playlist')
+def get_playlist_partial():
+    """
+    Devuelve solo el HTML de la lista de canciones para ser cargado con AJAX.
+    """
+    context = request.args.get('context', 'index')
+    tag_name = request.args.get('tag_name')
+    search_query = request.args.get('search')
+    sort_by = request.args.get('sort_by', 'canonico')
+    playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
+    
+    # Pasamos todos los parámetros de contexto a la plantilla parcial
+    # para que los enlaces url_for() se generen correctamente.
+    return render_template(
+        '_song_list.html', 
+        composiciones=playlist, 
+        page_context=context, 
+        tag_nombre=tag_name, 
+        search_query=search_query, 
+        sort_by=sort_by
+    )
 
 # --- Ruta para la búsqueda en vivo (con ordenamiento corregido) ---
 @app.route('/filter')
@@ -221,9 +430,12 @@ def ver_composicion(comp_id):
     context = request.args.get('context', 'index')
     tag_name = request.args.get('tag_name')
     search_query = request.args.get('search')
+    
+    # Obtenemos el ordenamiento de la URL. Si no viene, usamos 'canonico' como default.
+    sort_by = request.args.get('sort_by', 'canonico')
 
     # Reconstruimos la playlist
-    playlist = get_playlist_songs(context, tag_name, search_query)
+    playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
     playlist_ids = [song.id for song in playlist]
 
     # Encontramos la posición de la canción actual
@@ -236,11 +448,11 @@ def ver_composicion(comp_id):
     prev_song_url = None
     if current_index > 0:
         prev_id = playlist_ids[current_index - 1]
-        prev_song_url = url_for('ver_composicion', comp_id=prev_id, context=context, tag_name=tag_name, search=search_query)
+        prev_song_url = url_for('ver_composicion', comp_id=prev_id, context=context, tag_name=tag_name, search=search_query, sort_by=sort_by)
     next_song_url = None
     if current_index != -1 and current_index < len(playlist_ids) - 1:
         next_id = playlist_ids[current_index + 1]
-        next_song_url = url_for('ver_composicion', comp_id=next_id, context=context, tag_name=tag_name, search=search_query)
+        next_song_url = url_for('ver_composicion', comp_id=next_id, context=context, tag_name=tag_name, search=search_query, sort_by=sort_by)
 
     # Generar un título dinámico para la playlist
     playlist_title = "Catálogo Completo"
@@ -257,13 +469,13 @@ def ver_composicion(comp_id):
     # Generar la URL para volver a la lista de reproducción
     playlist_url = url_for('index') # URL por defecto
     if context == 'composiciones':
-        playlist_url = url_for('ver_composiciones', search=search_query)
+        playlist_url = url_for('ver_composiciones', search=search_query, sort_by=sort_by)
     elif context == 'arreglos':
-        playlist_url = url_for('ver_arreglos', search=search_query)
+        playlist_url = url_for('ver_arreglos', search=search_query, sort_by=sort_by)
     elif context == 'tag' and tag_name:
-        playlist_url = url_for('ver_tag', tag_name=tag_name, search=search_query)
+        playlist_url = url_for('ver_tag', tag_name=tag_name, search=search_query, sort_by=sort_by)
     elif context == 'index':
-         playlist_url = url_for('index', search=search_query)
+         playlist_url = url_for('index', search=search_query, sort_by=sort_by)
 
     obra_encontrada = Cancion.query.get_or_404(comp_id)
     partitura_path = obra_encontrada.partitura
@@ -361,9 +573,24 @@ def ver_listas():
     for tag in set_de_tags:
         if ':' in tag:
             categoria, sub_etiqueta = tag.split(':', 1)
-            hierarchical_tags[categoria.strip()].append(sub_etiqueta.strip())
+            # Nos aseguramos de que la sub-etiqueta no esté vacía antes de añadirla
+            sub_etiqueta_limpia = sub_etiqueta.strip()
+            if sub_etiqueta_limpia:
+                hierarchical_tags[categoria.strip()].append(sub_etiqueta_limpia)
+
+    # Ordena las sub-etiquetas dentro de cada categoría
     for categoria in hierarchical_tags:
-        hierarchical_tags[categoria].sort()
+        if categoria in ORDENES_PERSONALIZADOS:
+            orden = ORDENES_PERSONALIZADOS[categoria]
+            # Para Cantos Bíblicos, las sub-etiquetas son los libros.
+            # Usamos el nombre canónico para obtener el orden numérico.
+            if categoria == "Cantos Bíblicos":
+                 hierarchical_tags[categoria].sort(key=lambda libro: orden.get(MAPEO_LIBROS_BIBLIA.get(libro.lower(), libro), 999))
+            else:
+                hierarchical_tags[categoria].sort(key=lambda sub: orden.get(sub, 999))
+        else:
+            hierarchical_tags[categoria].sort() # Orden alfabético para el resto
+
     return render_template('listas.html', 
                            simple_tags=simple_tags, 
                            hierarchical_tags=dict(sorted(hierarchical_tags.items())))

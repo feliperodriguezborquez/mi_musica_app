@@ -7,10 +7,13 @@
     <!-- Menú lateral de la playlist -->
     <div id="playlist-sidebar" class="sidebar">
         <a href="javascript:void(0)" id="close-playlist-btn" class="close-btn">×</a>
-        <a href="{{ playlist_url }}" class="sidebar-title-link"><h4>{{ playlist_title }}</h4></a>
-        <div class="sidebar-song-list">
+        <div class="sidebar-header">
+            <a href="{{ playlist_url }}" class="sidebar-title-link"><h4>{{ playlist_title.split(':')[-1] | trim }}</h4></a>
+        </div>
+        <div id="sidebar-song-list-content" class="sidebar-song-list">
+            {# El contenido de la lista se cargará aquí dinámicamente #}
             {% for song in playlist %}
-                <a href="{{ url_for('ver_composicion', comp_id=song.id, context=request.args.get('context'), tag_name=request.args.get('tag_name'), search=request.args.get('search')) }}" 
+                <a href="{{ url_for('ver_composicion', comp_id=song.id, context=request.args.get('context'), tag_name=request.args.get('tag_name'), search=request.args.get('search'), sort_by=request.args.get('sort_by')) }}" 
                    class="sidebar-song-item {% if song.id == obra.id %}active{% endif %}">
                     <span class="song-number">{{ loop.index }}.</span>
                     <span class="song-title">{{ song.titulo }}</span>
@@ -111,6 +114,33 @@
                 // Aplicamos el nuevo estilo.
                 playlistBtn.style.top = `${newTop}px`;
             });
+
+            // --- Lógica para recargar la lista de canciones del menú lateral ---
+            // Esta función se llamará cuando se cambie el orden en la página de la lista.
+            // Por ahora, la dejamos preparada para futuras mejoras.
+            function reloadSidebarPlaylist(sortMethod) {
+                const url = new URL(window.location.href);
+                const context = url.searchParams.get('context');
+                const tagName = url.searchParams.get('tag_name');
+                const searchQuery = url.searchParams.get('search');
+
+                // Construimos la URL para obtener la lista de canciones actualizada
+                const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=${context}&tag_name=${tagName}&search=${searchQuery}&sort_by=${sortMethod}`;
+
+                fetch(fetchUrl)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Reemplazamos el contenido de la lista con la nueva lista ordenada
+                        document.getElementById('sidebar-song-list-content').innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error al recargar la playlist del menú lateral:', error);
+                    });
+            }
+            // Ejemplo de cómo se podría llamar (no se usa activamente ahora, pero está listo)
+            // document.getElementById('un-boton-de-ordenar').addEventListener('click', () => {
+            //     reloadSidebarPlaylist('alfabetico');
+            // });
         </script>
 
         {% if obra.tipo == 'local' %}
@@ -121,23 +151,29 @@
             </audio>
 
             {% if obra.partitura %}
-    <div class="partitura-header">
-        <h4>Partitura</h4>
-    </div>
-    
-    <!-- Contenedor para los controles de selección de instrumentos -->
-    <div id="instrument-controls" class="instrument-controls-container"></div>
+                <!-- El título de la sección ahora está fuera y siempre visible -->
+                <div class="partitura-header">
+                    <h4>Partitura</h4>
+                </div>
+                <!-- El botón ahora es un interruptor para mostrar/ocultar -->
+                <button id="toggle-score-btn" class="btn-load-score">Mostrar Partitura</button>
 
-    <div class="osmd-controls">
-        <button id="zoom-out-btn" title="Alejar">-</button>
-        <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
-        <button id="zoom-in-btn" title="Acercar">+</button>
-        <span class="osmd-control-separator"></span>
-        <button id="toggle-view-btn" title="Cambiar Vista">Vertical</button>
-    </div>
-
-    <!-- Contenedor para la partitura -->
-    <div id="osmd-container"></div>
+                <!-- Contenedor del contenido de la partitura (oculto por defecto) -->
+                <div id="score-content-container" class="hidden">
+                    <div id="instrument-controls" class="instrument-controls-container"></div>
+                    <div id="score-wrapper">
+                        <div class="osmd-controls">
+                            <button id="zoom-out-btn" title="Alejar">-</button>
+                            <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
+                            <button id="zoom-in-btn" title="Acercar">+</button>
+                            <span class="osmd-control-separator"></span>
+                            <button id="toggle-view-btn" title="Cambiar Vista">Vertical</button>
+                            <span class="osmd-control-separator"></span>
+                            <button id="fullscreen-btn" title="Pantalla Completa">⛶</button>
+                        </div>
+                        <div id="osmd-container"></div>
+                    </div>
+                </div>
     
     <script>
         const musicXmlUrl = "{{ url_for('static', filename=obra.partitura) }}";
@@ -145,6 +181,7 @@
         const zoomDisplay = document.getElementById('zoom-display-btn');
         let osmd;
         let isHorizontalView = false; // Estado para controlar la vista
+        let scoreLoaded = false; // Bandera para saber si la partitura ya se cargó
         
         // Niveles de zoom predefinidos para asegurar un paso por 100%
         const zoomLevels = [0.5, 0.75, 0.9, 1.0, 1.1, 1.25, 1.5, 2.0];
@@ -156,6 +193,12 @@
         
         // Función para cargar y renderizar la partitura
         function loadAndRenderScore() {
+            // Si ya está cargada, no hacemos nada.
+            if (scoreLoaded) return;
+
+            // Mostramos un mensaje de carga
+            container.innerHTML = '<p>Cargando partitura...</p>';
+
             let options;
             if (isHorizontalView) {
                 // Opciones para la VISTA HORIZONTAL
@@ -179,11 +222,22 @@
 
             osmd.load(musicXmlUrl)
             .then(() => {
+                scoreLoaded = true; // <-- Marcamos como cargada
                 // Limpiamos los controles de instrumentos antes de volver a crearlos
                 document.getElementById('instrument-controls').innerHTML = '';
 
                 // Renderizamos la partitura.
                 osmd.render();
+
+                // --- AJUSTE DE ZOOM AUTOMÁTICO PARA VISTA HORIZONTAL ---
+                if (isHorizontalView) {
+                    // Esperamos un instante para que el SVG tenga dimensiones
+                    setTimeout(() => {
+                        // Multiplicamos por 0.98 para dejar un pequeño margen a la derecha
+                        const zoomFactor = (container.clientWidth / osmd.sheet.SheetBoundaries.x);
+                        osmd.zoomTo(zoomFactor);
+                    }, 10);
+                }
                 console.log("Partitura cargada correctamente");
 
                 // --- Lógica para la selección de instrumentos ---
@@ -356,8 +410,66 @@
             loadAndRenderScore();
         });
 
-        // Carga inicial de la partitura
-        loadAndRenderScore();
+        // --- Lógica para Pantalla Completa ---
+        document.getElementById('fullscreen-btn').addEventListener('click', function() {
+            const wrapper = document.getElementById('score-wrapper');
+            
+            if (!document.fullscreenElement) {
+                // Si no estamos en pantalla completa, la solicitamos para el contenedor principal.
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen();
+                } else if (wrapper.mozRequestFullScreen) { /* Firefox */
+                    wrapper.mozRequestFullScreen();
+                } else if (wrapper.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                    wrapper.webkitRequestFullscreen();
+                } else if (wrapper.msRequestFullscreen) { /* IE/Edge */
+                    wrapper.msRequestFullscreen();
+                }
+            } else {
+                // Si ya estamos en pantalla completa, salimos.
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { /* Firefox */
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE/Edge */
+                    document.msExitFullscreen();
+                }
+            }
+        });
+
+        // Escuchamos el evento de cambio de pantalla completa para limpiar estilos y re-renderizar
+        document.addEventListener('fullscreenchange', function() {
+            const wrapper = document.getElementById('score-wrapper');
+            if (document.fullscreenElement === wrapper) {
+                wrapper.classList.add('fullscreen-mode');
+            } else {
+                wrapper.classList.remove('fullscreen-mode');
+            }
+            // Forzamos un re-renderizado para que OSMD se ajuste al nuevo tamaño
+            if (osmd) setTimeout(() => osmd.render(), 50);
+        });
+
+        // --- Lógica para el botón de Mostrar/Ocultar Partitura ---
+        document.getElementById('toggle-score-btn').addEventListener('click', function() {
+            const scoreContainer = document.getElementById('score-content-container');
+            const isHidden = scoreContainer.classList.contains('hidden');
+
+            if (isHidden) {
+                // Si está oculta, la mostramos
+                scoreContainer.classList.remove('hidden');
+                this.textContent = 'Ocultar Partitura';
+                // Si es la primera vez, cargamos la partitura
+                if (!scoreLoaded) {
+                    loadAndRenderScore();
+                }
+            } else {
+                // Si está visible, la ocultamos
+                scoreContainer.classList.add('hidden');
+                this.textContent = 'Mostrar Partitura';
+            }
+        });
 
     </script>
             {% endif %}
@@ -412,7 +524,6 @@
                         {% set sub_etiqueta = parts[1] | trim %}
                         
                         <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">{{ categoria }}</a>
-                        
                         <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ sub_etiqueta }}</a>
 
                     {% else %}

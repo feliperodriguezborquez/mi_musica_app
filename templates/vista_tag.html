@@ -1,19 +1,82 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {# Extraemos la sub-etiqueta si el tag es jerárquico #}
-    {% set display_title = tag_nombre.split(':')[-1] | trim %}
+<div class="container">
+    <div class="vista-tag-header">
+        <h2>{{ tag_nombre.split(':')[-1] | trim }}</h2>
 
-    <h2>{{ display_title }}</h2>
-    
-    {% include '_filters.html' %}
+        {# Mostramos los controles de orden solo si la categoría tiene un orden personalizado #}
+        {% if (tag_nombre.split(':')[0] | trim) in ordenes_personalizados %}
+            <div class="sort-controls">
+                <span>Ordenar por:</span>
+                <a href="#" data-sort="canonico"
+                   class="sort-button {% if sort_by == 'canonico' %}active{% endif %}" >
+                   Orden Canónico
+                </a>
+                <a href="#" data-sort="alfabetico"
+                   class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}" >
+                   Orden Alfabético
+                </a>
+            </div>
+        {% endif %}
+    </div>
 
-    <div class="lista-scroll" id="song-list-container">
-        {% include '_song_list.html' %}
+    <div class="lista-scroll">
+        <div id="song-list-container">
+            {% if composiciones %}
+                {# Pasamos el sort_by actual al partial para que los enlaces se generen correctamente #}
+                {% with sort_by=sort_by %}
+                    {% include '_song_list.html' %}
+                {% endwith %}
+            {% else %}
+                <p class="no-results">No se encontraron canciones en esta lista.</p>
+            {% endif %}
+        </div>
     </div>
-    
-    {# Añadimos un botón de "Volver a Listas" para una mejor navegación #}
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{{ url_for('ver_listas') }}" class="btn-volver">← Volver a todas las Listas</a>
-    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortButtons = document.querySelectorAll('.sort-button');
+    const vistaTagHeader = document.querySelector('.vista-tag-header');
+    const songListContainer = document.getElementById('song-list-container');
+
+    sortButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita la navegación
+
+            const sortMethod = this.dataset.sort;
+            const currentSearch = "{{ search_query or '' }}";
+            const tagName = "{{ tag_nombre }}";
+
+            // Actualizar la clase 'active' en los botones
+            sortButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // Construir la URL para la petición AJAX
+            const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=tag&tag_name=${tagName}&search=${currentSearch}&sort_by=${sortMethod}`;
+
+            // Mostrar un indicador de carga (opcional)
+            songListContainer.innerHTML = '<p class="no-results">Cargando...</p>';
+
+            // Realizar la petición para obtener la lista actualizada
+            fetch(fetchUrl)
+                .then(response => response.text())
+                .then(html => {
+                    songListContainer.innerHTML = html; // Actualizamos la lista
+
+                    // Actualizamos la URL del navegador para que refleje el nuevo estado
+                    const nextURL = new URL(window.location);
+                    nextURL.searchParams.set('sort_by', sortMethod);
+                    // Usamos pushState para cambiar la URL sin recargar la página
+                    window.history.pushState({ path: nextURL.href }, '', nextURL.href);
+                })
+                .catch(error => {
+                    console.error('Error al ordenar la lista:', error);
+                    songListContainer.innerHTML = '<p class="no-results" style="color:red;">Error al cargar la lista.</p>';
+                });
+        });
+    });
+});
+</script>
 {% endblock %}

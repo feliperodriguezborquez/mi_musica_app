@@ -66,9 +66,6 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     background-color: var(--color-blanco);
 }
 
-#song-list-container {
-    /* El contenedor interno ya no necesita estilos propios */
-}
 
 .lista-composiciones {
     display: block; 
@@ -157,11 +154,20 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .seccion-lista h3 { margin-top: 0; border-bottom: 2px solid var(--color-principal); padding-bottom: 10px; }
 .seccion-lista .tags-container { text-align: left; border: none; padding: 0; }
 .tag-link { display: inline-block; background-color: #e0e0e0; color: #333; padding: 5px 12px; margin: 5px; border-radius: 15px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s, color 0.2s; }
+.tag-link { font-weight: 500; } /* Usamos un peso intermedio (semibold) en lugar de negrita completa */
 .btn-nav { display: inline-block; text-decoration: none; background-color: var(--color-principal); color: white; padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s; }
 .btn-nav-disabled { display: inline-block; text-decoration: none; background-color: #ccc; color: #888; padding: 10px 15px; border-radius: 5px; cursor: not-allowed; }
 .btn-nav:hover { background-color: var(--color-acento); }
-.tag-link:hover { background-color: var(--color-principal); color: #fff; }
-.tag-link-todas { background-color: var(--color-principal) !important; color: var(--color-blanco) !important; font-weight: bold; }
+.tag-link:hover {
+    background-color: var(--color-principal);
+    color: #fff;
+    /* Se elimina la negrita de aquí porque ya está en la clase base */
+}
+
+.tag-separator {
+    color: #aaa;
+    margin: 0 5px; /* Añade un poco de espacio a los lados del separador */
+}
 .edit-form { background-color: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-top: 2rem; }
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
@@ -311,7 +317,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .partitura-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end; /* Alinea el texto a la base de la línea */
     border-bottom: 2px solid var(--color-principal); /* Línea amarilla debajo del título */
     padding-bottom: 8px;
     margin-top: 30px;
@@ -350,22 +356,21 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     margin: 0 15px; /* Añadimos margen a ambos lados del separador */
 }
 
-/* Separación para el botón de cambio de vista */
-#toggle-view-btn {
-    /* El margen ahora está en el separador, así que eliminamos este */
-}
 
 /* Contenedor de la partitura */
 #osmd-container {
     width: 100%;
+    height: 80vh; /* ¡LA CLAVE! Establecemos una altura del 80% de la ventana. */
     margin-top: 20px; /* Mantenemos el espacio superior */
     /* Eliminamos el fondo, borde y padding para que se integre */
     background-color: transparent;
+    overflow: scroll; /* Cambiado a 'scroll' para que las barras sean siempre visibles si hay desbordamiento */
+    border: 1px solid #ddd; /* Añadimos un borde sutil para delimitar el área de scroll */
 }
 
 /* Vista horizontal con scroll */
 #osmd-container.horizontal-scroll {
-    overflow-x: auto !important;
+    overflow-x: scroll !important; /* Cambiado a 'scroll' para que la barra sea siempre visible si hay desbordamiento */
     overflow-y: hidden !important;
     white-space: nowrap;
     padding: 20px; /* Añadimos padding en todos los lados */
@@ -379,6 +384,63 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 #osmd-container.horizontal-scroll > svg {
     display: inline-block;
     max-width: none !important;
+}
+
+/* --- Contenedor principal de la partitura --- */
+#score-wrapper {
+    position: relative; /* Necesario para el posicionamiento de los controles en pantalla completa */
+}
+
+/* --- Estilos para el modo Pantalla Completa de OSMD --- */
+#score-wrapper.fullscreen-mode {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-blanco); /* Fondo general */
+    box-sizing: border-box;
+    overflow: hidden; /* El wrapper principal NUNCA debe tener scroll */
+    padding-top: 60px; /* Espacio reservado para los controles fijos */
+}
+
+/* Controles en modo pantalla completa */
+#score-wrapper.fullscreen-mode .osmd-controls {
+    position: fixed; /* Posición fija en la parte superior */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-blanco); /* Fondo blanco sólido para consistencia */
+    z-index: 10; /* Asegura que esté por encima de la partitura */
+    height: 60px; /* Altura fija que coincide con el padding-top del wrapper */
+    margin: 0; /* Reseteamos márgenes */
+    padding: 0; /* Reseteamos padding */
+    display: flex; /* Centramos los botones vertical y horizontalmente */
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Contenedor de la partitura en modo pantalla completa */
+#score-wrapper.fullscreen-mode #osmd-container {
+    height: calc(100% - 20px); /* ¡LA SOLUCIÓN! Restamos la altura de los controles para que las barras de scroll sean visibles. */
+    width: 100%;
+    padding: 0; /* Sin padding, el scroll se pegará a los bordes */
+    box-sizing: border-box;
+    overflow: scroll; /* ¡LA CLAVE! Este contenedor tendrá las barras de scroll */
+    border: none; /* Quitamos cualquier borde que pueda interferir */
+}
+
+/* --- AJUSTES FINALES PARA PANTALLA COMPLETA --- */
+
+/* 1. Asegura que el SVG pueda desbordar su contenedor en modo horizontal */
+#score-wrapper.fullscreen-mode #osmd-container.horizontal-scroll > svg {
+    display: block !important; /* Asegura que el SVG se comporte como un bloque */
+}
+
+/* 2. Anula los estilos conflictivos y define el comportamiento del scroll para el modo horizontal en pantalla completa */
+#score-wrapper.fullscreen-mode #osmd-container.horizontal-scroll {
+    overflow: scroll !important; /* Permite scroll en ambas direcciones si es necesario (ej. con mucho zoom) */
+    white-space: nowrap; /* Evita que el contenido se divida en líneas */
+    padding: 0 !important; /* Anula cualquier padding heredado */
+    border: none !important; /* Anula cualquier borde heredado */
 }
 
 /* --- Controles de Selección de Instrumentos --- */
@@ -511,11 +573,14 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     color: #818181;
 }
 
-.sidebar h4 {
-    padding: 0 32px 15px 32px; /* Ajustamos el padding del título */
+.sidebar-header {
+    padding: 0 32px 15px 32px;
+    border-bottom: 2px solid #ddd;
+}
+
+.sidebar-header h4 {
     font-size: 1.5em;
     color: #333;
-    border-bottom: 2px solid #ddd; /* Añadimos un separador sutil */
     margin: 0;
 }
 
@@ -574,4 +639,69 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .instrument-checkbox-item {
     display: flex;
     align-items: center;
+}
+
+/* --- Estilos para la cabecera de la vista de tag --- */
+.vista-tag-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+    gap: 15px;
+}
+
+.vista-tag-header h2 {
+    margin: 0;
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #e0e0e0;
+    color: #333;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.sort-button.active, .sort-button:hover {
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+}
+
+/* --- Estilos para Carga Diferida (Lazy Loading) --- */
+.hidden {
+    display: none;
+}
+
+.btn-load-score {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0; /* Ajustamos el margen superior */
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.btn-load-score:hover {
+    background-color: var(--color-acento);
 }
