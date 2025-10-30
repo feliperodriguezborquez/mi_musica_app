@@ -573,5 +573,28 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null
+    },
+    {
+        "id": 26,
+        "titulo": "Miserere",
+        "musica": "Felipe Rodríguez",
+        "letra": "Salmo 51 (50)",
+        "adaptacion": "Felipe Rodríguez",
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Miserere.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Miserere.musicxml",
+        "tags": [
+            "Cantos Bíblicos: Salmos"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
     }
 ]

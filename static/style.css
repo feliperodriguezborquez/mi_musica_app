@@ -1,11 +1,11 @@
 /* --- Paleta de Colores --- */
 :root {
     --color-principal: #d4ac0d;
-    --color-fondo: #f4f4f9;
+    --color-fondo: #e1e1e1;
     --color-boton-nav: #cfa60d; /* Tono dorado, un poco más oscuro */
     --color-texto: #333;
     --color-acento: #f1c40f;
-    --color-blanco: #fff;
+    --color-blanco: #eeeeee;
 }
 
 /* Estilos Generales */
