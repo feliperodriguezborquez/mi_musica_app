@@ -1,0 +1,23 @@
+<div class="sort-dropdown-container">
+    <span class="sort-label">Ordenar por:</span>
+    
+    {# Botón para Orden Canónico: solo aparece si la categoría tiene un orden definido #}
+    {% if page_context == 'tag' and main_category in ordenes_personalizados %}
+    <a href="{{ url_for(request.endpoint, tag_name=tag_nombre, sort_by='canonico', search=search_query) }}" 
+       class="sort-button {% if sort_by == 'canonico' %}active{% endif %}">
+       Canónico
+    </a>
+    {% endif %}
+
+    {# Botón para Orden Alfabético #}
+    <a href="{{ url_for(request.endpoint, tag_name=tag_nombre if 'tag_name' in request.view_args else None, sort_by='alfabetico', search=search_query) }}" 
+       class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}">
+       Alfabético
+    </a>
+
+    {# Botón para Orden Cronológico #}
+    <a href="{{ url_for(request.endpoint, tag_name=tag_nombre if 'tag_name' in request.view_args else None, sort_by='cronologico', search=search_query) }}" 
+       class="sort-button {% if sort_by == 'cronologico' %}active{% endif %}">
+       Cronológico
+    </a>
+</div>

@@ -34,6 +34,8 @@ class Cancion(db.Model):
     letra = db.Column(db.String(100))
     adaptacion = db.Column(db.String(100))
     idioma = db.Column(db.String(50))
+    dia = db.Column(db.Integer, nullable=True)
+    mes = db.Column(db.Integer, nullable=True)
     anio = db.Column(db.Integer)
     descripcion = db.Column(db.Text)
     audio = db.Column(db.String(150))
@@ -294,8 +296,24 @@ def logout():
 
 @app.route('/')
 def index():
-    filtered_songs, search_query = get_filtered_and_sorted_songs(Cancion.query)
-    return render_template('index.html', composiciones=filtered_songs, search_query=search_query, page_context='index')
+    # 1. Obtener canciones y aplicar filtro de búsqueda de texto
+    all_songs = Cancion.query.all()
+    filtered_songs, search_query = search_songs(all_songs)
+    
+    # 2. Obtener el método de ordenamiento y aplicarlo
+    sort_by = request.args.get('sort_by', 'alfabetico') # Por defecto, alfabético
+
+    if sort_by == 'cronologico':
+        def get_song_order_cronologico(song):
+            anio = song.anio if song.anio is not None else float('inf')
+            mes = song.mes if song.mes is not None else float('inf')
+            dia = song.dia if song.dia is not None else float('inf')
+            return (anio, mes, dia)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+    else: # 'alfabetico' o cualquier otro caso
+        filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+
+    return render_template('index.html', composiciones=filtered_songs, search_query=search_query, page_context='index', sort_by=sort_by)
 
 @app.route('/composiciones')
 def ver_composiciones():
@@ -384,13 +402,23 @@ def ver_tag(tag_name):
 
         # Ordena primero por el orden canónico y luego por título
         filtered_songs.sort(key=lambda song: (get_song_order(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+    elif sort_by == 'cronologico':
+        # Ordenamiento cronológico: año, mes, día. Los que no tienen fecha van al final.
+        # El desempate final es por título.
+        def get_song_order_cronologico(song):
+            # Usamos un número muy grande para los valores nulos para que se vayan al final
+            anio = song.anio if song.anio is not None else float('inf')
+            mes = song.mes if song.mes is not None else float('inf')
+            dia = song.dia if song.dia is not None else float('inf')
+            return (anio, mes, dia)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
     else:
         # Ordenamiento alfabético estándar para el resto de las listas
         # o si el usuario eligió explícitamente 'alfabetico'.
         filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
 
     # Pasamos el método de ordenamiento actual a la plantilla
-    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys())
+    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(), main_category=main_category)
 
 @app.route('/get_playlist')
 def get_playlist_partial():
