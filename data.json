@@ -596,5 +596,27 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null
+    },
+    {
+        "id": 27,
+        "titulo": "Señor, Tú Me Llamaste",
+        "musica": "Felipe Rodríguez",
+        "letra": "Liturgia de las Horas",
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2025,
+        "descripcion": "Descripción de la obra.",
+        "audio": "media/Señor, Tú Me Llamaste.mp3",
+        "letras_acordes": "media/Señor, Tú Me Llamaste.pdf",
+        "partitura": null,
+        "tags": [
+            "Liturgia de las Horas"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
     }
 ]
