@@ -305,11 +305,13 @@ def index():
 
     if sort_by == 'cronologico':
         def get_song_order_cronologico(song):
-            anio = song.anio if song.anio is not None else float('inf')
-            mes = song.mes if song.mes is not None else float('inf')
-            dia = song.dia if song.dia is not None else float('inf')
+            # Para ordenar de más nuevo a más antiguo, los valores nulos deben ser los más pequeños.
+            anio = song.anio if song.anio is not None else 0
+            mes = song.mes if song.mes is not None else 0
+            dia = song.dia if song.dia is not None else 0
             return (anio, mes, dia)
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)), reverse=True)
     else: # 'alfabetico' o cualquier otro caso
         filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
 
@@ -406,12 +408,13 @@ def ver_tag(tag_name):
         # Ordenamiento cronológico: año, mes, día. Los que no tienen fecha van al final.
         # El desempate final es por título.
         def get_song_order_cronologico(song):
-            # Usamos un número muy grande para los valores nulos para que se vayan al final
-            anio = song.anio if song.anio is not None else float('inf')
-            mes = song.mes if song.mes is not None else float('inf')
-            dia = song.dia if song.dia is not None else float('inf')
+            # Para ordenar de más nuevo a más antiguo, los valores nulos deben ser los más pequeños.
+            anio = song.anio if song.anio is not None else 0
+            mes = song.mes if song.mes is not None else 0
+            dia = song.dia if song.dia is not None else 0
             return (anio, mes, dia)
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)), reverse=True)
     else:
         # Ordenamiento alfabético estándar para el resto de las listas
         # o si el usuario eligió explícitamente 'alfabetico'.
