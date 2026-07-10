@@ -1,20 +1,25 @@
-/* --- Paleta de Colores --- */
+/* --- Paleta de Colores Premium --- */
 :root {
-    --color-principal: #d4ac0d;
-    --color-fondo: #e1e1e1;
-    --color-boton-nav: #cfa60d; /* Tono dorado, un poco más oscuro */
-    --color-texto: #333;
-    --color-acento: #f1c40f;
-    --color-blanco: #eeeeee;
+    --color-principal: #b89020; /* Dorado envejecido satinado */
+    --color-fondo: #f9f8f6;      /* Arena blanca / Crema suave de papel */
+    --color-boton-nav: #a27e1b;  /* Dorado oscuro sutil */
+    --color-texto: #353331;      /* Gris oscuro cálido / Carbón */
+    --color-acento: #dcb33f;     /* Dorado brillante */
+    --color-blanco: #ffffff;     /* Blanco puro para tarjetas y bloques */
 }
 
 /* Estilos Generales */
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: var(--color-fondo);
     color: var(--color-texto);
     margin: 0;
     line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-logo {
+    font-family: 'Lora', serif;
+    font-weight: 700;
 }
 
 .container {
@@ -61,50 +66,56 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .lista-scroll {
     height: 85vh; /* Altura del 85% de la ventana */
     overflow-y: auto; /* Scroll vertical si es necesario */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: var(--color-blanco);
+    border: none;
+    background-color: transparent;
+    padding-right: 5px; /* Evita que la barra de scroll tape la sombra */
 }
-
 
 .lista-composiciones {
     display: block; 
-    padding: 10px;
+    padding: 10px 5px;
 }
 
 .tarjeta-obra {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: none;
     text-decoration: none;
     color: var(--color-texto);
-    transition: background-color 0.2s;
-    padding: 15px;
+    background-color: var(--color-blanco);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
+    padding: 18px 24px;
 }
 
 .song-title-with-number {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 12px;
 }
-.song-number { color: #888; font-size: 1.1em; }
+.song-number { color: #aaa; font-weight: bold; font-size: 1.1em; }
 
 .tarjeta-obra:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .tarjeta-obra:hover {
-    background-color: #f7f7f7;
+    background-color: var(--color-blanco);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px -5px rgba(184, 144, 32, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
 }
 
 .info-tarjeta {
-    padding: 0; /* No padding needed here */
+    padding: 0;
 }
-.info-tarjeta h3 { margin: 0 0 5px 0; font-size: 1.1em; }
-.info-tarjeta p { margin: 0; color: #777; font-size: 0.9em; }
-.categoria-tags-container { display: flex; gap: 5px; }
-.categoria-tag { background-color: #e0e0e0; color: #555; font-size: 0.8em; font-weight: bold; padding: 4px 10px; border-radius: 12px; margin-left: 15px; white-space: nowrap; }
+.info-tarjeta h3 { margin: 0 0 6px 0; font-size: 1.25em; color: var(--color-texto); }
+.info-tarjeta p { margin: 0; color: #6d6a66; font-size: 0.95em; }
+.categoria-tags-container { display: flex; gap: 8px; }
+.categoria-tag { background-color: #f2ede0; color: #8e6c13; font-size: 0.8em; font-weight: bold; padding: 5px 12px; border-radius: 20px; margin-left: 15px; white-space: nowrap; transition: background-color 0.2s; }
+.tarjeta-obra:hover .categoria-tag { background-color: #e9e0cb; }
 
 /* --- ESTILOS DE PÁGINA DE DETALLE --- */
 .detalle-obra { background-color: var(--color-blanco); padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 100%; margin: 0 auto; }

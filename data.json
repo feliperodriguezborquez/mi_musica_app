@@ -703,7 +703,7 @@
     {
         "id": 28,
         "titulo": "Al Santísimo Sacramento",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
@@ -726,59 +726,9 @@
         "youtube_audio_embed": null
     },
     {
-        "id": 29,
-        "titulo": "Emprenda la Esperanza Raudo Vuelo",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Emprenda la Esperanza Raudo Vuelo.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Emprenda la Esperanza Raudo Vuelo.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
-        "id": 30,
-        "titulo": "Estate Señor Conmigo",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Estate Señor Conmigo.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Estate Señor Conmigo.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
         "id": 31,
         "titulo": "Himno a San Francisco Javier",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
@@ -803,7 +753,7 @@
     {
         "id": 32,
         "titulo": "Hoy Nos Ha Nacido un Salvador",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
@@ -826,109 +776,9 @@
         "youtube_audio_embed": null
     },
     {
-        "id": 33,
-        "titulo": "La Esperanza",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/La Esperanza.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/La Esperanza.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
-        "id": 34,
-        "titulo": "Luz de Navidad",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Luz de Navidad.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Luz de Navidad.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
-        "id": 35,
-        "titulo": "María",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/María.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/María.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
-        "id": 36,
-        "titulo": "Octavas de Pascua",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Octavas de Pascua.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Octavas de Pascua.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
         "id": 37,
         "titulo": "Oh Virginal Doncella",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
@@ -953,7 +803,7 @@
     {
         "id": 38,
         "titulo": "Ojos Muertos que Miráis",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
@@ -976,59 +826,9 @@
         "youtube_audio_embed": null
     },
     {
-        "id": 39,
-        "titulo": "Secuencia de Pascua",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Secuencia de Pascua.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Secuencia de Pascua.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
-        "id": 40,
-        "titulo": "Señor, Tú Me Llamaste",
-        "musica": null,
-        "letra": null,
-        "adaptacion": null,
-        "idioma": "Español",
-        "anio": 2026,
-        "mes": null,
-        "dia": null,
-        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
-        "audio": "media/Concurso de Canciones 2026/Señor, Tú Me Llamaste.mp3",
-        "letras_acordes": "media/Concurso de Canciones 2026/Señor, Tú Me Llamaste.pdf",
-        "partitura": null,
-        "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
-        "tipo": "local",
-        "categorias": [
-            "Composición"
-        ],
-        "youtube_video_embed": null,
-        "youtube_audio_embed": null
-    },
-    {
         "id": 41,
         "titulo": "Ya No Temo, Señor",
-        "musica": null,
+        "musica": "Felipe Rodríguez",
         "letra": null,
         "adaptacion": null,
         "idioma": "Español",
