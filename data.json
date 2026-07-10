@@ -806,18 +806,21 @@
         "id": 38,
         "titulo": "Ojos Muertos que Miráis",
         "musica": "Felipe Rodríguez",
-        "letra": null,
+        "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
         "anio": 2026,
-        "mes": null,
-        "dia": null,
+        "mes": 3,
+        "dia": 31,
         "descripcion": "Canto participante en el Concurso de Canciones 2026.",
         "audio": "media/Ojos Muertos que Miráis.mp3",
         "letras_acordes": "media/Ojos Muertos que Miráis.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [],
+        "tags": [
+            "Adoración Eucarística",
+            "Tiempos Litúrgicos: Semana Santa"
+        ],
         "tipo": "local",
         "categorias": [
             "Composición"
@@ -829,18 +832,20 @@
         "id": 41,
         "titulo": "Ya No Temo, Señor",
         "musica": "Felipe Rodríguez",
-        "letra": null,
+        "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
         "anio": 2026,
-        "mes": null,
-        "dia": null,
+        "mes": 4,
+        "dia": 28,
         "descripcion": "Canto participante en el Concurso de Canciones 2026.",
         "audio": "media/Ya No Temo, Señor.mp3",
         "letras_acordes": "media/Ya no Temo, Señor.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [],
+        "tags": [
+            "Liturgia de las Horas"
+        ],
         "tipo": "local",
         "categorias": [
             "Composición"
