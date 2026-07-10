@@ -4,6 +4,7 @@
     --color-fondo: #f9f8f6;      /* Arena blanca / Crema suave de papel */
     --color-boton-nav: #a27e1b;  /* Dorado oscuro sutil */
     --color-texto: #353331;      /* Gris oscuro cálido / Carbón */
+    --color-texto-secundario: #666666; /* Gris medio para textos secundarios */
     --color-acento: #dcb33f;     /* Dorado brillante */
     --color-blanco: #ffffff;     /* Blanco puro para tarjetas y bloques */
     --color-tag-bg: #f2ede0;     /* Fondo de etiqueta */
@@ -15,6 +16,7 @@
 [data-theme="dark"] {
     --color-fondo: #2d2b29;      /* Gris cálido medio (menos negro) */
     --color-texto: #eae6df;      /* Crema suave / Blanco tiza */
+    --color-texto-secundario: #a7a4a0; /* Gris claro para textos secundarios */
     --color-blanco: #3a3735;     /* Gris un poco más claro para tarjetas y bloques */
     --color-principal: #b89020;  /* Dorado igual al modo claro */
     --color-boton-nav: #a27e1b;  /* Dorado del modo claro */
@@ -128,7 +130,7 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     padding: 0;
 }
 .info-tarjeta h3 { margin: 0 0 6px 0; font-size: 1.25em; color: var(--color-texto); }
-.info-tarjeta p { margin: 0; color: #6d6a66; font-size: 0.95em; }
+.info-tarjeta p { margin: 0; color: var(--color-texto-secundario); font-size: 0.95em; }
 .categoria-tags-container { display: flex; gap: 8px; }
 .categoria-tag { background-color: #f2ede0; color: #8e6c13; font-size: 0.8em; font-weight: bold; padding: 5px 12px; border-radius: 20px; margin-left: 15px; white-space: nowrap; transition: background-color 0.2s; }
 .tarjeta-obra:hover .categoria-tag { background-color: #e9e0cb; }
@@ -145,14 +147,14 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .detalle-obra h2 { font-size: 2.5em; margin-top: 0; margin-bottom: 0.5rem; }
 .song-subtitle {
     font-style: italic;
-    color: #666;
+    color: var(--color-texto-secundario);
     font-size: 1.2em;
     margin: 0;
 }
 .metadata-grid { display: flex; justify-content: center; gap: 100px; margin: 0 auto 2.5rem auto; font-size: 1.1em; }
 .metadata-column p { margin: 0 0 10px 0; }
 .metadata-label { font-weight: bold; color: var(--color-texto); }
-.metadata-value { color: #555; font-style: italic; }
+.metadata-value { color: var(--color-texto-secundario); font-style: italic; }
 .detalle-obra h4 { font-size: 1.2em; border-bottom: 2px solid var(--color-principal); padding-bottom: 8px; margin-top: 40px; margin-bottom: 20px; }
 .tags-container { text-align: left; padding: 0; margin: 0 0 20px 0; border: none; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .reproductor { width: 100%; max-width: 500px; margin: 20px auto; display: block; }

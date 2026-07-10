@@ -411,9 +411,9 @@
 
         // --- Controles de Transposición ---
         function transposeScore(semitones) {
-            if (!osmd || !osmd.Sheet) return;
+            if (!osmd || !osmd.sheet) return;
             currentTransposition += semitones;
-            osmd.Sheet.Transpose = currentTransposition;
+            osmd.sheet.Transpose = currentTransposition;
             osmd.updateGraphic();
             osmd.render();
             if (transposeDisplay) {
