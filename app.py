@@ -67,6 +67,16 @@ def sort_categories_for_page(categories, page_context='default'):
         sorted_cats.sort(key=lambda x: (x != 'Arreglo', x != 'Composición'))
     return sorted_cats
 
+@app.context_processor
+def inject_last_update():
+    """Inyecta la fecha de la última actualización en todas las plantillas."""
+    try:
+        with open('build_date.txt', 'r', encoding='utf-8') as f:
+            date_str = f.read().strip()
+    except Exception:
+        date_str = "Desconocida"
+    return dict(last_update=date_str)
+
 # --- LÓGICA DE ORDENAMIENTO BÍBLICO AVANZADO ---
 import re
 
@@ -314,7 +324,7 @@ def index():
     filtered_songs, search_query = search_songs(all_songs)
     
     # 2. Obtener el método de ordenamiento y aplicarlo
-    sort_by = request.args.get('sort_by', 'alfabetico') # Por defecto, alfabético
+    sort_by = request.args.get('sort_by', 'cronologico') # Por defecto, cronológico
 
     if sort_by == 'cronologico':
         def get_song_order_cronologico(song):

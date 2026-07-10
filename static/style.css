@@ -10,6 +10,16 @@
     --color-tag-bg: #f2ede0;     /* Fondo de etiqueta */
     --color-tag-texto: #8e6c13;  /* Texto de etiqueta */
     --color-borde: #eae5d9;      /* Borde de contenedor */
+    
+    /* Variables de Estructura */
+    --color-header-bg: var(--color-principal);
+    --color-header-texto: var(--color-blanco);
+    --color-header-btn-bg: var(--color-boton-nav);
+    --color-footer-bg: var(--color-principal);
+    --color-footer-texto: var(--color-blanco);
+    --color-btn-bg: var(--color-principal);
+    --color-btn-texto: var(--color-blanco);
+    --color-btn-borde: transparent;
 }
 
 /* --- Modo Oscuro Premium --- */
@@ -24,6 +34,16 @@
     --color-tag-bg: #3f3c39;     /* Fondo de etiqueta oscuro */
     --color-tag-texto: #dcb33f;  /* Dorado para etiquetas */
     --color-borde: #4d4945;      /* Borde sutil */
+    
+    /* Variables de Estructura Ajustadas para Armonía */
+    --color-header-bg: #1c1a19;  /* Encabezado oscuro premium */
+    --color-header-texto: var(--color-principal); /* Logo y texto en dorado */
+    --color-header-btn-bg: #3a3735; /* Botones oscuros integrados */
+    --color-footer-bg: #1c1a19;  /* Pie de página oscuro */
+    --color-footer-texto: var(--color-texto-secundario);
+    --color-btn-bg: #3a3735;     /* Botones delineados en dorado */
+    --color-btn-texto: var(--color-principal);
+    --color-btn-borde: var(--color-principal);
 }
 
 /* Estilos Generales */
@@ -47,23 +67,23 @@ h1, h2, h3, h4, h5, h6, .brand-logo {
 }
 
 /* ... (Header, Footer, Búsqueda, etc. sin cambios) ... */
-header { background-color: var(--color-principal); color: var(--color-blanco); padding: 1rem 0; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+header { background-color: var(--color-header-bg); color: var(--color-header-texto); padding: 1rem 0; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 nav { display: flex; justify-content: space-between; align-items: center; }
-.brand-logo { font-size: 1.5em; font-weight: bold; color: var(--color-blanco); text-decoration: none; }
+.brand-logo { font-size: 1.5em; font-weight: bold; color: var(--color-header-texto); text-decoration: none; }
 nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 15px; }
 nav ul li { margin-left: 0; } /* Eliminamos el margen por defecto */
 nav ul li a { 
-    color: var(--color-blanco); 
+    color: var(--color-header-texto); 
     text-decoration: none; 
     font-weight: bold; 
     transition: all 0.2s; 
     padding: 8px 12px;
     border-radius: 6px; /* Bordes redondeados */
-    background-color: var(--color-boton-nav); /* Fondo permanente más oscuro */
+    background-color: var(--color-header-btn-bg); /* Fondo permanente más oscuro */
 }
 nav ul li a:hover { 
-    /* Un poco más oscuro al pasar el ratón */
-    background-color: #c7a00c; 
+    background-color: var(--color-acento);
+    color: var(--color-blanco);
     transform: translateY(1px);
 }
 .nav-separator { 
@@ -75,7 +95,7 @@ nav ul li a:hover {
     /* Hacemos este separador más opaco en lugar de más grueso */
     border-left-color: rgba(255, 255, 255, 0.6);
 }
-footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: var(--color-principal); color: var(--color-blanco); }
+footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: var(--color-footer-bg); color: var(--color-footer-texto); }
 .filter-container { margin-bottom: 20px; }
 .search-bar input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.1em; box-sizing: border-box; }
 
@@ -184,9 +204,9 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .seccion-lista .tags-container { text-align: left; border: none; padding: 0; }
 .tag-link { display: inline-block; background-color: var(--color-tag-bg); color: var(--color-tag-texto); padding: 5px 12px; margin: 5px; border-radius: 15px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s, color 0.2s; }
 .tag-link { font-weight: 500; } /* Usamos un peso intermedio (semibold) en lugar de negrita completa */
-.btn-nav { display: inline-block; text-decoration: none; background-color: var(--color-principal); color: white; padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s; }
-.btn-nav-disabled { display: inline-block; text-decoration: none; background-color: #ccc; color: #888; padding: 10px 15px; border-radius: 5px; cursor: not-allowed; }
-.btn-nav:hover { background-color: var(--color-acento); }
+.btn-nav { display: inline-block; text-decoration: none; background-color: var(--color-btn-bg); color: var(--color-btn-texto); border: 1px solid var(--color-btn-borde); padding: 10px 15px; border-radius: 5px; transition: background-color 0.2s, color 0.2s, border-color 0.2s; }
+.btn-nav-disabled { display: inline-block; text-decoration: none; background-color: var(--color-tag-bg); color: var(--color-texto-secundario); border: 1px solid var(--color-borde); padding: 10px 15px; border-radius: 5px; cursor: not-allowed; }
+.btn-nav:hover { background-color: var(--color-acento); color: var(--color-blanco); border-color: var(--color-acento); }
 .tag-link:hover {
     background-color: var(--color-principal);
     color: #fff;
