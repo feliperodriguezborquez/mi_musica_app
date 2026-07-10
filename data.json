@@ -704,19 +704,19 @@
         "id": 28,
         "titulo": "Al Santísimo Sacramento",
         "musica": "Felipe Rodríguez",
-        "letra": null,
+        "letra": "Felipe Rodríguez",
         "adaptacion": null,
         "idioma": "Español",
         "anio": 2026,
-        "mes": null,
-        "dia": null,
+        "mes": 6,
+        "dia": 21,
         "descripcion": "Canto participante en el Concurso de Canciones 2026.",
         "audio": "media/Concurso de Canciones 2026/Al Santísimo Sacramento.mp3",
         "letras_acordes": "media/Concurso de Canciones 2026/Al Santísimo Sacramento.pdf",
         "partitura": null,
         "midi": null,
         "tags": [
-            "Concurso de Canciones 2026"
+            "Adoración Eucarística"
         ],
         "tipo": "local",
         "categorias": [
@@ -740,9 +740,7 @@
         "letras_acordes": "media/Concurso de Canciones 2026/Himno a San Francisco Javier.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
@@ -765,9 +763,7 @@
         "letras_acordes": "media/Concurso de Canciones 2026/Hoy Nos Ha Nacido un Salvador.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
@@ -790,9 +786,7 @@
         "letras_acordes": "media/Concurso de Canciones 2026/Oh Virginal Doncella.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
@@ -815,9 +809,7 @@
         "letras_acordes": "media/Concurso de Canciones 2026/Ojos Muertos que Miráis.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
@@ -840,9 +832,7 @@
         "letras_acordes": "media/Concurso de Canciones 2026/Ya no Temo, Señor.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            "Concurso de Canciones 2026"
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
