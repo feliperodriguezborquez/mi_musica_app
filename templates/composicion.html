@@ -230,6 +230,7 @@
             osmd.load(musicXmlUrl)
             .then(() => {
                 scoreLoaded = true; // <-- Marcamos como cargada
+                osmd.TransposeCalculator = new opensheetmusicdisplay.TransposeCalculator();
                 currentTransposition = 0;
                 if (transposeDisplay) transposeDisplay.textContent = '0';
                 // Limpiamos los controles de instrumentos antes de volver a crearlos
@@ -411,11 +412,25 @@
 
         // --- Controles de Transposición ---
         function transposeScore(semitones) {
-            if (!osmd || !osmd.sheet) return;
+            if (!osmd) return;
+            
+            if (!osmd.TransposeCalculator && opensheetmusicdisplay.TransposeCalculator) {
+                osmd.TransposeCalculator = new opensheetmusicdisplay.TransposeCalculator();
+            }
+            
+            var targetSheet = osmd.sheet || osmd.Sheet;
+            if (!targetSheet) return;
+
             currentTransposition += semitones;
-            osmd.sheet.Transpose = currentTransposition;
-            osmd.updateGraphic();
-            osmd.render();
+            targetSheet.Transpose = currentTransposition;
+            
+            try {
+                osmd.updateGraphic();
+                osmd.render();
+            } catch (e) {
+                console.error("Error al re-renderizar tras transposición:", e);
+            }
+
             if (transposeDisplay) {
                 transposeDisplay.textContent = (currentTransposition > 0 ? '+' : '') + currentTransposition;
             }
