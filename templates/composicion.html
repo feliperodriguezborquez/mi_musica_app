@@ -222,6 +222,7 @@
             }
 
             osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmd-container", options);
+            osmd.TransposeCalculator = new opensheetmusicdisplay.TransposeCalculator();
 
             // Aplicar la clase para el scroll si es vista horizontal
             container.classList.toggle('horizontal-scroll', isHorizontalView);

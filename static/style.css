@@ -13,15 +13,15 @@
 
 /* --- Modo Oscuro Premium --- */
 [data-theme="dark"] {
-    --color-fondo: #161514;      /* Carbón muy oscuro */
+    --color-fondo: #2d2b29;      /* Gris cálido medio (menos negro) */
     --color-texto: #eae6df;      /* Crema suave / Blanco tiza */
-    --color-blanco: #232120;     /* Gris oscuro cálido para bloques y tarjetas */
-    --color-principal: #e0b642;  /* Dorado más brillante y visible */
-    --color-boton-nav: #8a6a13;
-    --color-acento: #f3c74e;
-    --color-tag-bg: #2d2922;
-    --color-tag-texto: #dcb33f;
-    --color-borde: #3a3632;
+    --color-blanco: #3a3735;     /* Gris un poco más claro para tarjetas y bloques */
+    --color-principal: #b89020;  /* Dorado igual al modo claro */
+    --color-boton-nav: #a27e1b;  /* Dorado del modo claro */
+    --color-acento: #dcb33f;     /* Dorado brillante igual al modo claro */
+    --color-tag-bg: #3f3c39;     /* Fondo de etiqueta oscuro */
+    --color-tag-texto: #dcb33f;  /* Dorado para etiquetas */
+    --color-borde: #4d4945;      /* Borde sutil */
 }
 
 /* Estilos Generales */
