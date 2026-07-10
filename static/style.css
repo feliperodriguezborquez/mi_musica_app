@@ -762,3 +762,36 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 .btn-load-score:hover {
     background-color: var(--color-acento);
 }
+
+/* --- Selector de Etiquetas en Edición --- */
+.tags-selector {
+    background: #fcfbfa;
+    border: 1px solid #eae5d9;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+}
+.available-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+.tag-badge {
+    display: inline-block;
+    background-color: #f2ede0;
+    color: #8e6c13;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+}
+.tag-badge:hover {
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(184, 144, 32, 0.15);
+}

@@ -526,6 +526,10 @@ def edit_cancion(comp_id):
         cancion_a_editar.letra = request.form.get('letra') or None
         cancion_a_editar.adaptacion = request.form.get('adaptacion') or None
         cancion_a_editar.idioma = request.form.get('idioma') or None
+        dia_str = request.form.get('dia')
+        cancion_a_editar.dia = int(dia_str) if dia_str else None
+        mes_str = request.form.get('mes')
+        cancion_a_editar.mes = int(mes_str) if mes_str else None
         anio_str = request.form.get('anio')
         cancion_a_editar.anio = int(anio_str) if anio_str else None
         cancion_a_editar.descripcion = request.form.get('descripcion') or None
@@ -555,6 +559,8 @@ def edit_cancion(comp_id):
                         data[i]['adaptacion'] = cancion_a_editar.adaptacion
                         data[i]['idioma'] = cancion_a_editar.idioma
                         data[i]['anio'] = cancion_a_editar.anio
+                        data[i]['mes'] = cancion_a_editar.mes
+                        data[i]['dia'] = cancion_a_editar.dia
                         data[i]['descripcion'] = cancion_a_editar.descripcion
                         data[i]['audio'] = cancion_a_editar.audio
                         data[i]['letras_acordes'] = cancion_a_editar.letras_acordes
@@ -572,7 +578,29 @@ def edit_cancion(comp_id):
             flash(f'Error al guardar en data.json: {e}', 'danger')
 
         return redirect(url_for('ver_composicion', comp_id=cancion_a_editar.id))
-    return render_template('edit_cancion.html', cancion=cancion_a_editar)
+        
+    # Obtener todas las etiquetas y categorías existentes para el selector
+    todas_las_canciones = Cancion.query.all()
+    set_de_tags = set()
+    for c in todas_las_canciones:
+        for tag in c.tags:
+            if tag and tag.strip():
+                set_de_tags.add(tag.strip())
+    todos_los_tags = sorted(list(set_de_tags))
+
+    set_de_categorias = set()
+    for c in todas_las_canciones:
+        for cat in c.categorias:
+            if cat and cat.strip():
+                set_de_categorias.add(cat.strip())
+    todas_las_categorias = sorted(list(set_de_categorias))
+
+    return render_template(
+        'edit_cancion.html', 
+        cancion=cancion_a_editar, 
+        todos_los_tags=todos_los_tags, 
+        todas_las_categorias=todas_las_categorias
+    )
 
 @app.route('/composicion/<int:comp_id>/delete', methods=['POST'])
 @login_required
