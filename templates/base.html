@@ -10,8 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Añadimos la biblioteca OpenSheetMusicDisplay (OSMD) - VERSIÓN ACTUALIZADA -->
     <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.1/build/opensheetmusicdisplay.min.js"></script>
-    <!-- Añadimos el reproductor de audio para OSMD (DESACTIVADO TEMPORALMENTE PARA PRUEBA) -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/osmd-audio-player@0.5.0/dist/osmd-audio-player.min.js"></script> -->
+    <script>
+        // Aplicar el tema de forma inmediata antes de renderizar para evitar destellos blancos
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
 <body>
     <header>
@@ -29,6 +32,9 @@
                 {% else %}
                     <li><a href="{{ url_for('login') }}" class="login-link">Entrar</a></li>
                 {% endif %}
+                <li>
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Cambiar tema">🌙</button>
+                </li>
             </ul>
         </nav>
     </header>
@@ -62,6 +68,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => console.error('Error al filtrar:', error));
             }, 300); // Espera 300ms después de la última tecla antes de buscar
+        });
+    }
+
+    // Lógica del conmutador de tema (Modo Oscuro)
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (themeToggleBtn) {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+        
+        themeToggleBtn.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            
+            // Si OSMD está activo en la página actual, forzar un re-renderizado
+            if (typeof osmd !== 'undefined' && osmd) {
+                try {
+                    osmd.render();
+                } catch(e) {}
+            }
         });
     }
 });

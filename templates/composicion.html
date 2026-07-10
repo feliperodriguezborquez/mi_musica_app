@@ -167,6 +167,10 @@
                             <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
                             <button id="zoom-in-btn" title="Acercar">+</button>
                             <span class="osmd-control-separator"></span>
+                            <button id="transpose-down-btn" title="Bajar Tono">-½ Tono</button>
+                            <span id="transpose-display" style="font-weight: bold; font-size: 14px; min-width: 35px; text-align: center; color: var(--color-texto);" title="Transposición actual en semitonos">0</span>
+                            <button id="transpose-up-btn" title="Subir Tono">+½ Tono</button>
+                            <span class="osmd-control-separator"></span>
                             <button id="toggle-view-btn" title="Cambiar Vista">Vertical</button>
                             <span class="osmd-control-separator"></span>
                             <button id="fullscreen-btn" title="Pantalla Completa">⛶</button>
@@ -179,9 +183,11 @@
         const musicXmlUrl = "{{ url_for('static', filename=obra.partitura) }}";
         const container = document.getElementById('osmd-container');
         const zoomDisplay = document.getElementById('zoom-display-btn');
+        const transposeDisplay = document.getElementById('transpose-display');
         let osmd;
         let isHorizontalView = false; // Estado para controlar la vista
         let scoreLoaded = false; // Bandera para saber si la partitura ya se cargó
+        let currentTransposition = 0; // Estado para la transposición en semitonos
         
         // Niveles de zoom predefinidos para asegurar un paso por 100%
         const zoomLevels = [0.5, 0.75, 0.9, 1.0, 1.1, 1.25, 1.5, 2.0];
@@ -223,6 +229,8 @@
             osmd.load(musicXmlUrl)
             .then(() => {
                 scoreLoaded = true; // <-- Marcamos como cargada
+                currentTransposition = 0;
+                if (transposeDisplay) transposeDisplay.textContent = '0';
                 // Limpiamos los controles de instrumentos antes de volver a crearlos
                 document.getElementById('instrument-controls').innerHTML = '';
 
@@ -398,6 +406,26 @@
             osmd.zoom = 1.0;
             osmd.render();
             updateZoomDisplay();
+        });
+
+        // --- Controles de Transposición ---
+        function transposeScore(semitones) {
+            if (!osmd || !osmd.Sheet) return;
+            currentTransposition += semitones;
+            osmd.Sheet.Transpose = currentTransposition;
+            osmd.updateGraphic();
+            osmd.render();
+            if (transposeDisplay) {
+                transposeDisplay.textContent = (currentTransposition > 0 ? '+' : '') + currentTransposition;
+            }
+        }
+
+        document.getElementById('transpose-up-btn').addEventListener('click', function() {
+            transposeScore(1);
+        });
+
+        document.getElementById('transpose-down-btn').addEventListener('click', function() {
+            transposeScore(-1);
         });
 
         // --- Lógica para cambiar de vista ---
