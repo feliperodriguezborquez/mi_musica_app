@@ -3,7 +3,7 @@ import datetime
 def update_date():
     now = datetime.datetime.now()
     meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
-    date_str = f"{now.day} de {meses[now.month - 1]} de {now.year} a las {now.strftime('%H:%M')}"
+    date_str = f"{now.day} de {meses[now.month - 1]} de {now.year}"
     
     with open('build_date.txt', 'w', encoding='utf-8') as f:
         f.write(date_str)
