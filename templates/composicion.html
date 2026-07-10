@@ -167,10 +167,6 @@
                             <button id="zoom-display-btn" title="Restablecer Zoom">100%</button>
                             <button id="zoom-in-btn" title="Acercar">+</button>
                             <span class="osmd-control-separator"></span>
-                            <button id="transpose-down-btn" title="Bajar Tono">-½ Tono</button>
-                            <span id="transpose-display" style="font-weight: bold; font-size: 14px; min-width: 35px; text-align: center; color: var(--color-texto);" title="Transposición actual en semitonos">0</span>
-                            <button id="transpose-up-btn" title="Subir Tono">+½ Tono</button>
-                            <span class="osmd-control-separator"></span>
                             <button id="toggle-view-btn" title="Cambiar Vista">Vertical</button>
                             <span class="osmd-control-separator"></span>
                             <button id="fullscreen-btn" title="Pantalla Completa">⛶</button>
@@ -436,13 +432,7 @@
             }
         }
 
-        document.getElementById('transpose-up-btn').addEventListener('click', function() {
-            transposeScore(1);
-        });
 
-        document.getElementById('transpose-down-btn').addEventListener('click', function() {
-            transposeScore(-1);
-        });
 
         // --- Lógica para cambiar de vista ---
         document.getElementById('toggle-view-btn').addEventListener('click', function() {
