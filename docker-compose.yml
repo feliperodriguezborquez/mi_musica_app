@@ -1,0 +1,32 @@
+services:
+  web:
+    build: .
+    command: flask run --debug
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_DEBUG=1
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/mi_musica_db
+      # Make sure to set these in your .env file or here if they are not sensitive for dev
+      - SECRET_KEY=${SECRET_KEY:-dev_secret_key}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mi_musica_db
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

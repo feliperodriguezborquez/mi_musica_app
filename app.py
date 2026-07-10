@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comentarios.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///comentarios.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -41,6 +41,7 @@ class Cancion(db.Model):
     audio = db.Column(db.String(150))
     letras_acordes = db.Column(db.String(150)) # Antes 'partitura' (PDF)
     partitura = db.Column(db.String(150))      # Antes 'partitura_xml' (MusicXML)
+    midi = db.Column(db.String(150))           # Archivo MIDI
     tags_json = db.Column(db.String(500))
     tipo = db.Column(db.String(50), nullable=False, default='local')
     categorias_json = db.Column(db.String(200))
@@ -531,6 +532,7 @@ def edit_cancion(comp_id):
         cancion_a_editar.audio = request.form.get('audio') or None
         cancion_a_editar.letras_acordes = request.form.get('letras_acordes') or None
         cancion_a_editar.partitura = request.form.get('partitura') or None
+        cancion_a_editar.midi = request.form.get('midi') or None
 
         cancion_a_editar.tags_json = json.dumps([tag.strip() for tag in request.form['tags'].split(',') if tag.strip()])
         processed_categorias = [cat.strip() for cat in request.form['categorias'].split(',') if cat.strip()]
@@ -557,6 +559,7 @@ def edit_cancion(comp_id):
                         data[i]['audio'] = cancion_a_editar.audio
                         data[i]['letras_acordes'] = cancion_a_editar.letras_acordes
                         data[i]['partitura'] = cancion_a_editar.partitura
+                        data[i]['midi'] = cancion_a_editar.midi
                         data[i]['tags'] = cancion_a_editar.tags # Usa la property que decodifica el JSON
                         data[i]['categorias'] = processed_categorias # Usa la lista procesada del formulario
                         break

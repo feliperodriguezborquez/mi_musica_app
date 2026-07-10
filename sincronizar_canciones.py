@@ -50,6 +50,7 @@ def sincronizar_canciones_desde_json():
                 'audio': cancion_data.get('audio'),
                 'letras_acordes': cancion_data.get('letras_acordes'),
                 'partitura': cancion_data.get('partitura'),
+                'midi': cancion_data.get('midi'),
                 'tags_json': json.dumps(cancion_data.get('tags', [])),
                 'tipo': cancion_data.get('tipo', 'local'),
                 'categorias_json': json.dumps(cancion_data.get('categorias', [])),

@@ -55,6 +55,11 @@
         </div>
 
         <div class="form-group">
+            <label for="midi">Archivo MIDI (ej: media/Santo.mid)</label>
+            <input type="text" id="midi" name="midi" value="{{ cancion.midi or '' }}">
+        </div>
+
+        <div class="form-group">
             <label for="tags">Etiquetas (separadas por comas)</label>
             <input type="text" id="tags" name="tags" value="{{ cancion.tags | join(', ') }}">
         </div>

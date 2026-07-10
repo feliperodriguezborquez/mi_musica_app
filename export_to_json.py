@@ -35,6 +35,7 @@ def export_data_to_json():
                 "audio": cancion.audio,
                 "letras_acordes": cancion.letras_acordes,
                 "partitura": cancion.partitura,
+                "midi": cancion.midi,
                 "tags": cancion.tags,  # Usamos la property que ya convierte el JSON a lista
                 "tipo": cancion.tipo,
                 "categorias": cancion.categorias, # Usamos la property

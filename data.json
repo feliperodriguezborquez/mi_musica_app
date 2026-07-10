@@ -6,13 +6,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 3,
-        "mes": 6,
         "anio": 2024,
+        "mes": 6,
+        "dia": 3,
         "descripcion": "Descripción del canto.",
         "audio": "media/¡Oh Bienvenido Seas!.mp3",
         "letras_acordes": null,
         "partitura": "media/¡Oh Bienvenido Seas!.musicxml",
+        "midi": "media/¡Oh Bienvenido Seas!.mid",
         "tags": [
             "Liturgia de las Horas",
             "Espíritu Santo",
@@ -33,13 +34,14 @@
         "letra": "Salmo 130 (129)",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 15,
-        "mes": 8,
         "anio": 2025,
+        "mes": 8,
+        "dia": 15,
         "descripcion": "Musicalización del Salmo 130 (129).",
         "audio": "media/De Profundis.mp3",
         "letras_acordes": null,
         "partitura": "media/De Profundis.musicxml",
+        "midi": "media/De Profundis.mid",
         "tags": [
             "Cantos Bíblicos: Salmos"
         ],
@@ -58,13 +60,14 @@
         "letra": "Ordinario de la Misa",
         "adaptacion": null,
         "idioma": "Griego",
-        "dia": 2,
-        "mes": 6,
         "anio": 2024,
+        "mes": 6,
+        "dia": 2,
         "descripcion": "Parte del ordinario de la Misa.",
         "audio": "media/Kyrie.mp3",
         "letras_acordes": null,
         "partitura": "media/Kyrie.musicxml",
+        "midi": "media/Kyrie.mid",
         "tags": [
             "Santa Misa: Señor ten Piedad"
         ],
@@ -83,13 +86,14 @@
         "letra": "Ordinario de la Misa",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 1,
-        "mes": 5,
         "anio": 2025,
+        "mes": 5,
+        "dia": 1,
         "descripcion": "El Sanctus, parte del ordinario de la Misa.",
         "audio": "media/Santo.mp3",
         "letras_acordes": null,
         "partitura": "media/Santo.musicxml",
+        "midi": "media/Santo.mid",
         "tags": [
             "Santa Misa: Santo"
         ],
@@ -108,13 +112,14 @@
         "letra": "Ordinario de la Misa",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 10,
-        "mes": 2,
         "anio": 2025,
+        "mes": 2,
+        "dia": 10,
         "descripcion": "Canto del Señor ten Piedad.",
         "audio": "media/Señor, ten Piedad.mp3",
         "letras_acordes": null,
         "partitura": "media/Señor, ten Piedad.musicxml",
+        "midi": "media/Señor, ten Piedad.mid",
         "tags": [
             "Santa Misa: Señor ten Piedad"
         ],
@@ -133,13 +138,14 @@
         "letra": "Lc 2, 1 - 20",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 4,
-        "mes": 6,
         "anio": 2023,
+        "mes": 6,
+        "dia": 4,
         "descripcion": "Composición y arreglo de \"Pastores de Belén\".",
         "audio": null,
         "letras_acordes": null,
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Evangelios",
             "Tiempos Litúrgicos: Navidad"
@@ -159,13 +165,14 @@
         "letra": "Salmo 23 (22)",
         "adaptacion": "Hna. María Camila Chaparro",
         "idioma": "Español",
-        "dia": 15,
-        "mes": 12,
         "anio": 2024,
+        "mes": 12,
+        "dia": 15,
         "descripcion": "Arreglo del canto \"Mi Buen Pastor\".",
         "audio": null,
         "letras_acordes": null,
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Salmos"
         ],
@@ -183,13 +190,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 27,
-        "mes": 4,
         "anio": 2023,
+        "mes": 4,
+        "dia": 27,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Cristo en Todas las Almas.mp3",
         "letras_acordes": "media/Cristo en Todas las Almas.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Adoración Eucarística"
@@ -208,13 +216,14 @@
         "letra": "Mt 13, 3 - 23",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 15,
-        "mes": 8,
         "anio": 2024,
+        "mes": 8,
+        "dia": 15,
         "descripcion": "Canto sobre la parábola del sembrador.",
         "audio": "media/El Sembrador.mp3",
         "letras_acordes": "media/El Sembrador.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Evangelios"
         ],
@@ -232,13 +241,14 @@
         "letra": "Mt 13, 24 - 30. 36 - 43",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 12,
-        "mes": 8,
         "anio": 2024,
+        "mes": 8,
+        "dia": 12,
         "descripcion": "Canto sobre la parábola del trigo y la cizaña.",
         "audio": "media/El Trigo y la Cizaña.mp3",
         "letras_acordes": "media/El Trigo y la Cizaña.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Evangelios"
         ],
@@ -256,13 +266,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 11,
-        "mes": 6,
         "anio": 2025,
+        "mes": 6,
+        "dia": 11,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Emprenda la Esperanza Raudo Vuelo.m4a",
         "letras_acordes": "media/Emprenda la Esperanza Raudo Vuelo.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas"
         ],
@@ -280,13 +291,14 @@
         "letra": "Gn 32, 7 - 33, 4",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 18,
-        "mes": 12,
         "anio": 2022,
+        "mes": 12,
+        "dia": 18,
         "descripcion": "Canto sobre la historia de Esaú y Jacob.",
         "audio": "media/Esaú y Jacob.mp3",
         "letras_acordes": "media/Esaú y Jacob.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Génesis"
         ],
@@ -305,13 +317,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 5,
-        "mes": 10,
         "anio": 2025,
+        "mes": 10,
+        "dia": 5,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Estate Señor Conmigo.m4a",
         "letras_acordes": "media/Estate Señor Conmigo.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Adoración Eucarística"
@@ -330,13 +343,14 @@
         "letra": "Invocación al Espíritu Santo",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 20,
-        "mes": 5,
         "anio": 2023,
+        "mes": 5,
+        "dia": 20,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Invocación al Espíritu Santo.mp3",
         "letras_acordes": "media/Invocación al Espíritu Santo.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Espíritu Santo",
             "Tiempos Litúrgicos: Pentecostés"
@@ -356,13 +370,14 @@
         "letra": "Felipe Rodríguez",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 28,
-        "mes": 7,
         "anio": 2025,
+        "mes": 7,
+        "dia": 28,
         "descripcion": "Descripción de la obra.",
         "audio": "media/La Esperanza.m4a",
         "letras_acordes": "media/La Esperanza.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             ""
         ],
@@ -380,13 +395,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 17,
-        "mes": 4,
         "anio": 2025,
+        "mes": 4,
+        "dia": 17,
         "descripcion": "Descripción de la obra.",
         "audio": "media/La Palabra de Dios Crucificada.mp3",
         "letras_acordes": "media/La Palabra de Dios Crucificada.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Tiempos Litúrgicos: Semana Santa"
@@ -406,13 +422,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 4,
-        "mes": 4,
         "anio": 2023,
+        "mes": 4,
+        "dia": 4,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Luz de Navidad.mp3",
         "letras_acordes": "media/Luz de Navidad.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Tiempos Litúrgicos: Navidad"
@@ -431,13 +448,14 @@
         "letra": "Felipe Rodríguez",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 28,
-        "mes": 7,
         "anio": 2025,
+        "mes": 7,
+        "dia": 28,
         "descripcion": "Descripción de la obra.",
         "audio": "media/María.m4a",
         "letras_acordes": "media/María.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Virgen María"
         ],
@@ -455,13 +473,14 @@
         "letra": "Mt 25, 1 - 13",
         "adaptacion": "Liturgia de las Horas",
         "idioma": "Español",
-        "dia": 8,
-        "mes": 7,
         "anio": 2024,
+        "mes": 7,
+        "dia": 8,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Nos Apremia el Amor Vírgenes Santas.mp3",
         "letras_acordes": "media/Nos Apremia el Amor Vírgenes Santas.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Cantos Bíblicos: Evangelios"
@@ -481,13 +500,14 @@
         "letra": "Felipe Rodríguez",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 16,
-        "mes": 7,
         "anio": 2023,
+        "mes": 7,
+        "dia": 16,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Octavas de Pascua.mp3",
         "letras_acordes": "media/Octavas de Pascua.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Tiempos Litúrgicos: Pascua"
         ],
@@ -505,13 +525,14 @@
         "letra": "Lc 15, 4 - 7",
         "adaptacion": "Luis de Góngora",
         "idioma": "Español",
-        "dia": 27,
-        "mes": 6,
         "anio": 2024,
+        "mes": 6,
+        "dia": 27,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Oveja Perdida Ven.mp3",
         "letras_acordes": "media/Oveja Perdida Ven.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Cantos Bíblicos: Evangelios",
@@ -531,13 +552,14 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 9,
-        "mes": 12,
         "anio": 2024,
+        "mes": 12,
+        "dia": 9,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Rosa Mística.mp3",
         "letras_acordes": "media/Rosa Mística.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Virgen María"
@@ -556,13 +578,14 @@
         "letra": "Secuencia de Pascua",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 5,
-        "mes": 5,
         "anio": 2023,
+        "mes": 5,
+        "dia": 5,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Secuencia de Pascua.mp3",
         "letras_acordes": "media/Secuencia de Pascua.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas",
             "Tiempos Litúrgicos: Pascua"
@@ -581,13 +604,14 @@
         "letra": "Ap 19, 11 - 16. 22, 13 - 20",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 13,
-        "mes": 6,
         "anio": 2023,
+        "mes": 6,
+        "dia": 13,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Ven Señor Jesús.mp3",
         "letras_acordes": "media/Ven Señor Jesús.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Cantos Bíblicos: Apocalipsis",
             "Tiempos Litúrgicos: Adviento"
@@ -606,13 +630,14 @@
         "letra": "Ordinario de la Misa",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 18,
-        "mes": 9,
         "anio": 2024,
+        "mes": 9,
+        "dia": 18,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Cordero Nortino.mp3",
         "letras_acordes": null,
         "partitura": "media/Cordero Nortino.musicxml",
+        "midi": "media/Cordero Nortino.mid",
         "tags": [
             "Santa Misa: Cordero de Dios"
         ],
@@ -631,13 +656,14 @@
         "letra": "Salmo 51 (50)",
         "adaptacion": "Felipe Rodríguez",
         "idioma": "Español",
-        "dia": 27,
-        "mes": 10,
         "anio": 2025,
+        "mes": 10,
+        "dia": 27,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Miserere.mp3",
         "letras_acordes": null,
         "partitura": "media/Miserere.musicxml",
+        "midi": "media/Miserere.mid",
         "tags": [
             "Cantos Bíblicos: Salmos"
         ],
@@ -656,15 +682,366 @@
         "letra": "Liturgia de las Horas",
         "adaptacion": null,
         "idioma": "Español",
-        "dia": 1,
-        "mes": 11,
         "anio": 2025,
+        "mes": 11,
+        "dia": 1,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Señor, Tú Me Llamaste.mp3",
         "letras_acordes": "media/Señor, Tú Me Llamaste.pdf",
         "partitura": null,
+        "midi": null,
         "tags": [
             "Liturgia de las Horas"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 28,
+        "titulo": "Al Santísimo Sacramento",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Al Santísimo Sacramento.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Al Santísimo Sacramento.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 29,
+        "titulo": "Emprenda la Esperanza Raudo Vuelo",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Emprenda la Esperanza Raudo Vuelo.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Emprenda la Esperanza Raudo Vuelo.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 30,
+        "titulo": "Estate Señor Conmigo",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Estate Señor Conmigo.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Estate Señor Conmigo.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 31,
+        "titulo": "Himno a San Francisco Javier",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Himno a San Francisco Javier.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Himno a San Francisco Javier.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 32,
+        "titulo": "Hoy Nos Ha Nacido un Salvador",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Hoy Nos Ha Nacido un Salvador.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Hoy Nos Ha Nacido un Salvador.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 33,
+        "titulo": "La Esperanza",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/La Esperanza.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/La Esperanza.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 34,
+        "titulo": "Luz de Navidad",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Luz de Navidad.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Luz de Navidad.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 35,
+        "titulo": "María",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/María.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/María.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 36,
+        "titulo": "Octavas de Pascua",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Octavas de Pascua.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Octavas de Pascua.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 37,
+        "titulo": "Oh Virginal Doncella",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Oh Virginal Doncella.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Oh Virginal Doncella.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 38,
+        "titulo": "Ojos Muertos que Miráis",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Ojos Muertos que Miráis.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Ojos Muertos que Miráis.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 39,
+        "titulo": "Secuencia de Pascua",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Secuencia de Pascua.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Secuencia de Pascua.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 40,
+        "titulo": "Señor, Tú Me Llamaste",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Señor, Tú Me Llamaste.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Señor, Tú Me Llamaste.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null
+    },
+    {
+        "id": 41,
+        "titulo": "Ya No Temo, Señor",
+        "musica": null,
+        "letra": null,
+        "adaptacion": null,
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": null,
+        "dia": null,
+        "descripcion": "Canto participante en el Concurso de Canciones 2026.",
+        "audio": "media/Concurso de Canciones 2026/Ya No Temo, Señor.mp3",
+        "letras_acordes": "media/Concurso de Canciones 2026/Ya no Temo, Señor.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Concurso de Canciones 2026"
         ],
         "tipo": "local",
         "categorias": [
