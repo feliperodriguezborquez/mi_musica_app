@@ -658,6 +658,19 @@ def delete_comment(comment_id):
 
 with app.app_context():
     db.create_all()
+    # Asegurar que la columna 'midi' existe en la base de datos
+    try:
+        from add_midi_column import add_midi_column_to_db
+        add_midi_column_to_db()
+    except Exception as e:
+        print(f"Error al verificar/migrar columna midi: {e}")
+        
+    # Sincronizar canciones desde data.json automáticamente al iniciar
+    try:
+        from sincronizar_canciones import sincronizar_canciones_desde_json
+        sincronizar_canciones_desde_json()
+    except Exception as e:
+        print(f"Error al sincronizar canciones automáticamente: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)
