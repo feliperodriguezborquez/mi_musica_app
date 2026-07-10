@@ -150,6 +150,18 @@ def parse_cita_biblica(texto):
 
     return (orden_libro, capitulo, versiculo)
 
+def normalize_for_sorting(titulo):
+    """
+    Normaliza el título de la canción para que la ordenación alfabética
+    ignore signos de puntuación, exclamaciones, interrogaciones y acentos.
+    """
+    if not titulo:
+        return ""
+    # Eliminar acentos y convertir a minúsculas
+    titulo_normalizado = unidecode(titulo.lower())
+    # Quedarse solo con caracteres alfanuméricos y espacios
+    return "".join(c for c in titulo_normalizado if c.isalnum() or c.isspace()).strip()
+
 # --- LÓGICA DE ORDENAMIENTO PERSONALIZADO (CONSTANTES GLOBALES) ---
 # Se mueven aquí para ser accesibles desde múltiples rutas.
 ORDEN_TIEMPOS_LITURGICOS = {
@@ -193,7 +205,7 @@ def get_filtered_and_sorted_songs(base_query):
     """Aplica el filtro de búsqueda y el ordenamiento a una consulta de canciones."""
     all_songs = base_query.all()
     filtered_songs, search_query = search_songs(all_songs)
-    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return filtered_songs, search_query
 
 def search_by_category(category_name):
@@ -256,7 +268,7 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='canon
                     orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
                     return (orden_libro, 0, 0)
             return (999, 0, 0)
-        base_songs.sort(key=lambda song: (get_song_order_biblico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        base_songs.sort(key=lambda song: (get_song_order_biblico(song), normalize_for_sorting(song.titulo)))
 
     elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
         orden_categoria = ORDENES_PERSONALIZADOS[main_category]
@@ -269,10 +281,10 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='canon
                     if order < min_order:
                         min_order = order
             return min_order
-        base_songs.sort(key=lambda song: (get_song_order(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        base_songs.sort(key=lambda song: (get_song_order(song), normalize_for_sorting(song.titulo)))
     
     else: # Orden alfabético por defecto para el resto
-        base_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+        base_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     
     return base_songs
 
@@ -312,9 +324,9 @@ def index():
             dia = song.dia if song.dia is not None else 0
             return (anio, mes, dia)
         # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)), reverse=True)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
     else: # 'alfabetico' o cualquier otro caso
-        filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
 
     return render_template('index.html', composiciones=filtered_songs, search_query=search_query, page_context='index', sort_by=sort_by)
 
@@ -323,14 +335,14 @@ def ver_composiciones():
     # Usamos la nueva función de búsqueda por categoría
     base_songs = search_by_category("Composición")
     filtered_songs, search_query = search_songs(base_songs)
-    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return render_template('composiciones.html', composiciones=filtered_songs, search_query=search_query, page_context='composiciones')
 
 @app.route('/arreglos')
 def ver_arreglos():
     base_songs = search_by_category("Arreglo")
     filtered_songs, search_query = search_songs(base_songs)
-    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return render_template('arreglos.html', composiciones=filtered_songs, search_query=search_query, page_context='arreglos')
 
 @app.route('/tag/<tag_name>')
@@ -384,7 +396,7 @@ def ver_tag(tag_name):
             return (999, 0, 0)
 
         # Ordena por la tupla de orden y luego por título
-        filtered_songs.sort(key=lambda song: (get_song_order_biblico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        filtered_songs.sort(key=lambda song: (get_song_order_biblico(song), normalize_for_sorting(song.titulo)))
 
     elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
         orden_categoria = ORDENES_PERSONALIZADOS[main_category]
@@ -404,7 +416,7 @@ def ver_tag(tag_name):
             return min_order
 
         # Ordena primero por el orden canónico y luego por título
-        filtered_songs.sort(key=lambda song: (get_song_order(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)))
+        filtered_songs.sort(key=lambda song: (get_song_order(song), normalize_for_sorting(song.titulo)))
     elif sort_by == 'cronologico':
         # Ordenamiento cronológico: año, mes, día. Los que no tienen fecha van al final.
         # El desempate final es por título.
@@ -415,11 +427,11 @@ def ver_tag(tag_name):
             dia = song.dia if song.dia is not None else 0
             return (anio, mes, dia)
         # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), (0, song.titulo) if song.titulo.startswith('¡') else (1, song.titulo)), reverse=True)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
     else:
         # Ordenamiento alfabético estándar para el resto de las listas
         # o si el usuario eligió explícitamente 'alfabetico'.
-        filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
 
     # Pasamos el método de ordenamiento actual a la plantilla
     return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(), main_category=main_category)
@@ -452,7 +464,7 @@ def filter_songs():
     base_songs = Cancion.query.all()
     filtered_songs, _ = search_songs(base_songs)
     # CORRECCIÓN: Regla de ordenamiento personalizada
-    filtered_songs.sort(key=lambda x: (0, x.titulo) if x.titulo.startswith('¡') else (1, x.titulo))
+    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return render_template('_song_list.html', composiciones=filtered_songs)
 
 # --- Rutas de detalle, edición, etc. (sin cambios) ---
