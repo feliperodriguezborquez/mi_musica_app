@@ -229,7 +229,7 @@ def search_by_category(category_name):
         song for song in all_songs if normalized_category in unidecode(str(song.categorias).lower())
     ]
 
-def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='canonico'):
+def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='cronologico'):
     """
     Reconstruye la lista de canciones (playlist) basada en el contexto y los filtros.
     Devuelve una lista ordenada de objetos Cancion.
@@ -292,6 +292,14 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='canon
                         min_order = order
             return min_order
         base_songs.sort(key=lambda song: (get_song_order(song), normalize_for_sorting(song.titulo)))
+    
+    elif sort_by == 'cronologico':
+        def get_song_order_cronologico(song):
+            anio = song.anio if song.anio is not None else 0
+            mes = song.mes if song.mes is not None else 0
+            dia = song.dia if song.dia is not None else 0
+            return (anio, mes, dia)
+        base_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
     
     else: # Orden alfabético por defecto para el resto
         base_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
@@ -454,7 +462,7 @@ def get_playlist_partial():
     context = request.args.get('context', 'index')
     tag_name = request.args.get('tag_name')
     search_query = request.args.get('search')
-    sort_by = request.args.get('sort_by', 'canonico')
+    sort_by = request.args.get('sort_by', 'cronologico')
     playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
     
     # Pasamos todos los parámetros de contexto a la plantilla parcial
@@ -485,8 +493,8 @@ def ver_composicion(comp_id):
     tag_name = request.args.get('tag_name')
     search_query = request.args.get('search')
     
-    # Obtenemos el ordenamiento de la URL. Si no viene, usamos 'canonico' como default.
-    sort_by = request.args.get('sort_by', 'canonico')
+    # Obtenemos el ordenamiento de la URL. Si no viene, usamos 'cronologico' como default.
+    sort_by = request.args.get('sort_by', 'cronologico')
 
     # Reconstruimos la playlist
     playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
