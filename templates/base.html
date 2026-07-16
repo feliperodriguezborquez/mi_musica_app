@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.1/build/opensheetmusicdisplay.min.js"></script>
     <script>
-        // Aplicar el tema de forma inmediata antes de renderizar para evitar destellos blancos
+        // Aplicar el tema inmediatamente para evitar destellos blancos
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
@@ -22,17 +22,14 @@
             <ul>
                 <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
                 <li class="nav-separator"></li>
-                <!-- Perfil dropdown -->
                 <li class="profile-menu-container">
                     <button id="profile-btn" class="profile-btn" title="Menú">⚙</button>
                     <div id="profile-dropdown" class="profile-dropdown hidden">
-                        <!-- Modo Oscuro -->
                         <div class="dropdown-item dropdown-toggle-row">
                             <span class="dropdown-label">Modo Oscuro</span>
                             <button id="theme-toggle" class="toggle-switch" aria-label="Modo oscuro"></button>
                         </div>
                         {% if FEATURES['autoplay'] %}
-                        <!-- Autoplay -->
                         <div class="dropdown-item dropdown-toggle-row">
                             <span class="dropdown-label">Reproducción automática</span>
                             <button id="autoplay-toggle" class="toggle-switch" aria-label="Auto-reproducción"></button>
@@ -63,7 +60,7 @@
     </footer>
 
     {% if FEATURES['floating_player'] %}
-    <!-- ====== REPRODUCTOR FLOTANTE (estilo Spotify) ====== -->
+    <!-- ====== REPRODUCTOR FLOTANTE ====== -->
     <div id="floating-player" class="floating-player hidden">
         <div class="fp-song-info">
             <span id="fp-title" class="fp-title">—</span>
@@ -80,16 +77,111 @@
                 <span id="fp-duration">0:00</span>
             </div>
             <button id="fp-volume-btn" class="fp-btn" title="Silenciar">🔊</button>
-            <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar">✕</button>
+            <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar reproductor">✕</button>
         </div>
     </div>
     {% endif %}
 
 <script>
+// ─── window.FP: definido ANTES de DOMContentLoaded ────────────────────────
+// composicion.html llama a FP.init() al cargar la página. Si lo pusiéramos
+// dentro de DOMContentLoaded, habría una carrera — el listener de composicion.html
+// puede dispararse antes. Con este patrón de cola (queue), funciona siempre.
+const _fmt = s => { s = Math.floor(s || 0); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
+
+window.FP = {
+    audio: null,
+    _queue: null,
+
+    /** Llamado desde composicion.html al cargar la página */
+    init(audioEl, title, prevUrl, nextUrl) {
+        this._queue = { audioEl, title, prevUrl, nextUrl };
+        if (document.readyState !== 'loading') {
+            this._setup();   // DOM ya listo → configurar ya
+        }
+        // Si no, DOMContentLoaded llamará a _setup()
+    },
+
+    _setup() {
+        if (!this._queue) return;
+        const { audioEl, title, prevUrl, nextUrl } = this._queue;
+        this._queue = null;
+        this.audio = audioEl;
+
+        const fp      = document.getElementById('floating-player');
+        const fpTitle = document.getElementById('fp-title');
+        const fpPrev  = document.getElementById('fp-prev');
+        const fpNext  = document.getElementById('fp-next');
+
+        if (fpTitle) fpTitle.textContent = title;
+        if (fpPrev)  { fpPrev.href  = prevUrl || '#'; fpPrev.style.opacity  = prevUrl  ? '1' : '0.3'; }
+        if (fpNext)  { fpNext.href  = nextUrl || '#'; fpNext.style.opacity  = nextUrl  ? '1' : '0.3'; }
+        if (fp)      fp.classList.remove('hidden');
+
+        this._bindAudio();
+    },
+
+    _bindAudio() {
+        const a      = this.audio;
+        if (!a) return;
+
+        a.addEventListener('timeupdate', () => {
+            if (!isNaN(a.duration)) {
+                const seek = document.getElementById('fp-seek');
+                const cur  = document.getElementById('fp-current');
+                const dur  = document.getElementById('fp-duration');
+                if (seek) { seek.max = Math.floor(a.duration); seek.value = Math.floor(a.currentTime); }
+                if (cur)  cur.textContent  = _fmt(a.currentTime);
+                if (dur)  dur.textContent  = _fmt(a.duration);
+            }
+        });
+        a.addEventListener('play',  () => { const p = document.getElementById('fp-play'); if (p) p.textContent = '⏸'; });
+        a.addEventListener('pause', () => { const p = document.getElementById('fp-play'); if (p) p.textContent = '▶'; });
+        a.addEventListener('ended', () => {
+            const p    = document.getElementById('fp-play');
+            const next = document.getElementById('fp-next');
+            if (p) p.textContent = '▶';
+            if (localStorage.getItem('autoplay_playlist') === 'true' &&
+                next && next.href && !next.href.endsWith('#')) {
+                const url = new URL(next.href);
+                url.searchParams.set('play', '1');
+                window.location.href = url.toString();
+            }
+        });
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
 
+    // Si FP.init() ya fue llamado (caso normal), completar el setup ahora
+    if (window.FP._queue) window.FP._setup();
+
+    // ─── Botones del Reproductor Flotante ────────────────────────────────────
+    const fpPlay   = document.getElementById('fp-play');
+    const fpSeek   = document.getElementById('fp-seek');
+    const fpVolBtn = document.getElementById('fp-volume-btn');
+    const fpClose  = document.getElementById('fp-close');
+
+    if (fpPlay)   fpPlay.addEventListener('click', () => {
+        if (!window.FP.audio) return;
+        window.FP.audio.paused ? window.FP.audio.play() : window.FP.audio.pause();
+    });
+    if (fpSeek)   fpSeek.addEventListener('input', () => {
+        if (window.FP.audio) window.FP.audio.currentTime = Number(fpSeek.value);
+    });
+    if (fpVolBtn) fpVolBtn.addEventListener('click', () => {
+        if (!window.FP.audio) return;
+        window.FP.audio.muted = !window.FP.audio.muted;
+        fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
+    });
+    if (fpClose)  fpClose.addEventListener('click', () => {
+        if (window.FP.audio) window.FP.audio.pause();
+        const fp = document.getElementById('floating-player');
+        if (fp) fp.classList.add('hidden');
+    });
+
     // ─── Búsqueda en vivo ───────────────────────────────────────────────────
-    const searchInput = document.getElementById('search-input');
+    const searchInput       = document.getElementById('search-input');
     const songListContainer = document.getElementById('song-list-container');
     if (searchInput) {
         let debounceTimer;
@@ -97,12 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 const form = document.getElementById('filter-form');
-                const params = new URLSearchParams(new FormData(form));
+                const params = new URLSearchParams(form ? new FormData(form) : {});
                 const catFilter = document.querySelector('.category-pill.active');
-                if (catFilter) params.set('categoria', catFilter.dataset.cat);
+                if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
                 fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
                     .then(r => r.text())
-                    .then(html => { songListContainer.innerHTML = html; })
+                    .then(html => { if (songListContainer) songListContainer.innerHTML = html; })
                     .catch(e => console.error(e));
             }, 300);
         });
@@ -114,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
             this.classList.add('active');
             if (!songListContainer) return;
-            const form = document.getElementById('filter-form');
+            const form   = document.getElementById('filter-form');
             const params = new URLSearchParams(form ? new FormData(form) : {});
             if (this.dataset.cat) params.set('categoria', this.dataset.cat);
             fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
@@ -125,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ─── Dropdown de perfil ─────────────────────────────────────────────────
-    const profileBtn     = document.getElementById('profile-btn');
+    const profileBtn      = document.getElementById('profile-btn');
     const profileDropdown = document.getElementById('profile-dropdown');
     if (profileBtn) {
         profileBtn.addEventListener('click', e => {
@@ -164,70 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ─── Reproductor Flotante ───────────────────────────────────────────────
-    const floatingPlayer = document.getElementById('floating-player');
-    const fpTitle     = document.getElementById('fp-title');
-    const fpPlay      = document.getElementById('fp-play');
-    const fpPrev      = document.getElementById('fp-prev');
-    const fpNext      = document.getElementById('fp-next');
-    const fpSeek      = document.getElementById('fp-seek');
-    const fpCurrent   = document.getElementById('fp-current');
-    const fpDuration  = document.getElementById('fp-duration');
-    const fpVolBtn    = document.getElementById('fp-volume-btn');
-    const fpClose     = document.getElementById('fp-close');
-
-    // El audio real vive en la página de composición; aquí solo lo manejamos
-    window.FP = {
-        audio: null,
-        init(audioEl, title, prevUrl, nextUrl) {
-            this.audio = audioEl;
-            if (fpTitle)   fpTitle.textContent = title;
-            if (fpPrev)    { fpPrev.href = prevUrl || '#'; fpPrev.style.opacity = prevUrl ? '1' : '0.3'; }
-            if (fpNext)    { fpNext.href = nextUrl || '#'; fpNext.style.opacity = nextUrl ? '1' : '0.3'; }
-            if (floatingPlayer) floatingPlayer.classList.remove('hidden');
-            this._bindAudio();
-        },
-        _bindAudio() {
-            const a = this.audio;
-            if (!a) return;
-            a.addEventListener('timeupdate', () => {
-                if (!isNaN(a.duration)) {
-                    fpSeek.max = Math.floor(a.duration);
-                    fpSeek.value = Math.floor(a.currentTime);
-                    fpCurrent.textContent = fmt(a.currentTime);
-                    fpDuration.textContent = fmt(a.duration);
-                }
-            });
-            a.addEventListener('play',  () => { fpPlay.textContent = '⏸'; });
-            a.addEventListener('pause', () => { fpPlay.textContent = '▶'; });
-            a.addEventListener('ended', () => {
-                fpPlay.textContent = '▶';
-                if (localStorage.getItem('autoplay_playlist') === 'true' && fpNext && fpNext.href && fpNext.href !== '#' && fpNext.href !== window.location.href) {
-                    const sep = fpNext.href.includes('?') ? '&' : '?';
-                    window.location.href = fpNext.href + sep + 'play=1';
-                }
-            });
-        }
-    };
-
-    const fmt = s => { s = Math.floor(s || 0); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
-
-    if (fpPlay) fpPlay.addEventListener('click', () => {
-        if (!window.FP.audio) return;
-        window.FP.audio.paused ? window.FP.audio.play() : window.FP.audio.pause();
-    });
-    if (fpSeek) fpSeek.addEventListener('input', () => {
-        if (window.FP.audio) window.FP.audio.currentTime = fpSeek.value;
-    });
-    if (fpVolBtn) fpVolBtn.addEventListener('click', () => {
-        if (!window.FP.audio) return;
-        window.FP.audio.muted = !window.FP.audio.muted;
-        fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
-    });
-    if (fpClose) fpClose.addEventListener('click', () => {
-        if (window.FP.audio) window.FP.audio.pause();
-        floatingPlayer.classList.add('hidden');
-    });
 });
 </script>
 {% block extra_js %}{% endblock %}

@@ -157,16 +157,24 @@
             </audio>
             <script>
             (function(){
-                var audio = document.getElementById('cancion-audio');
+                // window.FP ya está definido antes de que este script corra,
+                // así que podemos llamar a FP.init() directamente aquí.
+                var audio   = document.getElementById('cancion-audio');
                 if (!audio) return;
                 var prevUrl = {{ ('"' + prev_song_url + '"') | safe if prev_song_url else 'null' }};
                 var nextUrl = {{ ('"' + next_song_url + '"') | safe if next_song_url else 'null' }};
                 var title   = {{ ('"' + obra.titulo | replace('"', '\\"') + '"') | safe }};
-                // Conectar al reproductor flotante global
-                document.addEventListener('DOMContentLoaded', function() {
-                    if (window.FP) window.FP.init(audio, title, prevUrl, nextUrl);
-                    if (audio.dataset.autoplay) { audio.play().catch(()=>{}); }
-                });
+
+                // FP.init() usa el patrón de cola: si el DOM no está listo,
+                // guardará los parámetros y los aplicará en DOMContentLoaded.
+                if (window.FP) window.FP.init(audio, title, prevUrl, nextUrl);
+
+                if (audio.dataset.autoplay) {
+                    audio.addEventListener('canplay', function once() {
+                        audio.removeEventListener('canplay', once);
+                        audio.play().catch(() => {});
+                    }, { once: true });
+                }
             })();
             </script>
             {% endif %}
