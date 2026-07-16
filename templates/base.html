@@ -24,28 +24,28 @@
                 <li class="nav-separator"></li>
                 <!-- Perfil dropdown -->
                 <li class="profile-menu-container">
-                    <button id="profile-btn" class="profile-btn" title="Menú">👤</button>
+                    <button id="profile-btn" class="profile-btn" title="Menú">⚙</button>
                     <div id="profile-dropdown" class="profile-dropdown hidden">
                         <!-- Modo Oscuro -->
                         <div class="dropdown-item dropdown-toggle-row">
-                            <span>🌙 Modo Oscuro</span>
-                            <button id="theme-toggle" class="toggle-switch" title="Cambiar tema" aria-label="Modo oscuro"></button>
+                            <span class="dropdown-label">Modo Oscuro</span>
+                            <button id="theme-toggle" class="toggle-switch" aria-label="Modo oscuro"></button>
                         </div>
                         {% if FEATURES['autoplay'] %}
                         <!-- Autoplay -->
                         <div class="dropdown-item dropdown-toggle-row">
-                            <span>▶️ Reproducción automática</span>
-                            <button id="autoplay-toggle" class="toggle-switch" title="Reproducción automática" aria-label="Auto-reproducción"></button>
+                            <span class="dropdown-label">Reproducción automática</span>
+                            <button id="autoplay-toggle" class="toggle-switch" aria-label="Auto-reproducción"></button>
                         </div>
                         {% endif %}
                         <div class="dropdown-separator"></div>
                         {% if session.logged_in %}
                             {% if FEATURES['ideas_admin'] %}
-                            <a href="{{ url_for('admin_ideas') }}" class="dropdown-item">💡 Ideas de Canciones</a>
+                            <a href="{{ url_for('admin_ideas') }}" class="dropdown-item">Ideas de Canciones</a>
                             {% endif %}
-                            <a href="{{ url_for('logout') }}" class="dropdown-item">🚪 Salir</a>
+                            <a href="{{ url_for('logout') }}" class="dropdown-item">Cerrar Sesión</a>
                         {% else %}
-                            <a href="{{ url_for('login') }}" class="dropdown-item">🔑 Entrar</a>
+                            <a href="{{ url_for('login') }}" class="dropdown-item">Iniciar Sesión</a>
                         {% endif %}
                     </div>
                 </li>
