@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="ideas-board">
+    <div class="ideas-header">
+        <h2>💡 Ideas de Canciones</h2>
+        <form action="{{ url_for('admin_ideas_add') }}" method="post" class="ideas-add-form">
+            <input type="text" name="titulo" placeholder="Nueva idea..." required class="ideas-input">
+            <input type="text" name="notas" placeholder="Notas (opcional)" class="ideas-input ideas-input-notes">
+            <button type="submit" class="ideas-add-btn">+ Agregar</button>
+        </form>
+    </div>
+
+    <div class="kanban-board">
+        <!-- Columna: Solo Ideas -->
+        <div class="kanban-col">
+            <div class="kanban-col-header kanban-idea">💭 Solo Ideas <span class="kanban-count">{{ ideas.idea | length }}</span></div>
+            {% for idea in ideas.idea %}
+            <div class="kanban-card">
+                <div class="kanban-card-title">{{ idea.titulo }}</div>
+                {% if idea.notas %}<div class="kanban-card-notes">{{ idea.notas }}</div>{% endif %}
+                <div class="kanban-card-actions">
+                    <form action="{{ url_for('admin_ideas_update', idea_id=idea.id) }}" method="post" style="display:inline">
+                        <input type="hidden" name="estado" value="mitad">
+                        <button type="submit" class="kanban-btn kanban-btn-up" title="Mover a En progreso">→ A la mitad</button>
+                    </form>
+                    <form action="{{ url_for('admin_ideas_delete', idea_id=idea.id) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar esta idea?')">
+                        <button type="submit" class="kanban-btn kanban-btn-del" title="Eliminar">🗑</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <p class="kanban-empty">Sin ideas todavía</p>
+            {% endfor %}
+        </div>
+
+        <!-- Columna: A la Mitad -->
+        <div class="kanban-col">
+            <div class="kanban-col-header kanban-mitad">🔨 A la Mitad <span class="kanban-count">{{ ideas.mitad | length }}</span></div>
+            {% for idea in ideas.mitad %}
+            <div class="kanban-card">
+                <div class="kanban-card-title">{{ idea.titulo }}</div>
+                {% if idea.notas %}<div class="kanban-card-notes">{{ idea.notas }}</div>{% endif %}
+                <div class="kanban-card-actions">
+                    <form action="{{ url_for('admin_ideas_update', idea_id=idea.id) }}" method="post" style="display:inline">
+                        <input type="hidden" name="estado" value="idea">
+                        <button type="submit" class="kanban-btn" title="Volver a Ideas">← Volver</button>
+                    </form>
+                    <form action="{{ url_for('admin_ideas_update', idea_id=idea.id) }}" method="post" class="kanban-promote-form">
+                        <input type="hidden" name="estado" value="lista">
+                        <select name="cancion_id" class="kanban-select">
+                            <option value="">— Vincular con canción (opcional) —</option>
+                            {% for cancion in canciones %}
+                            <option value="{{ cancion.id }}" {% if idea.cancion_id == cancion.id %}selected{% endif %}>{{ cancion.titulo }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="kanban-btn kanban-btn-up">→ Lista ✓</button>
+                    </form>
+                    <form action="{{ url_for('admin_ideas_delete', idea_id=idea.id) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar esta idea?')">
+                        <button type="submit" class="kanban-btn kanban-btn-del">🗑</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <p class="kanban-empty">Nada en progreso</p>
+            {% endfor %}
+        </div>
+
+        <!-- Columna: Listas -->
+        <div class="kanban-col">
+            <div class="kanban-col-header kanban-lista">✅ Listas <span class="kanban-count">{{ ideas.lista | length }}</span></div>
+            {% for idea in ideas.lista %}
+            <div class="kanban-card kanban-card-done">
+                <div class="kanban-card-title">
+                    {% if idea.cancion %}
+                        <a href="{{ url_for('ver_composicion', comp_id=idea.cancion.id) }}" target="_blank">{{ idea.titulo }} ↗</a>
+                    {% else %}
+                        {{ idea.titulo }}
+                    {% endif %}
+                </div>
+                {% if idea.notas %}<div class="kanban-card-notes">{{ idea.notas }}</div>{% endif %}
+                <div class="kanban-card-actions">
+                    <form action="{{ url_for('admin_ideas_update', idea_id=idea.id) }}" method="post" style="display:inline">
+                        <input type="hidden" name="estado" value="mitad">
+                        <button type="submit" class="kanban-btn" title="Volver a En progreso">← Reabrir</button>
+                    </form>
+                    <form action="{{ url_for('admin_ideas_update', idea_id=idea.id) }}" method="post" class="kanban-promote-form">
+                        <input type="hidden" name="estado" value="lista">
+                        <select name="cancion_id" class="kanban-select">
+                            <option value="">— Cambiar canción —</option>
+                            {% for cancion in canciones %}
+                            <option value="{{ cancion.id }}" {% if idea.cancion_id == cancion.id %}selected{% endif %}>{{ cancion.titulo }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="kanban-btn">Vincular</button>
+                    </form>
+                    <form action="{{ url_for('admin_ideas_delete', idea_id=idea.id) }}" method="post" style="display:inline" onsubmit="return confirm('¿Eliminar?')">
+                        <button type="submit" class="kanban-btn kanban-btn-del">🗑</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <p class="kanban-empty">Ninguna completada aún</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

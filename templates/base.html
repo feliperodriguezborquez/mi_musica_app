@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- Añadimos la biblioteca OpenSheetMusicDisplay (OSMD) - VERSIÓN ACTUALIZADA -->
     <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.1/build/opensheetmusicdisplay.min.js"></script>
     <script>
         // Aplicar el tema de forma inmediata antes de renderizar para evitar destellos blancos
@@ -21,78 +20,214 @@
         <nav class="container">
             <a href="{{ url_for('index') }}" class="brand-logo">Mis Canciones</a>
             <ul>
-                <li><a href="{{ url_for('ver_composiciones') }}">Composiciones</a></li>
-                <li><a href="{{ url_for('ver_arreglos') }}">Arreglos</a></li>
-                <li class="nav-separator"></li>
                 <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
-                <li class="nav-separator nav-separator-thick"></li>
-                
-                {% if session.logged_in %}
-                    <li><a href="{{ url_for('logout') }}" class="login-link">Salir</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('login') }}" class="login-link">Entrar</a></li>
-                {% endif %}
-                <li>
-                    <button id="theme-toggle" class="theme-toggle-btn" title="Cambiar tema">🌙</button>
+                <li class="nav-separator"></li>
+                <!-- Perfil dropdown -->
+                <li class="profile-menu-container">
+                    <button id="profile-btn" class="profile-btn" title="Menú">👤</button>
+                    <div id="profile-dropdown" class="profile-dropdown hidden">
+                        <!-- Modo Oscuro -->
+                        <div class="dropdown-item dropdown-toggle-row">
+                            <span>🌙 Modo Oscuro</span>
+                            <button id="theme-toggle" class="toggle-switch" title="Cambiar tema" aria-label="Modo oscuro"></button>
+                        </div>
+                        {% if FEATURES['autoplay'] %}
+                        <!-- Autoplay -->
+                        <div class="dropdown-item dropdown-toggle-row">
+                            <span>▶️ Reproducción automática</span>
+                            <button id="autoplay-toggle" class="toggle-switch" title="Reproducción automática" aria-label="Auto-reproducción"></button>
+                        </div>
+                        {% endif %}
+                        <div class="dropdown-separator"></div>
+                        {% if session.logged_in %}
+                            {% if FEATURES['ideas_admin'] %}
+                            <a href="{{ url_for('admin_ideas') }}" class="dropdown-item">💡 Ideas de Canciones</a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="dropdown-item">🚪 Salir</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="dropdown-item">🔑 Entrar</a>
+                        {% endif %}
+                    </div>
                 </li>
             </ul>
         </nav>
     </header>
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>
+
     <footer>
         <p>&copy; Felipe Rodríguez | Última actualización: {{ last_update }}</p>
         <p>Código bajo Licencia MIT. Composiciones son propiedad exclusiva del autor.</p>
     </footer>
 
+    {% if FEATURES['floating_player'] %}
+    <!-- ====== REPRODUCTOR FLOTANTE (estilo Spotify) ====== -->
+    <div id="floating-player" class="floating-player hidden">
+        <div class="fp-song-info">
+            <span id="fp-title" class="fp-title">—</span>
+        </div>
+        <div class="fp-controls">
+            <a id="fp-prev" href="#" class="fp-btn fp-skip" title="Anterior">⏮</a>
+            <button id="fp-play" class="fp-btn fp-play-btn" title="Play/Pausa">▶</button>
+            <a id="fp-next" href="#" class="fp-btn fp-skip" title="Siguiente">⏭</a>
+        </div>
+        <div class="fp-right">
+            <div class="fp-progress-container">
+                <span id="fp-current">0:00</span>
+                <input type="range" id="fp-seek" class="fp-seek" value="0" min="0" step="1">
+                <span id="fp-duration">0:00</span>
+            </div>
+            <button id="fp-volume-btn" class="fp-btn" title="Silenciar">🔊</button>
+            <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar">✕</button>
+        </div>
+    </div>
+    {% endif %}
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    // ─── Búsqueda en vivo ───────────────────────────────────────────────────
     const searchInput = document.getElementById('search-input');
     const songListContainer = document.getElementById('song-list-container');
-
     if (searchInput) {
         let debounceTimer;
         searchInput.addEventListener('input', function() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 const form = document.getElementById('filter-form');
-                const formData = new FormData(form);
-                const params = new URLSearchParams(formData);
-
-                // Fetch a la nueva ruta /filter
+                const params = new URLSearchParams(new FormData(form));
+                const catFilter = document.querySelector('.category-pill.active');
+                if (catFilter) params.set('categoria', catFilter.dataset.cat);
                 fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
-                    .then(response => response.text())
-                    .then(html => {
-                        songListContainer.innerHTML = html;
-                    })
-                    .catch(error => console.error('Error al filtrar:', error));
-            }, 300); // Espera 300ms después de la última tecla antes de buscar
+                    .then(r => r.text())
+                    .then(html => { songListContainer.innerHTML = html; })
+                    .catch(e => console.error(e));
+            }, 300);
         });
     }
 
-    // Lógica del conmutador de tema (Modo Oscuro)
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    if (themeToggleBtn) {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
-        
-        themeToggleBtn.addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            
-            // Si OSMD está activo en la página actual, forzar un re-renderizado
-            if (typeof osmd !== 'undefined' && osmd) {
-                try {
-                    osmd.render();
-                } catch(e) {}
-            }
+    // ─── Category pills ─────────────────────────────────────────────────────
+    document.querySelectorAll('.category-pill').forEach(pill => {
+        pill.addEventListener('click', function() {
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            if (!songListContainer) return;
+            const form = document.getElementById('filter-form');
+            const params = new URLSearchParams(form ? new FormData(form) : {});
+            if (this.dataset.cat) params.set('categoria', this.dataset.cat);
+            fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
+                .then(r => r.text())
+                .then(html => { songListContainer.innerHTML = html; })
+                .catch(e => console.error(e));
+        });
+    });
+
+    // ─── Dropdown de perfil ─────────────────────────────────────────────────
+    const profileBtn     = document.getElementById('profile-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
+        profileDropdown.addEventListener('click', e => e.stopPropagation());
+    }
+
+    // ─── Modo Oscuro ────────────────────────────────────────────────────────
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeToggle.classList.toggle('on', theme === 'dark');
+            if (typeof osmd !== 'undefined' && osmd) { try { osmd.render(); } catch(e){} }
+        };
+        applyTheme(localStorage.getItem('theme') || 'light');
+        themeToggle.addEventListener('click', () => {
+            applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         });
     }
+
+    // ─── Toggle de Autoplay ─────────────────────────────────────────────────
+    const autoplayToggle = document.getElementById('autoplay-toggle');
+    if (autoplayToggle) {
+        const applyAutoplay = (val) => {
+            localStorage.setItem('autoplay_playlist', val ? 'true' : 'false');
+            autoplayToggle.classList.toggle('on', val);
+        };
+        applyAutoplay(localStorage.getItem('autoplay_playlist') === 'true');
+        autoplayToggle.addEventListener('click', () => {
+            applyAutoplay(localStorage.getItem('autoplay_playlist') !== 'true');
+        });
+    }
+
+    // ─── Reproductor Flotante ───────────────────────────────────────────────
+    const floatingPlayer = document.getElementById('floating-player');
+    const fpTitle     = document.getElementById('fp-title');
+    const fpPlay      = document.getElementById('fp-play');
+    const fpPrev      = document.getElementById('fp-prev');
+    const fpNext      = document.getElementById('fp-next');
+    const fpSeek      = document.getElementById('fp-seek');
+    const fpCurrent   = document.getElementById('fp-current');
+    const fpDuration  = document.getElementById('fp-duration');
+    const fpVolBtn    = document.getElementById('fp-volume-btn');
+    const fpClose     = document.getElementById('fp-close');
+
+    // El audio real vive en la página de composición; aquí solo lo manejamos
+    window.FP = {
+        audio: null,
+        init(audioEl, title, prevUrl, nextUrl) {
+            this.audio = audioEl;
+            if (fpTitle)   fpTitle.textContent = title;
+            if (fpPrev)    { fpPrev.href = prevUrl || '#'; fpPrev.style.opacity = prevUrl ? '1' : '0.3'; }
+            if (fpNext)    { fpNext.href = nextUrl || '#'; fpNext.style.opacity = nextUrl ? '1' : '0.3'; }
+            if (floatingPlayer) floatingPlayer.classList.remove('hidden');
+            this._bindAudio();
+        },
+        _bindAudio() {
+            const a = this.audio;
+            if (!a) return;
+            a.addEventListener('timeupdate', () => {
+                if (!isNaN(a.duration)) {
+                    fpSeek.max = Math.floor(a.duration);
+                    fpSeek.value = Math.floor(a.currentTime);
+                    fpCurrent.textContent = fmt(a.currentTime);
+                    fpDuration.textContent = fmt(a.duration);
+                }
+            });
+            a.addEventListener('play',  () => { fpPlay.textContent = '⏸'; });
+            a.addEventListener('pause', () => { fpPlay.textContent = '▶'; });
+            a.addEventListener('ended', () => {
+                fpPlay.textContent = '▶';
+                if (localStorage.getItem('autoplay_playlist') === 'true' && fpNext && fpNext.href && fpNext.href !== '#' && fpNext.href !== window.location.href) {
+                    const sep = fpNext.href.includes('?') ? '&' : '?';
+                    window.location.href = fpNext.href + sep + 'play=1';
+                }
+            });
+        }
+    };
+
+    const fmt = s => { s = Math.floor(s || 0); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
+
+    if (fpPlay) fpPlay.addEventListener('click', () => {
+        if (!window.FP.audio) return;
+        window.FP.audio.paused ? window.FP.audio.play() : window.FP.audio.pause();
+    });
+    if (fpSeek) fpSeek.addEventListener('input', () => {
+        if (window.FP.audio) window.FP.audio.currentTime = fpSeek.value;
+    });
+    if (fpVolBtn) fpVolBtn.addEventListener('click', () => {
+        if (!window.FP.audio) return;
+        window.FP.audio.muted = !window.FP.audio.muted;
+        fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
+    });
+    if (fpClose) fpClose.addEventListener('click', () => {
+        if (window.FP.audio) window.FP.audio.pause();
+        floatingPlayer.classList.add('hidden');
+    });
 });
 </script>
 {% block extra_js %}{% endblock %}

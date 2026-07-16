@@ -19,6 +19,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# --- Feature Flags (set to False to disable, code stays intact) ---
+FEATURES = {
+    'floating_player': True,   # Reproductor flotante estilo Spotify
+    'autoplay':        True,   # Opción de auto-reproducción en perfil
+    'category_pills':  True,   # Pestañas Todas/Composiciones/Arreglos
+    'ideas_admin':     True,   # Tablero de ideas en admin
+}
+
 # --- Modelos de la Base de Datos (sin cambios) ---
 class Comentario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,8 +60,15 @@ class Cancion(db.Model):
         return json.loads(self.tags_json) if self.tags_json else []
     @property
     def categorias(self):
-        # Carga las categorías desde el JSON
         return json.loads(self.categorias_json) if self.categorias_json else []
+
+class IdeaCancion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(150), nullable=False)
+    notas = db.Column(db.Text, nullable=True)
+    estado = db.Column(db.String(20), nullable=False, default='idea')  # 'idea', 'mitad', 'lista'
+    cancion_id = db.Column(db.Integer, db.ForeignKey('cancion.id'), nullable=True)
+    cancion = db.relationship('Cancion', backref='idea', foreign_keys=[cancion_id])
 
 @app.template_filter('sort_categories_for_page')
 def sort_categories_for_page(categories, page_context='default'):
@@ -68,14 +83,14 @@ def sort_categories_for_page(categories, page_context='default'):
     return sorted_cats
 
 @app.context_processor
-def inject_last_update():
-    """Inyecta la fecha de la última actualización en todas las plantillas."""
+def inject_globals():
+    """Inyecta variables globales en todas las plantillas."""
     try:
         with open('build_date.txt', 'r', encoding='utf-8') as f:
             date_str = f.read().strip()
     except Exception:
         date_str = "Desconocida"
-    return dict(last_update=date_str)
+    return dict(last_update=date_str, FEATURES=FEATURES)
 
 # --- LÓGICA DE ORDENAMIENTO BÍBLICO AVANZADO ---
 import re
@@ -479,9 +494,12 @@ def get_playlist_partial():
 # --- Ruta para la búsqueda en vivo (con ordenamiento corregido) ---
 @app.route('/filter')
 def filter_songs():
-    base_songs = Cancion.query.all()
+    categoria = request.args.get('categoria', '').strip()
+    if categoria:
+        base_songs = search_by_category(categoria)
+    else:
+        base_songs = Cancion.query.all()
     filtered_songs, _ = search_songs(base_songs)
-    # CORRECCIÓN: Regla de ordenamiento personalizada
     filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return render_template('_song_list.html', composiciones=filtered_songs)
 
@@ -714,6 +732,52 @@ def delete_comment(comment_id):
     return redirect(url_for('ver_composicion', comp_id=obra_id))
 
 
+# ============================================================
+# ADMIN: Ideas de Canciones (Tablero Kanban)
+# ============================================================
+@app.route('/admin/ideas')
+@login_required
+def admin_ideas():
+    if not FEATURES['ideas_admin']:
+        abort(404)
+    ideas = {
+        'idea':  IdeaCancion.query.filter_by(estado='idea').order_by(IdeaCancion.titulo).all(),
+        'mitad': IdeaCancion.query.filter_by(estado='mitad').order_by(IdeaCancion.titulo).all(),
+        'lista': IdeaCancion.query.filter_by(estado='lista').order_by(IdeaCancion.titulo).all(),
+    }
+    canciones = Cancion.query.order_by(Cancion.titulo).all()
+    return render_template('admin/ideas.html', ideas=ideas, canciones=canciones)
+
+@app.route('/admin/ideas/add', methods=['POST'])
+@login_required
+def admin_ideas_add():
+    titulo = request.form.get('titulo', '').strip()
+    notas  = request.form.get('notas', '').strip() or None
+    if titulo:
+        db.session.add(IdeaCancion(titulo=titulo, notas=notas, estado='idea'))
+        db.session.commit()
+    return redirect(url_for('admin_ideas'))
+
+@app.route('/admin/ideas/<int:idea_id>/update', methods=['POST'])
+@login_required
+def admin_ideas_update(idea_id):
+    idea = IdeaCancion.query.get_or_404(idea_id)
+    idea.estado = request.form.get('estado', idea.estado)
+    idea.titulo = request.form.get('titulo', idea.titulo).strip() or idea.titulo
+    idea.notas  = request.form.get('notas', idea.notas or '').strip() or None
+    cid = request.form.get('cancion_id', '').strip()
+    idea.cancion_id = int(cid) if cid else None
+    db.session.commit()
+    return redirect(url_for('admin_ideas'))
+
+@app.route('/admin/ideas/<int:idea_id>/delete', methods=['POST'])
+@login_required
+def admin_ideas_delete(idea_id):
+    idea = IdeaCancion.query.get_or_404(idea_id)
+    db.session.delete(idea)
+    db.session.commit()
+    return redirect(url_for('admin_ideas'))
+
 with app.app_context():
     db.create_all()
     # Asegurar que la columna 'midi' existe en la base de datos
@@ -729,6 +793,26 @@ with app.app_context():
         sincronizar_canciones_desde_json()
     except Exception as e:
         print(f"Error al sincronizar canciones automáticamente: {e}")
+
+    # Seed inicial de Ideas si la tabla está vacía
+    if FEATURES['ideas_admin'] and IdeaCancion.query.count() == 0:
+        miserere = Cancion.query.filter(Cancion.titulo.ilike('%miserere%')).first()
+        profundis = Cancion.query.filter(Cancion.titulo.ilike('%profundis%')).first()
+        sembrador = Cancion.query.filter(Cancion.titulo.ilike('%sembrador%')).first()
+        seeds = [
+            IdeaCancion(titulo='El Sembrador',    estado='lista', cancion_id=sembrador.id if sembrador else None),
+            IdeaCancion(titulo='Miserere',         estado='lista', cancion_id=miserere.id  if miserere  else None),
+            IdeaCancion(titulo='De Profundis',     estado='lista', cancion_id=profundis.id if profundis else None),
+            IdeaCancion(titulo='Salmo 6 (Señor, no me reprendas en tu enojo)',   estado='idea'),
+            IdeaCancion(titulo='Salmo 32 (Dichoso el que es absuelto)',          estado='idea'),
+            IdeaCancion(titulo='Salmo 38 (Señor, no me reprendas enojado)',      estado='idea'),
+            IdeaCancion(titulo='Salmo 102 (Bendice, alma mía, al Señor)',        estado='idea'),
+            IdeaCancion(titulo='Salmo 143 (Señor, escucha mi oración)',          estado='idea'),
+        ]
+        for s in seeds:
+            db.session.add(s)
+        db.session.commit()
+        print("Ideas iniciales sembradas.")
 
 if __name__ == '__main__':
     app.run(debug=True)

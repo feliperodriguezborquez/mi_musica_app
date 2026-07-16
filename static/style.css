@@ -865,3 +865,165 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     border-color: rgba(255, 255, 255, 0.8);
     transform: scale(1.05);
 }
+
+/* ================================================================
+   PROFILE DROPDOWN
+   ================================================================ */
+.profile-menu-container { position: relative; }
+.profile-btn {
+    background: var(--color-header-btn-bg);
+    border: none; cursor: pointer;
+    font-size: 1.2rem; padding: 6px 10px;
+    border-radius: 50%; color: var(--color-header-texto);
+    transition: background 0.2s;
+}
+.profile-btn:hover { background: var(--color-acento); }
+.profile-dropdown {
+    position: absolute; right: 0; top: calc(100% + 8px);
+    background: var(--color-blanco); border: 1px solid var(--color-borde);
+    border-radius: 10px; min-width: 240px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    z-index: 9999; overflow: hidden;
+}
+.profile-dropdown.hidden { display: none; }
+.dropdown-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; font-size: 0.92rem;
+    color: var(--color-texto); text-decoration: none;
+    transition: background 0.15s;
+}
+.dropdown-item:hover { background: var(--color-tag-bg); }
+.dropdown-toggle-row { justify-content: space-between; }
+.dropdown-separator { border-top: 1px solid var(--color-borde); margin: 4px 0; }
+
+/* Toggle Switch */
+.toggle-switch {
+    width: 40px; height: 22px; border-radius: 11px;
+    background: var(--color-borde); border: none; cursor: pointer;
+    position: relative; transition: background 0.25s; flex-shrink: 0;
+}
+.toggle-switch::after {
+    content: ''; position: absolute;
+    left: 3px; top: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%; background: #fff;
+    transition: left 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.toggle-switch.on { background: var(--color-principal); }
+.toggle-switch.on::after { left: 21px; }
+
+/* ================================================================
+   CATEGORY PILLS
+   ================================================================ */
+.category-pills {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.category-pill {
+    padding: 6px 18px; border-radius: 20px;
+    border: 1px solid var(--color-borde);
+    background: var(--color-blanco); color: var(--color-texto);
+    font-size: 0.88rem; cursor: pointer; font-weight: 500;
+    transition: all 0.2s;
+}
+.category-pill:hover { border-color: var(--color-principal); color: var(--color-principal); }
+.category-pill.active {
+    background: var(--color-principal); color: #fff; border-color: var(--color-principal);
+}
+
+/* ================================================================
+   FLOATING PLAYER (Spotify Style)
+   ================================================================ */
+.floating-player {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
+    background: var(--color-blanco);
+    border-top: 1px solid var(--color-borde);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 24px; min-height: 68px;
+}
+.floating-player.hidden { display: none; }
+.fp-song-info { flex: 1; min-width: 0; }
+.fp-title {
+    font-weight: 600; font-size: 0.95rem; color: var(--color-texto);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+}
+.fp-controls { display: flex; align-items: center; gap: 8px; }
+.fp-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.2rem; color: var(--color-texto); padding: 4px 6px;
+    border-radius: 6px; transition: color 0.2s, background 0.2s; text-decoration: none;
+    display: flex; align-items: center;
+}
+.fp-btn:hover { color: var(--color-principal); background: var(--color-tag-bg); }
+.fp-play-btn { font-size: 1.5rem; }
+.fp-right { display: flex; align-items: center; gap: 10px; flex: 1.5; min-width: 0; }
+.fp-progress-container {
+    display: flex; align-items: center; gap: 6px; flex: 1;
+    font-size: 0.78rem; color: var(--color-texto-secundario); min-width: 0;
+}
+.fp-seek {
+    flex: 1; accent-color: var(--color-principal);
+    height: 4px; cursor: pointer; border-radius: 2px; min-width: 60px;
+}
+.fp-close-btn { color: var(--color-texto-secundario); font-size: 1rem; }
+
+/* ================================================================
+   KANBAN BOARD (Ideas de Canciones)
+   ================================================================ */
+.ideas-board { max-width: 1200px; margin: 0 auto; }
+.ideas-header { margin-bottom: 24px; }
+.ideas-add-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.ideas-input {
+    flex: 1; min-width: 160px; padding: 9px 14px;
+    border: 1px solid var(--color-borde); border-radius: 8px;
+    background: var(--color-blanco); color: var(--color-texto); font-size: 0.95rem;
+}
+.ideas-input-notes { flex: 1.5; }
+.ideas-add-btn {
+    padding: 9px 20px; background: var(--color-principal); color: #fff;
+    border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+    transition: background 0.2s;
+}
+.ideas-add-btn:hover { background: var(--color-acento); }
+
+.kanban-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 768px) { .kanban-board { grid-template-columns: 1fr; } }
+
+.kanban-col {
+    background: var(--color-tag-bg); border-radius: 12px; padding: 16px; min-height: 200px;
+}
+.kanban-col-header {
+    font-weight: 700; font-size: 0.9rem; padding: 8px 12px; border-radius: 8px;
+    margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; color: #fff;
+}
+.kanban-idea  { background: #7b8fa0; }
+.kanban-mitad { background: #c49a0a; }
+.kanban-lista { background: #4a9a5c; }
+.kanban-count { background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 8px; font-size: 0.8rem; }
+.kanban-empty { color: var(--color-texto-secundario); font-size: 0.88rem; text-align: center; padding: 20px 0; }
+
+.kanban-card {
+    background: var(--color-blanco); border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 10px; border: 1px solid var(--color-borde);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.kanban-card-done { border-left: 3px solid #4a9a5c; }
+.kanban-card-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; color: var(--color-texto); }
+.kanban-card-title a { color: var(--color-principal); text-decoration: none; }
+.kanban-card-title a:hover { text-decoration: underline; }
+.kanban-card-notes { font-size: 0.8rem; color: var(--color-texto-secundario); margin-bottom: 8px; }
+.kanban-card-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+.kanban-btn {
+    font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-borde);
+    background: var(--color-tag-bg); color: var(--color-texto); cursor: pointer; transition: all 0.15s;
+}
+.kanban-btn:hover { background: var(--color-principal); color: #fff; border-color: var(--color-principal); }
+.kanban-btn-up { background: var(--color-principal); color: #fff; border-color: var(--color-principal); }
+.kanban-btn-del { color: #c0392b; border-color: #e8c0bb; }
+.kanban-btn-del:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+.kanban-select {
+    font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;
+    border: 1px solid var(--color-borde); background: var(--color-blanco);
+    color: var(--color-texto); max-width: 200px;
+}
+.kanban-promote-form { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }

@@ -73,6 +73,11 @@
             // Lógica para el menú lateral de la playlist
             document.getElementById('open-playlist-btn').addEventListener('click', function() {
                 document.getElementById('playlist-sidebar').style.width = '300px';
+                // Centrar la canción activa al abrir el sidebar
+                setTimeout(() => {
+                    const activeItem = document.querySelector('.sidebar-song-item.active');
+                    if (activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 150);
             });
 
             document.getElementById('close-playlist-btn').addEventListener('click', function() {
@@ -144,11 +149,27 @@
         </script>
 
         {% if obra.tipo == 'local' %}
+            {% if obra.audio %}
             <h4>Audio</h4>
-            <audio controls class="reproductor">
+            <audio id="cancion-audio" controls class="reproductor" {% if request.args.get('play') %}data-autoplay="1"{% endif %}>
                 <source src="{{ url_for('static', filename=obra.audio) }}" type="audio/mpeg">
                 Tu navegador no soporta el elemento de audio.
             </audio>
+            <script>
+            (function(){
+                var audio = document.getElementById('cancion-audio');
+                if (!audio) return;
+                var prevUrl = {{ ('"' + prev_song_url + '"') | safe if prev_song_url else 'null' }};
+                var nextUrl = {{ ('"' + next_song_url + '"') | safe if next_song_url else 'null' }};
+                var title   = {{ ('"' + obra.titulo | replace('"', '\\"') + '"') | safe }};
+                // Conectar al reproductor flotante global
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (window.FP) window.FP.init(audio, title, prevUrl, nextUrl);
+                    if (audio.dataset.autoplay) { audio.play().catch(()=>{}); }
+                });
+            })();
+            </script>
+            {% endif %}
 
             {% if obra.partitura %}
                 <!-- El título de la sección ahora está fuera y siempre visible -->
