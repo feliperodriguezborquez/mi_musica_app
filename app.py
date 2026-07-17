@@ -365,18 +365,41 @@ def index():
 
 @app.route('/composiciones')
 def ver_composiciones():
-    # Usamos la nueva función de búsqueda por categoría
+    sort_by = request.args.get('sort_by', 'cronologico')
     base_songs = search_by_category("Composición")
     filtered_songs, search_query = search_songs(base_songs)
-    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-    return render_template('composiciones.html', composiciones=filtered_songs, search_query=search_query, page_context='composiciones')
+    
+    # Aplicar ordenamiento
+    if sort_by == 'cronologico':
+        def get_song_order_cronologico(song):
+            anio = song.anio if song.anio is not None else 0
+            mes = song.mes if song.mes is not None else 0
+            dia = song.dia if song.dia is not None else 0
+            return (anio, mes, dia)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
+    else:
+        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
+        
+    return render_template('composiciones.html', composiciones=filtered_songs, search_query=search_query, page_context='composiciones', sort_by=sort_by)
 
 @app.route('/arreglos')
 def ver_arreglos():
+    sort_by = request.args.get('sort_by', 'cronologico')
     base_songs = search_by_category("Arreglo")
     filtered_songs, search_query = search_songs(base_songs)
-    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-    return render_template('arreglos.html', composiciones=filtered_songs, search_query=search_query, page_context='arreglos')
+    
+    # Aplicar ordenamiento
+    if sort_by == 'cronologico':
+        def get_song_order_cronologico(song):
+            anio = song.anio if song.anio is not None else 0
+            mes = song.mes if song.mes is not None else 0
+            dia = song.dia if song.dia is not None else 0
+            return (anio, mes, dia)
+        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
+    else:
+        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
+        
+    return render_template('arreglos.html', composiciones=filtered_songs, search_query=search_query, page_context='arreglos', sort_by=sort_by)
 
 @app.route('/tag/<tag_name>')
 def ver_tag(tag_name):
