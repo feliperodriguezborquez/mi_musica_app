@@ -106,19 +106,24 @@
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
                     <span id="fp-queue-count" class="fp-queue-badge hidden">0</span>
                 </button>
-                <div id="fp-queue-dropdown" class="fp-queue-dropdown hidden">
-                    <div class="fp-queue-header">
-                        <span>Cola de reproducción</span>
-                        <button id="fp-clear-queue-btn">Limpiar</button>
-                    </div>
-                    <div id="fp-queue-items" class="fp-queue-items">
-                        <div class="fp-queue-empty">Cola vacía</div>
-                    </div>
-                </div>
             </div>
             <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar reproductor">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
+        </div>
+    </div>
+
+    <!-- Panel de Cola de Reproducción Lateral -->
+    <div id="fp-queue-dropdown" class="fp-queue-dropdown hidden">
+        <div class="fp-queue-header">
+            <span>Cola de reproducción</span>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button id="fp-clear-queue-btn" class="fp-clear-queue-btn">Limpiar</button>
+                <button id="fp-close-queue-btn" style="background:none; border:none; cursor:pointer; color:var(--color-texto); font-size:1.2rem;">✕</button>
+            </div>
+        </div>
+        <div id="fp-queue-items" class="fp-queue-items">
+            <div class="fp-queue-empty">Cola vacía</div>
         </div>
     </div>
 
@@ -390,9 +395,12 @@ document.addEventListener('DOMContentLoaded', function() {
             fpQueueDropdown.classList.toggle('hidden');
         });
     }
-    document.addEventListener('click', () => {
-        if (fpQueueDropdown) fpQueueDropdown.classList.add('hidden');
-    });
+    const fpCloseQueueBtn = document.getElementById('fp-close-queue-btn');
+    if (fpCloseQueueBtn) {
+        fpCloseQueueBtn.addEventListener('click', () => {
+            fpQueueDropdown.classList.add('hidden');
+        });
+    }
     if (fpQueueDropdown) {
         fpQueueDropdown.addEventListener('click', (e) => e.stopPropagation());
     }

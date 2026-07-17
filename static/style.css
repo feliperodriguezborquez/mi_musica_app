@@ -1517,32 +1517,38 @@ body { padding-bottom: 110px; }
     display: none;
 }
 .fp-queue-dropdown {
-    position: absolute;
-    bottom: 50px;
+    position: fixed;
+    top: 0;
     right: 0;
-    background: var(--color-fondo);
-    border: 1px solid var(--color-borde);
-    border-radius: 12px;
-    width: 320px;
-    max-height: 400px;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    bottom: 0;
+    background: rgba(31, 29, 27, 0.96);
+    backdrop-filter: blur(25px);
+    border-left: 1px solid var(--color-borde);
+    width: 380px;
+    max-height: 100vh;
+    box-shadow: -10px 0 40px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
-    z-index: 9999;
+    z-index: 10000;
     overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme="light"] .fp-queue-dropdown {
+    background: rgba(253, 251, 247, 0.96);
 }
 .fp-queue-dropdown.hidden {
-    display: none !important;
+    transform: translateX(100%);
+    display: flex !important; /* Keep flex structure so transitions work */
 }
 .fp-queue-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 24px;
     border-bottom: 1px solid var(--color-borde);
-    background: var(--color-blanco);
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    font-family: 'Lora', serif;
 }
 .fp-clear-queue-btn, #fp-clear-queue-btn {
     background: none;
