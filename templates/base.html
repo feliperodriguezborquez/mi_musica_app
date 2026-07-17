@@ -105,18 +105,17 @@ window.FP = {
 
     /** Llamado desde composicion.html al cargar la página */
     init(audioEl, title, prevUrl, nextUrl) {
-        this._queue = { audioEl, title, prevUrl, nextUrl };
+        this.audio = audioEl;
+        this._pending = { title, prevUrl, nextUrl };
         if (document.readyState !== 'loading') {
-            this._setup();   // DOM ya listo → configurar ya
+            this._setup();
         }
-        // Si no, DOMContentLoaded llamará a _setup()
     },
 
     _setup() {
-        if (!this._queue) return;
-        const { audioEl, title, prevUrl, nextUrl } = this._queue;
-        this._queue = null;
-        this.audio = audioEl;
+        if (!this._pending) return;
+        const { title, prevUrl, nextUrl } = this._pending;
+        this._pending = null;
 
         const fp      = document.getElementById('floating-player');
         const fpTitle = document.getElementById('fp-title');
@@ -164,7 +163,7 @@ window.FP = {
 document.addEventListener('DOMContentLoaded', function() {
 
     // Si FP.init() ya fue llamado (caso normal), completar el setup ahora
-    if (window.FP._queue) window.FP._setup();
+    if (window.FP._pending) window.FP._setup();
 
     // ─── Botones del Reproductor Flotante ────────────────────────────────────
     const fpPlay   = document.getElementById('fp-play');
