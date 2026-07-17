@@ -69,9 +69,9 @@
         <p>Código bajo Licencia MIT. Composiciones son propiedad exclusiva del autor.</p>
     </footer>
 
-    {% if FEATURES['floating_player'] %}
     <!-- ====== REPRODUCTOR FLOTANTE ====== -->
     <div id="floating-player" class="floating-player">
+        <audio id="global-audio" style="display: none;"></audio>
         <div class="fp-song-info">
             <span id="fp-title" class="fp-title">Ninguna canción en reproducción</span>
         </div>
@@ -100,7 +100,13 @@ window.FP = {
     audio: null,
     _pending: null,
 
+    // Vincula el reproductor flotante al elemento de audio actual (puede ser el de la página o el global-audio)
     init(audioEl, title, prevUrl, nextUrl) {
+        // Desvincular eventos del audio anterior si existía
+        if (this.audio) {
+            this._unbindAudio();
+        }
+
         this.audio = audioEl;
         this._pending = { title, prevUrl, nextUrl };
         this._setup();
@@ -125,25 +131,38 @@ window.FP = {
         this._bindAudio();
     },
 
+    _timeUpdateHandler: null,
+    _playHandler: null,
+    _pauseHandler: null,
+    _endedHandler: null,
+
     _bindAudio() {
-        const a      = this.audio;
+        const a = this.audio;
         if (!a) return;
 
-        a.addEventListener('timeupdate', () => {
+        const seek = document.getElementById('fp-seek');
+        const cur  = document.getElementById('fp-current');
+        const dur  = document.getElementById('fp-duration');
+        const p    = document.getElementById('fp-play');
+        const next = document.getElementById('fp-next');
+
+        this._timeUpdateHandler = () => {
             if (!isNaN(a.duration)) {
-                const seek = document.getElementById('fp-seek');
-                const cur  = document.getElementById('fp-current');
-                const dur  = document.getElementById('fp-duration');
                 if (seek) { seek.max = Math.floor(a.duration); seek.value = Math.floor(a.currentTime); }
                 if (cur)  cur.textContent  = _fmt(a.currentTime);
                 if (dur)  dur.textContent  = _fmt(a.duration);
             }
-        });
-        a.addEventListener('play',  () => { const p = document.getElementById('fp-play'); if (p) p.textContent = '⏸'; });
-        a.addEventListener('pause', () => { const p = document.getElementById('fp-play'); if (p) p.textContent = '▶'; });
-        a.addEventListener('ended', () => {
-            const p    = document.getElementById('fp-play');
-            const next = document.getElementById('fp-next');
+        };
+
+        this._playHandler = () => {
+            if (p) p.textContent = '⏸';
+        };
+
+        this._pauseHandler = () => {
+            if (p) p.textContent = '▶';
+        };
+
+        this._endedHandler = () => {
             if (p) p.textContent = '▶';
             if (localStorage.getItem('autoplay_playlist') === 'true' &&
                 next && next.href && !next.href.endsWith('#')) {
@@ -151,7 +170,24 @@ window.FP = {
                 url.searchParams.set('play', '1');
                 window.location.href = url.toString();
             }
-        });
+        };
+
+        a.addEventListener('timeupdate', this._timeUpdateHandler);
+        a.addEventListener('play', this._playHandler);
+        a.addEventListener('pause', this._pauseHandler);
+        a.addEventListener('ended', this._endedHandler);
+
+        // Inicializar el botón de play en la barra con el estado actual
+        if (p) p.textContent = a.paused ? '▶' : '⏸';
+    },
+
+    _unbindAudio() {
+        const a = this.audio;
+        if (!a) return;
+        a.removeEventListener('timeupdate', this._timeUpdateHandler);
+        a.removeEventListener('play', this._playHandler);
+        a.removeEventListener('pause', this._pauseHandler);
+        a.removeEventListener('ended', this._endedHandler);
     }
 };
 
@@ -159,31 +195,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (window.FP._pending) window.FP._setup();
 
-    // ─── Botones del Reproductor Flotante ────────────────────────────────────
+    // ====== Controles del Reproductor Flotante ======
     const fpPlay   = document.getElementById('fp-play');
     const fpSeek   = document.getElementById('fp-seek');
     const fpVolBtn = document.getElementById('fp-volume-btn');
     const fpClose  = document.getElementById('fp-close');
 
-    if (fpPlay)   fpPlay.addEventListener('click', () => {
-        if (!window.FP.audio) return;
-        window.FP.audio.paused ? window.FP.audio.play() : window.FP.audio.pause();
-    });
-    if (fpSeek)   fpSeek.addEventListener('input', () => {
-        if (window.FP.audio) window.FP.audio.currentTime = Number(fpSeek.value);
-    });
-    if (fpVolBtn) fpVolBtn.addEventListener('click', () => {
-        if (!window.FP.audio) return;
-        window.FP.audio.muted = !window.FP.audio.muted;
-        fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
-    });
-    if (fpClose)  fpClose.addEventListener('click', () => {
-        if (window.FP.audio) window.FP.audio.pause();
-        const fp = document.getElementById('floating-player');
-        if (fp) fp.classList.add('hidden');
-    });
+    if (fpPlay) {
+        fpPlay.addEventListener('click', () => {
+            if (!window.FP.audio) return;
+            if (window.FP.audio.paused) {
+                window.FP.audio.play().catch(e => console.log(e));
+            } else {
+                window.FP.audio.pause();
+            }
+        });
+    }
+    if (fpSeek) {
+        fpSeek.addEventListener('input', () => {
+            if (window.FP.audio) window.FP.audio.currentTime = Number(fpSeek.value);
+        });
+    }
+    if (fpVolBtn) {
+        fpVolBtn.addEventListener('click', () => {
+            if (!window.FP.audio) return;
+            window.FP.audio.muted = !window.FP.audio.muted;
+            fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
+        });
+    }
+    if (fpClose) {
+        fpClose.addEventListener('click', () => {
+            if (window.FP.audio) window.FP.audio.pause();
+            const fp = document.getElementById('floating-player');
+            if (fp) fp.style.display = 'none';
+        });
+    }
 
-    // ─── Búsqueda en vivo ───────────────────────────────────────────────────
+    // ====== Búsqueda en vivo ======
     const searchInput       = document.getElementById('search-input');
     const songListContainer = document.getElementById('song-list-container');
     if (searchInput) {
@@ -203,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ─── Category pills ─────────────────────────────────────────────────────
+    // ====== Category pills ======
     document.querySelectorAll('.category-pill').forEach(pill => {
         pill.addEventListener('click', function() {
             document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
@@ -219,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ─── Dropdown de perfil ─────────────────────────────────────────────────
+    // ====== Dropdown de perfil ======
     const profileBtn      = document.getElementById('profile-btn');
     const profileDropdown = document.getElementById('profile-dropdown');
     if (profileBtn) {
@@ -231,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
         profileDropdown.addEventListener('click', e => e.stopPropagation());
     }
 
-    // ─── Modo Oscuro ────────────────────────────────────────────────────────
+    // ====== Modo Oscuro ======
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         const applyTheme = (theme) => {
@@ -246,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ─── Toggle de Autoplay ─────────────────────────────────────────────────
+    // ====== Toggle de Autoplay ======
     const autoplayToggle = document.getElementById('autoplay-toggle');
     if (autoplayToggle) {
         const applyAutoplay = (val) => {
@@ -259,21 +307,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ─── Interceptar Clicks en Botones de Play de la Lista ───────────────────
+    // ====== Interceptar Clicks en Botones de Play de la Lista (Reproducción directa) ======
     if (songListContainer) {
         songListContainer.addEventListener('click', function(e) {
             const playBtn = e.target.closest('.list-play-btn');
             if (playBtn) {
-                e.preventDefault(); // Evitar navegar inmediatamente
+                e.preventDefault();
                 e.stopPropagation();
+                
                 const card = playBtn.closest('.tarjeta-obra');
                 if (card) {
-                    const href = card.getAttribute('href');
-                    if (href) {
-                        // Navegar forzando el autoplay automático con query param ?play=1
-                        const url = new URL(href, window.location.origin);
-                        url.searchParams.set('play', '1');
-                        window.location.href = url.toString();
+                    const audioUrl = card.getAttribute('data-audio');
+                    const title = card.getAttribute('data-title');
+                    
+                    if (audioUrl) {
+                        // Usar el audio global
+                        const globalAudio = document.getElementById('global-audio');
+                        if (globalAudio) {
+                            // Si es el mismo audio y está reproduciendo, pausamos
+                            if (globalAudio.src.includes(audioUrl)) {
+                                if (globalAudio.paused) {
+                                    globalAudio.play().catch(err => console.log(err));
+                                    playBtn.textContent = '⏸';
+                                } else {
+                                    globalAudio.pause();
+                                    playBtn.textContent = '▶';
+                                }
+                            } else {
+                                // Cargar un nuevo audio
+                                // Restablecer botones anteriores de play
+                                document.querySelectorAll('.list-play-btn').forEach(btn => btn.textContent = '▶');
+                                
+                                globalAudio.src = audioUrl;
+                                globalAudio.load();
+                                
+                                // Inicializar el reproductor flotante con este audio global
+                                window.FP.init(globalAudio, title, null, null);
+                                globalAudio.play().catch(err => console.log(err));
+                                playBtn.textContent = '⏸';
+                            }
+                        }
                     }
                 }
             }

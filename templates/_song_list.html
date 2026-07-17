@@ -1,6 +1,10 @@
 <div class="lista-composiciones">
     {% for obra in composiciones %}
-        <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query, sort_by=sort_by) }}" class="tarjeta-obra">
+        <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query, sort_by=sort_by) }}" 
+           class="tarjeta-obra" 
+           data-id="{{ obra.id }}"
+           {% if obra.audio %}data-audio="{{ url_for('static', filename=obra.audio) }}"{% endif %}
+           data-title="{{ obra.titulo }}">
             <div class="info-tarjeta">
                 <div class="song-title-with-number">
                     <span class="song-number">{{ loop.index }}.</span>
@@ -17,7 +21,7 @@
                     {% endif %}
                 </div>
                 {% if obra.audio %}
-                <span class="list-play-btn" title="Ver e iniciar reproducción">▶</span>
+                <span class="list-play-btn" title="Reproducir sin abrir página">▶</span>
                 {% endif %}
             </div>
         </a>
