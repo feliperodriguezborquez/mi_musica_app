@@ -150,29 +150,49 @@
 
         {% if obra.tipo == 'local' %}
             {% if obra.audio %}
-            <h4>Audio</h4>
-            <audio id="cancion-audio" controls class="reproductor" {% if request.args.get('play') %}data-autoplay="1"{% endif %}>
+            <!-- El audio real ahora se oculta de forma visual y se maneja con el reproductor flotante -->
+            <audio id="cancion-audio" style="display:none;" {% if request.args.get('play') %}data-autoplay="1"{% endif %}>
                 <source src="{{ url_for('static', filename=obra.audio) }}" type="audio/mpeg">
-                Tu navegador no soporta el elemento de audio.
             </audio>
+
+            <div class="main-play-button-container">
+                <button id="main-play-btn" class="main-play-btn" title="Reproducir canción">▶ Escuchar Canción</button>
+            </div>
+
             <script>
             (function(){
-                // window.FP ya está definido antes de que este script corra,
-                // así que podemos llamar a FP.init() directamente aquí.
                 var audio   = document.getElementById('cancion-audio');
+                var playBtn = document.getElementById('main-play-btn');
                 if (!audio) return;
+                
                 var prevUrl = {{ ('"' + prev_song_url + '"') | safe if prev_song_url else 'null' }};
                 var nextUrl = {{ ('"' + next_song_url + '"') | safe if next_song_url else 'null' }};
                 var title   = {{ ('"' + obra.titulo | replace('"', '\\"') + '"') | safe }};
 
-                // FP.init() usa el patrón de cola: si el DOM no está listo,
-                // guardará los parámetros y los aplicará en DOMContentLoaded.
                 if (window.FP) window.FP.init(audio, title, prevUrl, nextUrl);
+
+                // Sincronizar estado del botón de la página con el audio
+                audio.addEventListener('play', function() {
+                    if (playBtn) playBtn.innerHTML = '⏸ Pausar Canción';
+                });
+                audio.addEventListener('pause', function() {
+                    if (playBtn) playBtn.innerHTML = '▶ Escuchar Canción';
+                });
+
+                if (playBtn) {
+                    playBtn.addEventListener('click', function() {
+                        if (audio.paused) {
+                            audio.play().catch(function(e){ console.log("Error al reproducir:", e); });
+                        } else {
+                            audio.pause();
+                        }
+                    });
+                }
 
                 if (audio.dataset.autoplay) {
                     audio.addEventListener('canplay', function once() {
                         audio.removeEventListener('canplay', once);
-                        audio.play().catch(() => {});
+                        audio.play().catch(function(){});
                     }, { once: true });
                 }
             })();

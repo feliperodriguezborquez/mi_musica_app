@@ -983,6 +983,63 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 }
 
 /* ================================================================
+   NUEVOS BOTONES DE REPRODUCCIÓN (Detalle y Lista)
+   ================================================================ */
+.main-play-button-container {
+    margin: 20px 0;
+    text-align: center;
+}
+.main-play-btn {
+    background-color: var(--color-principal);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.main-play-btn:hover {
+    background-color: var(--color-acento);
+    transform: scale(1.04);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+.main-play-btn:active {
+    transform: scale(0.98);
+}
+
+.tarjeta-right-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.list-play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-principal);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.tarjeta-obra:hover .list-play-btn {
+    background-color: var(--color-acento);
+    transform: scale(1.15);
+}
+
+
+/* ================================================================
    FLOATING PLAYER (Spotify Style)
    ================================================================ */
 .floating-player {

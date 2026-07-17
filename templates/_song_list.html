@@ -8,11 +8,16 @@
                 </div>
                 <p>{{ obra.musica }}</p>
             </div>
-            <div class="categoria-tags-container">
-                {% if obra.categorias %}
-                    {% for cat in obra.categorias | sort_categories_for_page(page_context) %}
-                        <span class="categoria-tag">{{ cat }}</span>
-                    {% endfor %}
+            <div class="tarjeta-right-section">
+                <div class="categoria-tags-container">
+                    {% if obra.categorias %}
+                        {% for cat in obra.categorias | sort_categories_for_page(page_context) %}
+                            <span class="categoria-tag">{{ cat }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% if obra.audio %}
+                <span class="list-play-btn" title="Ver e iniciar reproducción">▶</span>
                 {% endif %}
             </div>
         </a>
