@@ -25,25 +25,35 @@
                 <li class="profile-menu-container">
                     <button id="profile-btn" class="profile-btn" title="Menú">⚙</button>
                     <div id="profile-dropdown" class="profile-dropdown hidden">
-                        <div class="dropdown-item dropdown-toggle-row">
-                            <span class="dropdown-label">Modo Oscuro</span>
-                            <button id="theme-toggle" class="toggle-switch" aria-label="Modo oscuro"></button>
-                        </div>
-                        {% if FEATURES['autoplay'] %}
-                        <div class="dropdown-item dropdown-toggle-row">
-                            <span class="dropdown-label">Reproducción automática</span>
-                            <button id="autoplay-toggle" class="toggle-switch" aria-label="Auto-reproducción"></button>
-                        </div>
-                        {% endif %}
-                        <div class="dropdown-separator"></div>
-                        {% if session.logged_in %}
-                            {% if FEATURES['ideas_admin'] %}
-                            <a href="{{ url_for('admin_ideas') }}" class="dropdown-item">Ideas de Canciones</a>
+                        <!-- Sección: Preferencias/Configuración -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Ajustes</div>
+                            <div class="dropdown-item dropdown-toggle-row">
+                                <span class="dropdown-label">Modo Oscuro</span>
+                                <button id="theme-toggle" class="toggle-switch" aria-label="Modo oscuro"></button>
+                            </div>
+                            {% if FEATURES['autoplay'] %}
+                            <div class="dropdown-item dropdown-toggle-row">
+                                <span class="dropdown-label">Auto-reproducir</span>
+                                <button id="autoplay-toggle" class="toggle-switch" aria-label="Auto-reproducción"></button>
+                            </div>
                             {% endif %}
-                            <a href="{{ url_for('logout') }}" class="dropdown-item">Cerrar Sesión</a>
-                        {% else %}
-                            <a href="{{ url_for('login') }}" class="dropdown-item">Iniciar Sesión</a>
-                        {% endif %}
+                        </div>
+                        
+                        <div class="dropdown-separator"></div>
+                        
+                        <!-- Sección: Cuenta / Admin -->
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">Opciones</div>
+                            {% if session.logged_in %}
+                                {% if FEATURES['ideas_admin'] %}
+                                <a href="{{ url_for('admin_ideas') }}" class="dropdown-item dropdown-link">Ideas de Canciones</a>
+                                {% endif %}
+                                <a href="{{ url_for('logout') }}" class="dropdown-item dropdown-link logout-item">Cerrar Sesión</a>
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="dropdown-item dropdown-link">Iniciar Sesión</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </li>
             </ul>

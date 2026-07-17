@@ -885,24 +885,37 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     position: absolute; right: 0; top: calc(100% + 10px);
     background: var(--color-fondo);
     border: 1px solid var(--color-borde);
-    border-radius: 12px; min-width: 230px;
+    border-radius: 12px; min-width: 250px;
     box-shadow: 0 10px 32px rgba(0,0,0,0.14);
     z-index: 9999; overflow: hidden;
-    /* Subtle warm top accent line */
     border-top: 3px solid var(--color-principal);
+    padding: 6px 0;
 }
 .profile-dropdown.hidden { display: none; }
 
+.dropdown-section {
+    padding: 6px 0;
+}
+.dropdown-section-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-texto-secundario);
+    padding: 4px 16px 6px 16px;
+    font-weight: 700;
+}
+
 .dropdown-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 11px 16px; font-size: 0.9rem;
+    padding: 8px 16px; font-size: 0.88rem;
     color: var(--color-texto); text-decoration: none;
     background: none; border: none; width: 100%;
     text-align: left; cursor: pointer;
     font-family: inherit; font-weight: 500;
     transition: background 0.15s, color 0.15s;
+    box-sizing: border-box;
 }
-.dropdown-item:hover {
+.dropdown-link:hover {
     background: var(--color-tag-bg);
     color: var(--color-principal);
 }
@@ -911,32 +924,45 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     cursor: default;
 }
 .dropdown-toggle-row:hover { background: none; color: var(--color-texto); }
-.dropdown-label { font-size: 0.9rem; color: var(--color-texto); font-weight: 500; }
+.dropdown-label { font-size: 0.88rem; color: var(--color-texto); font-weight: 500; }
 
 .dropdown-separator {
     border: none; border-top: 1px solid var(--color-borde);
-    margin: 3px 0;
+    margin: 6px 0;
 }
 
 /* Toggle Switch */
 .toggle-switch {
-    width: 42px; height: 24px; border-radius: 12px;
+    width: 44px; height: 24px; border-radius: 12px;
     background: var(--color-borde); border: none; cursor: pointer;
     position: relative; transition: background 0.25s; flex-shrink: 0;
     outline: none;
+    padding: 0;
 }
 .toggle-switch::after {
     content: ''; position: absolute;
     left: 3px; top: 3px;
     width: 18px; height: 18px;
     border-radius: 50%; background: #fff;
-    transition: left 0.22s cubic-bezier(.4,0,.2,1);
+    transition: left 0.2s cubic-bezier(.4,0,.2,1);
     box-shadow: 0 1px 4px rgba(0,0,0,0.22);
 }
 .toggle-switch.on { background: var(--color-principal); }
-.toggle-switch.on::after { left: 21px; }
+.toggle-switch.on::after { left: 23px; }
 [data-theme="dark"] .toggle-switch { background: #555; }
 [data-theme="dark"] .toggle-switch.on { background: var(--color-principal); }
+
+.logout-item {
+    color: #c0392b;
+}
+.logout-item:hover {
+    background: #fdf2f2;
+    color: #c0392b;
+}
+[data-theme="dark"] .logout-item:hover {
+    background: #2c1a1a;
+    color: #e74c3c;
+}
 
 /* ================================================================
    CATEGORY PILLS
