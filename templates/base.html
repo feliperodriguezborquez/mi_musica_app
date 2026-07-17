@@ -261,7 +261,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (window.FP._pending) window.FP._setup();
 
-    // ====== Controles del Reproductor Flotante ======
+    // ====== INICIALIZAR ESTADO DE COLA (solo una vez, no se reinicia con PJAX) ======
+    if (!window.FP.queue) window.FP.queue = [];
+    if (window.FP.queueIndex === undefined) window.FP.queueIndex = -1;
+
+    // ====== Controles del Reproductor Flotante (delegación global, siempre funcionan) ======
     const fpPlay         = document.getElementById('fp-play');
     const fpSeek         = document.getElementById('fp-seek');
     const fpVolBtn       = document.getElementById('fp-volume-btn');
@@ -321,41 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ====== Búsqueda en vivo ======
-    const searchInput       = document.getElementById('search-input');
-    const songListContainer = document.getElementById('song-list-container');
-    if (searchInput) {
-        let debounceTimer;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                const form = document.getElementById('filter-form');
-                const params = new URLSearchParams(form ? new FormData(form) : {});
-                const catFilter = document.querySelector('.category-pill.active');
-                if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
-                fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
-                    .then(r => r.text())
-                    .then(html => { if (songListContainer) songListContainer.innerHTML = html; })
-                    .catch(e => console.error(e));
-            }, 300);
-        });
-    }
-
-    // ====== Category pills ======
-    document.querySelectorAll('.category-pill').forEach(pill => {
-        pill.addEventListener('click', function() {
-            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-            if (!songListContainer) return;
-            const form   = document.getElementById('filter-form');
-            const params = new URLSearchParams(form ? new FormData(form) : {});
-            if (this.dataset.cat) params.set('categoria', this.dataset.cat);
-            fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
-                .then(r => r.text())
-                .then(html => { songListContainer.innerHTML = html; })
-                .catch(e => console.error(e));
-        });
-    });
+    // Búsqueda en vivo y category pills ahora son delegación global (ver abajo)
 
     // ====== Dropdown de perfil ======
     const profileBtn      = document.getElementById('profile-btn');
@@ -397,9 +367,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ====== COLA DE REPRODUCCIÓN (Queue State) ======
-    window.FP.queue = [];
-    window.FP.queueIndex = -1;
+    // ====== COLA DE REPRODUCCIÓN (Queue State) - refs al DOM del reproductor, que nunca cambia ======
+    // La cola y el índice ya fueron inicializados arriba (guardados en window.FP)
 
     const fpQueueBtn = document.getElementById('fp-queue-btn');
     const fpQueueDropdown = document.getElementById('fp-queue-dropdown');
@@ -585,194 +554,208 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ====== Interceptar Clicks en Botones de Play de la Lista (Reproducción directa) ======
-    if (songListContainer) {
-        songListContainer.addEventListener('click', function(e) {
-            const playBtn = e.target.closest('.list-play-btn');
-            const optionsBtn = e.target.closest('.card-options-btn');
-            const addQueueBtn = e.target.closest('.opt-add-queue');
+    // Play, options y add-to-queue en tarjetas ahora son delegación global (ver abajo)
 
-            if (playBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const card = playBtn.closest('.tarjeta-obra');
-                if (card) {
-                    const audioUrl = card.getAttribute('data-audio');
-                    const title = card.getAttribute('data-title');
-                    const id = card.getAttribute('data-id');
-                    
-                    if (audioUrl) {
-                        // Construir cola cargando todas las canciones con audio que están en la lista visible
-                        const allCards = Array.from(document.querySelectorAll('.tarjeta-obra-wrapper .tarjeta-obra'));
-                        const audioCards = allCards.filter(c => c.getAttribute('data-audio'));
-                        
-                        window.FP.queue = audioCards.map(c => ({
-                            id: c.getAttribute('data-id'),
-                            title: c.getAttribute('data-title'),
-                            audioUrl: c.getAttribute('data-audio')
-                        }));
-                        
-                        // Buscar el índice de la canción clicada en la nueva cola
-                        const index = window.FP.queue.findIndex(item => item.id === id);
-                        playQueueIndex(index !== -1 ? index : 0);
-                    }
-                }
-            } else if (optionsBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                // Cerrar otros dropdowns de opciones
-                document.querySelectorAll('.card-options-dropdown').forEach(d => {
-                    if (d !== optionsBtn.nextElementSibling) d.classList.add('hidden');
-                });
-                optionsBtn.nextElementSibling.classList.toggle('hidden');
-            } else if (addQueueBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                const id = addQueueBtn.getAttribute('data-id');
-                const title = addQueueBtn.getAttribute('data-title');
-                const audio = addQueueBtn.getAttribute('data-audio');
-                addToQueue(id, title, audio);
-                addQueueBtn.closest('.card-options-dropdown').classList.add('hidden');
-            }
-        });
-    }
+    // ====== NAVEGACIÓN SPA (PJAX) ======
+    // La delegación de eventos en `document` garantiza que funcionen incluso
+    // después de que el PJAX reemplace el contenido del main.
 
-    // Cerrar dropdown de opciones al hacer click afuera
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.card-options-dropdown').forEach(d => d.classList.add('hidden'));
-    });
-
-    // ====== NAVEGACIÓN SPA (PJAX) PARA EVITAR QUE SE DETENGA LA MÚSICA ======
-    function makeSPALinks(container) {
-        const links = container.querySelectorAll('a');
-        links.forEach(link => {
-            // Ignorar enlaces externos, vacíos, o de descarga
-            if (!link.href || link.href.includes('#') || link.getAttribute('target') === '_blank' || link.href.startsWith('javascript:')) {
-                return;
-            }
-            // Solo interceptar enlaces internos al mismo dominio
-            if (new URL(link.href).origin === window.location.origin) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navigateSPA(link.href);
-                });
-            }
-        });
+    // Helper: ¿debemos interceptar este link con PJAX?
+    function shouldIntercept(link) {
+        if (!link || !link.href) return false;
+        try {
+            const url = new URL(link.href, window.location.origin);
+            if (url.origin !== window.location.origin) return false;
+            if (url.pathname.startsWith('/admin')) return false;
+            if (url.pathname.startsWith('/login')) return false;
+            if (url.pathname.startsWith('/logout')) return false;
+            if (url.pathname.startsWith('/register')) return false;
+            if (link.getAttribute('target') === '_blank') return false;
+            if (link.getAttribute('download') != null) return false;
+            if (url.hash && url.pathname === window.location.pathname) return false;
+            if (link.href.startsWith('javascript:')) return false;
+            return true;
+        } catch(e) { return false; }
     }
 
     function navigateSPA(url, pushState = true) {
-        fetch(url)
-            .then(res => res.text())
+        fetch(url, { headers: { 'X-PJAX': '1' } })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.text();
+            })
             .then(html => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                
-                // Actualizar el título de la página
+
                 document.title = doc.title;
-                
-                // Reemplazar el contenedor principal
+
                 const currentMain = document.getElementById('pjax-container');
                 const newMain = doc.getElementById('pjax-container');
                 if (currentMain && newMain) {
                     currentMain.innerHTML = newMain.innerHTML;
-                    
-                    // Re-inicializar eventos específicos de la página cargada
-                    makeSPALinks(currentMain);
-                    rebindPageEvents();
+                }
+
+                // Re-ejecutar scripts del bloque extra_js del template parcial
+                const newExtraJS = doc.getElementById('pjax-extra-js');
+                const curExtraJS = document.getElementById('pjax-extra-js');
+                if (newExtraJS && curExtraJS) {
+                    curExtraJS.innerHTML = '';
+                    newExtraJS.querySelectorAll('script').forEach(s => {
+                        const ns = document.createElement('script');
+                        if (s.src) { ns.src = s.src; ns.defer = true; }
+                        else ns.textContent = s.textContent;
+                        curExtraJS.appendChild(ns);
+                    });
                 }
 
                 if (pushState) {
                     window.history.pushState({ url }, '', url);
                 }
-                
-                // Mover scroll arriba
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(err => {
-                console.error("Error en navegación SPA, reintentando de forma nativa:", err);
+                console.warn('PJAX falló, navegando nativamente:', err);
                 window.location.href = url;
             });
     }
 
-    // Volver a vincular listeners del buscador y category pills al cambiar de página
-    function rebindPageEvents() {
-        const searchInput = document.getElementById('search-input');
-        const songListContainer = document.getElementById('song-list-container');
-        if (searchInput) {
-            let debounceTimer;
-            searchInput.addEventListener('input', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    const form = document.getElementById('filter-form');
-                    const params = new URLSearchParams(form ? new FormData(form) : {});
-                    const catFilter = document.querySelector('.category-pill.active');
-                    if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
-                    fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
-                        .then(r => r.text())
-                        .then(html => { if (songListContainer) songListContainer.innerHTML = html; })
-                        .catch(e => console.error(e));
-                }, 300);
-            });
+    // ====== DELEGACIÓN GLOBAL UNIFICADA: Un único listener para todos los clicks ======
+    document.addEventListener('click', (e) => {
+
+        // 1. Play en tarjetas
+        const playBtn = e.target.closest('.list-play-btn');
+        if (playBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = playBtn.closest('.tarjeta-obra');
+            if (card) {
+                const audioUrl = card.getAttribute('data-audio');
+                const id = card.getAttribute('data-id');
+                if (audioUrl) {
+                    const allCards = Array.from(document.querySelectorAll('.tarjeta-obra-wrapper .tarjeta-obra'));
+                    const audioCards = allCards.filter(c => c.getAttribute('data-audio'));
+                    window.FP.queue = audioCards.map(c => ({
+                        id: c.getAttribute('data-id'),
+                        title: c.getAttribute('data-title'),
+                        audioUrl: c.getAttribute('data-audio')
+                    }));
+                    const index = window.FP.queue.findIndex(item => item.id === id);
+                    playQueueIndex(index !== -1 ? index : 0);
+                }
+            }
+            return;
         }
 
-        document.querySelectorAll('.category-pill').forEach(pill => {
-            pill.addEventListener('click', function() {
-                document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                if (!songListContainer) return;
-                const form   = document.getElementById('filter-form');
+        // 2. Botón de opciones de tarjeta
+        const optionsBtn = e.target.closest('.card-options-btn');
+        if (optionsBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.querySelectorAll('.card-options-dropdown').forEach(d => {
+                if (d !== optionsBtn.nextElementSibling) d.classList.add('hidden');
+            });
+            optionsBtn.nextElementSibling?.classList.toggle('hidden');
+            return;
+        }
+
+        // 3. Añadir a la cola
+        const addQueueBtn = e.target.closest('.opt-add-queue');
+        if (addQueueBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            addToQueue(
+                addQueueBtn.getAttribute('data-id'),
+                addQueueBtn.getAttribute('data-title'),
+                addQueueBtn.getAttribute('data-audio')
+            );
+            addQueueBtn.closest('.card-options-dropdown')?.classList.add('hidden');
+            return;
+        }
+
+        // 4. Cerrar dropdowns si se hizo click fuera
+        if (!e.target.closest('.card-options-dropdown')) {
+            document.querySelectorAll('.card-options-dropdown').forEach(d => d.classList.add('hidden'));
+        }
+
+        // 5. Category pills
+        const pill = e.target.closest('.category-pill');
+        if (pill) {
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const container = document.getElementById('song-list-container');
+            if (container) {
+                const form = document.getElementById('filter-form');
                 const params = new URLSearchParams(form ? new FormData(form) : {});
-                if (this.dataset.cat) params.set('categoria', this.dataset.cat);
+                if (pill.dataset.cat) params.set('categoria', pill.dataset.cat);
+                const searchInput = document.getElementById('search-input');
+                if (searchInput && searchInput.value) params.set('search', searchInput.value);
                 fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
                     .then(r => r.text())
-                    .then(html => { songListContainer.innerHTML = html; })
-                    .catch(e => console.error(e));
-            });
-        });
+                    .then(html => { container.innerHTML = html; })
+                    .catch(err => console.error(err));
+            }
+            return;
+        }
 
-        // Configurar botones de ordenación AJAX específicos si existen
-        const sortButtons = document.querySelectorAll('.sort-button');
-        if (sortButtons.length > 0 && songListContainer) {
-            sortButtons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const sortMethod = this.dataset.sort;
-                    const tagName = window.location.pathname.split('/').pop();
-
-                    sortButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=tag&tag_name=${tagName}&sort_by=${sortMethod}`;
-                    songListContainer.innerHTML = '<p class="no-results">Cargando...</p>';
-
-                    fetch(fetchUrl)
-                        .then(response => response.text())
-                        .then(html => {
-                            songListContainer.innerHTML = html;
-                            const nextURL = new URL(window.location);
-                            nextURL.searchParams.set('sort_by', sortMethod);
-                            window.history.pushState({ path: nextURL.href }, '', nextURL.href);
-                        });
+        // 6. Sort buttons
+        const sortBtn = e.target.closest('.sort-button');
+        if (sortBtn) {
+            e.preventDefault();
+            const container = document.getElementById('song-list-container');
+            if (!container) return;
+            const sortMethod = sortBtn.dataset.sort;
+            const tagName = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+            sortBtn.classList.add('active');
+            const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=tag&tag_name=${tagName}&sort_by=${sortMethod}`;
+            container.innerHTML = '<p class="no-results">Cargando...</p>';
+            fetch(fetchUrl)
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    const nextURL = new URL(window.location);
+                    nextURL.searchParams.set('sort_by', sortMethod);
+                    window.history.pushState({ path: nextURL.href }, '', nextURL.href);
                 });
-            });
+            return;
         }
-    }
 
-    // Inicializar SPA para el cuerpo inicial de la página
-    makeSPALinks(document.body);
-    
-    // Escuchar el botón "Atrás" / "Adelante" del navegador
-    window.addEventListener('popstate', (e) => {
-        if (e.state && e.state.url) {
-            navigateSPA(e.state.url, false);
-        } else {
-            navigateSPA(window.location.href, false);
+        // 7. Links internos → PJAX
+        const link = e.target.closest('a');
+        if (!link) return;
+        if (link.closest('#floating-player') || link.closest('#fp-queue-dropdown')) return;
+        if (shouldIntercept(link)) {
+            e.preventDefault();
+            navigateSPA(link.href);
         }
+    });
+
+    // Volver atrás / adelante en el navegador
+    window.addEventListener('popstate', () => {
+        navigateSPA(window.location.href, false);
+    });
+
+    // ====== DELEGACIÓN GLOBAL: Búsqueda en vivo ======
+    document.addEventListener('input', function(e) {
+        if (!e.target.matches('#search-input')) return;
+        const searchInput = e.target;
+        clearTimeout(searchInput._debounce);
+        searchInput._debounce = setTimeout(() => {
+            const form = document.getElementById('filter-form');
+            const params = new URLSearchParams(form ? new FormData(form) : {});
+            const catFilter = document.querySelector('.category-pill.active');
+            if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
+            const container = document.getElementById('song-list-container');
+            fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
+                .then(r => r.text())
+                .then(html => { if (container) container.innerHTML = html; })
+                .catch(e => console.error(e));
+        }, 300);
     });
 
 });
 </script>
-{% block extra_js %}{% endblock %}
+<div id="pjax-extra-js">{% block extra_js %}{% endblock %}</div>
 </body>
 </html>
