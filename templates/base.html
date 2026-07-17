@@ -566,10 +566,9 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const url = new URL(link.href, window.location.origin);
             if (url.origin !== window.location.origin) return false;
-            if (url.pathname.startsWith('/admin')) return false;
-            if (url.pathname.startsWith('/login')) return false;
-            if (url.pathname.startsWith('/logout')) return false;
-            if (url.pathname.startsWith('/register')) return false;
+            // Rutas que siempre navegan de forma completa (formularios, auth, admin)
+            const excluded = ['/admin', '/login', '/logout', '/register', '/editar_cancion', '/agregar_cancion', '/subir_'];
+            if (excluded.some(p => url.pathname.startsWith(p))) return false;
             if (link.getAttribute('target') === '_blank') return false;
             if (link.getAttribute('download') != null) return false;
             if (url.hash && url.pathname === window.location.pathname) return false;
