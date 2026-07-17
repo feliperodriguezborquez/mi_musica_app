@@ -136,27 +136,46 @@ window.FP = {
     _pending: null,
 
     // Vincula el reproductor flotante al elemento de audio actual (puede ser el de la página o el global-audio)
-    init(audioEl, title, prevUrl, nextUrl) {
+    init(audioEl, title, prevUrl, nextUrl, songId) {
         // Desvincular eventos del audio anterior si existía
         if (this.audio) {
             this._unbindAudio();
         }
 
         this.audio = audioEl;
-        this._pending = { title, prevUrl, nextUrl };
+        this.songId = songId;
+        this._pending = { title, prevUrl, nextUrl, songId };
         this._setup();
     },
 
     _setup() {
         if (!this._pending) return;
-        const { title, prevUrl, nextUrl } = this._pending;
+        const { title, prevUrl, nextUrl, songId } = this._pending;
         this._pending = null;
 
         const fpTitle = document.getElementById('fp-title');
         const fpPrev  = document.getElementById('fp-prev');
         const fpNext  = document.getElementById('fp-next');
 
-        if (fpTitle) fpTitle.textContent = title;
+        if (fpTitle) {
+            if (songId) {
+                fpTitle.innerHTML = `<a href="/composicion/${songId}" class="fp-title-link" style="color: inherit; text-decoration: none; font-weight: 700;">${title}</a>`;
+                // Vincular enlace dinámico de SPA
+                const linkEl = fpTitle.querySelector('a');
+                if (linkEl) {
+                    linkEl.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (typeof navigateSPA === 'function') {
+                            navigateSPA(linkEl.href);
+                        } else {
+                            window.location.href = linkEl.href;
+                        }
+                    });
+                }
+            } else {
+                fpTitle.textContent = title;
+            }
+        }
         if (fpPrev)  { fpPrev.href  = prevUrl || '#'; fpPrev.style.opacity  = prevUrl  ? '1' : '0.35'; }
         if (fpNext)  { fpNext.href  = nextUrl || '#'; fpNext.style.opacity  = nextUrl  ? '1' : '0.35'; }
         
@@ -496,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (globalAudio) {
             globalAudio.src = item.audioUrl;
             globalAudio.load();
-            window.FP.init(globalAudio, item.title, null, null);
+            window.FP.init(globalAudio, item.title, null, null, item.id);
             globalAudio.play().catch(err => console.log(err));
         }
         updateQueueUI();
