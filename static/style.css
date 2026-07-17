@@ -1,15 +1,15 @@
 /* --- Paleta de Colores Premium --- */
 :root {
     --color-principal: #b89020; /* Dorado envejecido satinado */
-    --color-fondo: #f9f8f6;      /* Arena blanca / Crema suave de papel */
+    --color-fondo: #f5eedf;      /* Arena suave / Crema cálido de papel */
     --color-boton-nav: #a27e1b;  /* Dorado oscuro sutil */
-    --color-texto: #353331;      /* Gris oscuro cálido / Carbón */
-    --color-texto-secundario: #666666; /* Gris medio para textos secundarios */
+    --color-texto: #2d2b29;      /* Carbón cálido */
+    --color-texto-secundario: #6e675f; /* Gris medio cálido */
     --color-acento: #dcb33f;     /* Dorado brillante */
-    --color-blanco: #ffffff;     /* Blanco puro para tarjetas y bloques */
-    --color-tag-bg: #f2ede0;     /* Fondo de etiqueta */
+    --color-blanco: #fdfbf7;     /* Blanco marfil cálido (suave, no puro) */
+    --color-tag-bg: #eadecc;     /* Fondo de etiqueta sutil */
     --color-tag-texto: #8e6c13;  /* Texto de etiqueta */
-    --color-borde: #eae5d9;      /* Borde de contenedor */
+    --color-borde: #e4d7c5;      /* Borde cálido */
     
     /* Variables de Estructura */
     --color-header-bg: var(--color-principal);
@@ -24,24 +24,24 @@
 
 /* --- Modo Oscuro Premium --- */
 [data-theme="dark"] {
-    --color-fondo: #2d2b29;      /* Gris cálido medio (menos negro) */
-    --color-texto: #eae6df;      /* Crema suave / Blanco tiza */
-    --color-texto-secundario: #a7a4a0; /* Gris claro para textos secundarios */
-    --color-blanco: #3a3735;     /* Gris un poco más claro para tarjetas y bloques */
-    --color-principal: #b89020;  /* Dorado igual al modo claro */
-    --color-boton-nav: #a27e1b;  /* Dorado del modo claro */
-    --color-acento: #dcb33f;     /* Dorado brillante igual al modo claro */
-    --color-tag-bg: #3f3c39;     /* Fondo de etiqueta oscuro */
-    --color-tag-texto: #dcb33f;  /* Dorado para etiquetas */
-    --color-borde: #4d4945;      /* Borde sutil */
+    --color-fondo: #1f1d1b;      /* Carbón oscuro cálido */
+    --color-texto: #eae3d9;      /* Crema suave */
+    --color-texto-secundario: #9e978e; /* Gris claro cálido */
+    --color-blanco: #2c2826;     /* Chocolate oscuro sedoso */
+    --color-principal: #cca42d;  /* Dorado envejecido ligeramente más luminoso */
+    --color-boton-nav: #3d3734;  
+    --color-acento: #e3bc48;     
+    --color-tag-bg: #3d3734;     
+    --color-tag-texto: #cca42d;  
+    --color-borde: #3f3936;      
     
     /* Variables de Estructura Ajustadas para Armonía */
-    --color-header-bg: #1c1a19;  /* Encabezado oscuro premium */
-    --color-header-texto: var(--color-principal); /* Logo y texto en dorado */
-    --color-header-btn-bg: #3a3735; /* Botones oscuros integrados */
-    --color-footer-bg: #1c1a19;  /* Pie de página oscuro */
+    --color-header-bg: #151312;  
+    --color-header-texto: var(--color-principal); 
+    --color-header-btn-bg: #2c2826; 
+    --color-footer-bg: #151312;  
     --color-footer-texto: var(--color-texto-secundario);
-    --color-btn-bg: #3a3735;     /* Botones delineados en dorado */
+    --color-btn-bg: #2c2826;     
     --color-btn-texto: var(--color-principal);
     --color-btn-borde: var(--color-principal);
 }
@@ -952,6 +952,49 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
 [data-theme="dark"] .toggle-switch { background: #555; }
 [data-theme="dark"] .toggle-switch.on { background: var(--color-principal); }
 
+/* Sun & Moon Theme Toggle Button */
+.theme-toggle-btn {
+    background: var(--color-tag-bg);
+    border: 1px solid var(--color-borde);
+    border-radius: 20px;
+    width: 60px;
+    height: 30px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    font-size: 0.9rem;
+    transition: background 0.25s, border-color 0.25s;
+    outline: none;
+}
+.theme-toggle-btn .theme-icon-sun,
+.theme-toggle-btn .theme-icon-moon {
+    transition: transform 0.2s, opacity 0.2s;
+}
+/* Estilo interactivo en base a data-theme en el html */
+[data-theme="light"] .theme-toggle-btn .theme-icon-sun { opacity: 1; transform: scale(1); }
+[data-theme="light"] .theme-toggle-btn .theme-icon-moon { opacity: 0.35; transform: scale(0.8); }
+[data-theme="dark"] .theme-toggle-btn .theme-icon-sun { opacity: 0.35; transform: scale(0.8); }
+[data-theme="dark"] .theme-toggle-btn .theme-icon-moon { opacity: 1; transform: scale(1); }
+
+/* Indicador de deslizador en el theme toggle */
+.theme-toggle-btn::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-blanco);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    left: 4px;
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"] .theme-toggle-btn::after {
+    transform: translateX(28px);
+}
+
 .logout-item {
     color: #c0392b;
 }
@@ -1097,6 +1140,27 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     background: var(--color-tag-bg);
 }
 .fp-close-btn { color: var(--color-texto-secundario); font-size: 1.1rem; }
+
+/* Control de Volumen */
+.fp-volume-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 8px;
+}
+.fp-volume-slider {
+    width: 70px;
+    accent-color: var(--color-principal);
+    height: 4px;
+    cursor: pointer;
+    border-radius: 2px;
+    background: var(--color-borde);
+    border: none;
+    transition: width 0.2s ease;
+}
+.fp-volume-container:hover .fp-volume-slider {
+    width: 90px;
+}
 
 /* Separar el footer del final cuando el player está activo */
 body { padding-bottom: 110px; }

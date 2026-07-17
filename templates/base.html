@@ -30,7 +30,10 @@
                             <div class="dropdown-section-title">Ajustes</div>
                             <div class="dropdown-item dropdown-toggle-row">
                                 <span class="dropdown-label">Modo Oscuro</span>
-                                <button id="theme-toggle" class="toggle-switch" aria-label="Modo oscuro"></button>
+                                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+                                    <span class="theme-icon-sun">☀️</span>
+                                    <span class="theme-icon-moon">🌙</span>
+                                </button>
                             </div>
                             {% if FEATURES['autoplay'] %}
                             <div class="dropdown-item dropdown-toggle-row">
@@ -86,7 +89,10 @@
                 <input type="range" id="fp-seek" class="fp-seek" value="0" min="0" step="1">
                 <span id="fp-duration">0:00</span>
             </div>
-            <button id="fp-volume-btn" class="fp-btn" title="Silenciar">🔊</button>
+            <div class="fp-volume-container">
+                <button id="fp-volume-btn" class="fp-btn" title="Silenciar">🔊</button>
+                <input type="range" id="fp-volume-slider" class="fp-volume-slider" min="0" max="1" step="0.05" value="1">
+            </div>
             <div class="fp-queue-container-wrapper">
                 <button id="fp-queue-btn" class="fp-btn" title="Cola de reproducción">📋 <span id="fp-queue-count" class="fp-queue-badge hidden">0</span></button>
                 <div id="fp-queue-dropdown" class="fp-queue-dropdown hidden">
@@ -207,10 +213,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.FP._pending) window.FP._setup();
 
     // ====== Controles del Reproductor Flotante ======
-    const fpPlay   = document.getElementById('fp-play');
-    const fpSeek   = document.getElementById('fp-seek');
-    const fpVolBtn = document.getElementById('fp-volume-btn');
-    const fpClose  = document.getElementById('fp-close');
+    const fpPlay         = document.getElementById('fp-play');
+    const fpSeek         = document.getElementById('fp-seek');
+    const fpVolBtn       = document.getElementById('fp-volume-btn');
+    const fpVolSlider    = document.getElementById('fp-volume-slider');
+    const fpClose        = document.getElementById('fp-close');
 
     if (fpPlay) {
         fpPlay.addEventListener('click', () => {
@@ -232,13 +239,22 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!window.FP.audio) return;
             window.FP.audio.muted = !window.FP.audio.muted;
             fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
+            if (fpVolSlider) fpVolSlider.value = window.FP.audio.muted ? 0 : window.FP.audio.volume;
+        });
+    }
+    if (fpVolSlider) {
+        fpVolSlider.addEventListener('input', () => {
+            if (!window.FP.audio) return;
+            window.FP.audio.volume = Number(fpVolSlider.value);
+            window.FP.audio.muted = (window.FP.audio.volume === 0);
+            if (fpVolBtn) fpVolBtn.textContent = window.FP.audio.muted ? '🔇' : '🔊';
         });
     }
     if (fpClose) {
         fpClose.addEventListener('click', () => {
             if (window.FP.audio) window.FP.audio.pause();
             const fp = document.getElementById('floating-player');
-            if (fp) fp.style.display = 'none';
+            if (fp) fp.classList.add('hidden');
         });
     }
 
