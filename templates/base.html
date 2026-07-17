@@ -70,7 +70,7 @@
     </footer>
 
     <!-- ====== REPRODUCTOR FLOTANTE ====== -->
-    <div id="floating-player" class="floating-player">
+    <div id="floating-player" class="floating-player hidden">
         <audio id="global-audio" style="display: none;"></audio>
         <div class="fp-song-info">
             <span id="fp-title" class="fp-title">Ninguna canción en reproducción</span>
@@ -137,7 +137,7 @@ window.FP = {
         if (fpNext)  { fpNext.href  = nextUrl || '#'; fpNext.style.opacity  = nextUrl  ? '1' : '0.35'; }
         
         const fp = document.getElementById('floating-player');
-        if (fp) fp.style.display = 'flex';
+        if (fp) fp.classList.remove('hidden');
 
         this._bindAudio();
     },

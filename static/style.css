@@ -1044,13 +1044,15 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
    FLOATING PLAYER (Spotify Style)
    ================================================================ */
 .floating-player {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
+    position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 9000;
     background: var(--color-blanco);
-    border-top: 2px solid var(--color-principal);
-    box-shadow: 0 -6px 28px rgba(0,0,0,0.18);
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 24px; min-height: 75px;
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 28px; min-height: 80px;
     box-sizing: border-box;
+    backdrop-filter: blur(10px);
 }
 .floating-player.hidden { display: none !important; }
 .fp-song-info { flex: 1.2; min-width: 0; }
@@ -1058,29 +1060,30 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     font-weight: 700; font-size: 1rem; color: var(--color-texto);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
 }
-.fp-controls { display: flex; align-items: center; gap: 12px; }
+.fp-controls { display: flex; align-items: center; gap: 14px; }
 .fp-btn {
     background: none; border: none; cursor: pointer;
     font-size: 1.3rem; color: var(--color-texto); padding: 6px;
-    border-radius: 50%; transition: all 0.2s ease; text-decoration: none;
+    border-radius: 50%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none;
     display: flex; align-items: center; justify-content: center;
     width: 38px; height: 38px;
 }
-.fp-btn:hover { color: var(--color-principal); background: var(--color-tag-bg); }
+.fp-btn:hover { color: var(--color-principal); background: var(--color-tag-bg); transform: scale(1.05); }
 .fp-play-btn {
     font-size: 1.6rem;
     background: var(--color-principal) !important;
     color: #fff !important;
-    width: 44px; height: 44px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    width: 46px; height: 46px;
+    box-shadow: 0 4px 12px rgba(184, 144, 32, 0.3);
 }
 .fp-play-btn:hover {
     transform: scale(1.08);
     background: var(--color-acento) !important;
+    box-shadow: 0 6px 16px rgba(184, 144, 32, 0.4);
 }
-.fp-right { display: flex; align-items: center; gap: 14px; flex: 1.8; min-width: 0; }
+.fp-right { display: flex; align-items: center; gap: 16px; flex: 2; min-width: 0; }
 .fp-progress-container {
-    display: flex; align-items: center; gap: 8px; flex: 1;
+    display: flex; align-items: center; gap: 10px; flex: 1;
     font-size: 0.8rem; color: var(--color-texto-secundario); min-width: 0;
 }
 .fp-seek {
@@ -1088,11 +1091,15 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     height: 6px; cursor: pointer; border-radius: 3px; min-width: 80px;
     background: var(--color-borde);
     border: none;
+    transition: background 0.15s;
+}
+.fp-seek:hover {
+    background: var(--color-tag-bg);
 }
 .fp-close-btn { color: var(--color-texto-secundario); font-size: 1.1rem; }
 
 /* Separar el footer del final cuando el player está activo */
-body { padding-bottom: 90px; }
+body { padding-bottom: 110px; }
 
 
 /* ================================================================
