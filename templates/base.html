@@ -63,7 +63,7 @@
         </nav>
     </header>
 
-    <main class="container">
+    <main class="container" id="pjax-container">
         {% block content %}{% endblock %}
     </main>
 
@@ -622,6 +622,134 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cerrar dropdown de opciones al hacer click afuera
     document.addEventListener('click', () => {
         document.querySelectorAll('.card-options-dropdown').forEach(d => d.classList.add('hidden'));
+    });
+
+    // ====== NAVEGACIÓN SPA (PJAX) PARA EVITAR QUE SE DETENGA LA MÚSICA ======
+    function makeSPALinks(container) {
+        const links = container.querySelectorAll('a');
+        links.forEach(link => {
+            // Ignorar enlaces externos, vacíos, o de descarga
+            if (!link.href || link.href.includes('#') || link.getAttribute('target') === '_blank' || link.href.startsWith('javascript:')) {
+                return;
+            }
+            // Solo interceptar enlaces internos al mismo dominio
+            if (new URL(link.href).origin === window.location.origin) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateSPA(link.href);
+                });
+            }
+        });
+    }
+
+    function navigateSPA(url, pushState = true) {
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Actualizar el título de la página
+                document.title = doc.title;
+                
+                // Reemplazar el contenedor principal
+                const currentMain = document.getElementById('pjax-container');
+                const newMain = doc.getElementById('pjax-container');
+                if (currentMain && newMain) {
+                    currentMain.innerHTML = newMain.innerHTML;
+                    
+                    // Re-inicializar eventos específicos de la página cargada
+                    makeSPALinks(currentMain);
+                    rebindPageEvents();
+                }
+
+                if (pushState) {
+                    window.history.pushState({ url }, '', url);
+                }
+                
+                // Mover scroll arriba
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            })
+            .catch(err => {
+                console.error("Error en navegación SPA, reintentando de forma nativa:", err);
+                window.location.href = url;
+            });
+    }
+
+    // Volver a vincular listeners del buscador y category pills al cambiar de página
+    function rebindPageEvents() {
+        const searchInput = document.getElementById('search-input');
+        const songListContainer = document.getElementById('song-list-container');
+        if (searchInput) {
+            let debounceTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const form = document.getElementById('filter-form');
+                    const params = new URLSearchParams(form ? new FormData(form) : {});
+                    const catFilter = document.querySelector('.category-pill.active');
+                    if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
+                    fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
+                        .then(r => r.text())
+                        .then(html => { if (songListContainer) songListContainer.innerHTML = html; })
+                        .catch(e => console.error(e));
+                }, 300);
+            });
+        }
+
+        document.querySelectorAll('.category-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                if (!songListContainer) return;
+                const form   = document.getElementById('filter-form');
+                const params = new URLSearchParams(form ? new FormData(form) : {});
+                if (this.dataset.cat) params.set('categoria', this.dataset.cat);
+                fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
+                    .then(r => r.text())
+                    .then(html => { songListContainer.innerHTML = html; })
+                    .catch(e => console.error(e));
+            });
+        });
+
+        // Configurar botones de ordenación AJAX específicos si existen
+        const sortButtons = document.querySelectorAll('.sort-button');
+        if (sortButtons.length > 0 && songListContainer) {
+            sortButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const sortMethod = this.dataset.sort;
+                    const tagName = window.location.pathname.split('/').pop();
+
+                    sortButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=tag&tag_name=${tagName}&sort_by=${sortMethod}`;
+                    songListContainer.innerHTML = '<p class="no-results">Cargando...</p>';
+
+                    fetch(fetchUrl)
+                        .then(response => response.text())
+                        .then(html => {
+                            songListContainer.innerHTML = html;
+                            const nextURL = new URL(window.location);
+                            nextURL.searchParams.set('sort_by', sortMethod);
+                            window.history.pushState({ path: nextURL.href }, '', nextURL.href);
+                        });
+                });
+            });
+        }
+    }
+
+    // Inicializar SPA para el cuerpo inicial de la página
+    makeSPALinks(document.body);
+    
+    // Escuchar el botón "Atrás" / "Adelante" del navegador
+    window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.url) {
+            navigateSPA(e.state.url, false);
+        } else {
+            navigateSPA(window.location.href, false);
+        }
     });
 
 });
