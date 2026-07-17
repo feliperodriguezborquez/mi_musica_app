@@ -259,6 +259,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ─── Interceptar Clicks en Botones de Play de la Lista ───────────────────
+    if (songListContainer) {
+        songListContainer.addEventListener('click', function(e) {
+            const playBtn = e.target.closest('.list-play-btn');
+            if (playBtn) {
+                e.preventDefault(); // Evitar navegar inmediatamente
+                e.stopPropagation();
+                const card = playBtn.closest('.tarjeta-obra');
+                if (card) {
+                    const href = card.getAttribute('href');
+                    if (href) {
+                        // Navegar forzando el autoplay automático con query param ?play=1
+                        const url = new URL(href, window.location.origin);
+                        url.searchParams.set('play', '1');
+                        window.location.href = url.toString();
+                    }
+                }
+            }
+        });
+    }
+
 });
 </script>
 {% block extra_js %}{% endblock %}
