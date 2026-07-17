@@ -25,7 +25,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 2,
@@ -51,7 +52,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 3,
@@ -77,7 +79,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez"
     },
     {
         "id": 4,
@@ -103,7 +106,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 5,
@@ -129,7 +133,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez"
     },
     {
         "id": 6,
@@ -156,7 +161,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/N-NbPumDRxA?si=rZMWWiTpZuCPNWV1\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
-        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/v_kBycuLVTY?si=4bygFyP_lJmSoR6_\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>"
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/v_kBycuLVTY?si=4bygFyP_lJmSoR6_\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "interprete": "Coro Misión País"
     },
     {
         "id": 7,
@@ -181,7 +187,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
-        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>"
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "interprete": "Coro Misión País"
     },
     {
         "id": 8,
@@ -207,7 +214,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 9,
@@ -232,7 +240,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 10,
@@ -257,7 +266,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 11,
@@ -282,7 +292,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 12,
@@ -308,7 +319,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 13,
@@ -334,7 +346,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 14,
@@ -361,7 +374,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 15,
@@ -386,7 +400,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 16,
@@ -413,7 +428,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 17,
@@ -439,7 +455,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 18,
@@ -464,7 +481,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 19,
@@ -491,7 +509,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 20,
@@ -516,7 +535,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 21,
@@ -543,7 +563,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 22,
@@ -569,7 +590,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 23,
@@ -595,7 +617,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 24,
@@ -621,7 +644,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 25,
@@ -647,7 +671,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 26,
@@ -673,7 +698,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 27,
@@ -698,7 +724,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 28,
@@ -723,7 +750,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 31,
@@ -746,7 +774,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 32,
@@ -773,7 +802,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 37,
@@ -800,7 +830,8 @@
             "Arreglo"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 38,
@@ -826,7 +857,8 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     },
     {
         "id": 41,
@@ -851,6 +883,7 @@
             "Composición"
         ],
         "youtube_video_embed": null,
-        "youtube_audio_embed": null
+        "youtube_audio_embed": null,
+        "interprete": "Felipe Rodríguez"
     }
 ]

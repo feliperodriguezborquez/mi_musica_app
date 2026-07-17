@@ -55,7 +55,8 @@ def sincronizar_canciones_desde_json():
                 'tipo': cancion_data.get('tipo', 'local'),
                 'categorias_json': json.dumps(cancion_data.get('categorias', [])),
                 'youtube_video_embed': cancion_data.get('youtube_video_embed'),
-                'youtube_audio_embed': cancion_data.get('youtube_audio_embed')
+                'youtube_audio_embed': cancion_data.get('youtube_audio_embed'),
+                'interprete': cancion_data.get('interprete')
             }
 
             cancion_existente = canciones_en_db.get(cancion_id)

@@ -7,19 +7,19 @@
 
         {# Mostramos los controles de orden solo si la categoría tiene un orden personalizado #}
         {% if (tag_nombre.split(':')[0] | trim) in ordenes_personalizados %}
-            <div class="sort-controls">
-                <span>Ordenar por:</span>
+            <div class="sort-dropdown-container">
+                <span class="sort-label">Ordenar por:</span>
                 <a href="#" data-sort="canonico"
                    class="sort-button {% if sort_by == 'canonico' %}active{% endif %}" >
-                   Orden Canónico
-                </a>
-                <a href="#" data-sort="alfabetico"
-                   class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}" >
-                   Orden Alfabético
+                   Canónico
                 </a>
                 <a href="#" data-sort="cronologico"
                    class="sort-button {% if sort_by == 'cronologico' %}active{% endif %}" >
-                   Orden Cronológico
+                   Cronológico
+                </a>
+                <a href="#" data-sort="alfabetico"
+                   class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}" >
+                   Alfabético
                 </a>
             </div>
         {% endif %}

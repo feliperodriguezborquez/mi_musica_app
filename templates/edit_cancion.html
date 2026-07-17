@@ -70,6 +70,11 @@
         </div>
 
         <div class="form-group">
+            <label for="interprete">Intérprete (ej: Felipe Rodríguez)</label>
+            <input type="text" id="interprete" name="interprete" value="{{ cancion.interprete or '' }}">
+        </div>
+
+        <div class="form-group">
             <label for="tags">Etiquetas (separadas por comas)</label>
             <input type="text" id="tags" name="tags" value="{{ cancion.tags | join(', ') }}">
             <div class="tags-selector" style="margin-top: 8px;">

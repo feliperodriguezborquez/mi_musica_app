@@ -55,6 +55,7 @@ class Cancion(db.Model):
     categorias_json = db.Column(db.String(200))
     youtube_video_embed = db.Column(db.Text)
     youtube_audio_embed = db.Column(db.Text)
+    interprete = db.Column(db.String(200), nullable=True)
     @property
     def tags(self):
         return json.loads(self.tags_json) if self.tags_json else []
@@ -608,6 +609,7 @@ def edit_cancion(comp_id):
         cancion_a_editar.letras_acordes = request.form.get('letras_acordes') or None
         cancion_a_editar.partitura = request.form.get('partitura') or None
         cancion_a_editar.midi = request.form.get('midi') or None
+        cancion_a_editar.interprete = request.form.get('interprete') or None
 
         cancion_a_editar.tags_json = json.dumps([tag.strip() for tag in request.form['tags'].split(',') if tag.strip()])
         processed_categorias = [cat.strip() for cat in request.form['categorias'].split(',') if cat.strip()]
@@ -637,6 +639,7 @@ def edit_cancion(comp_id):
                         data[i]['letras_acordes'] = cancion_a_editar.letras_acordes
                         data[i]['partitura'] = cancion_a_editar.partitura
                         data[i]['midi'] = cancion_a_editar.midi
+                        data[i]['interprete'] = cancion_a_editar.interprete
                         data[i]['tags'] = cancion_a_editar.tags # Usa la property que decodifica el JSON
                         data[i]['categorias'] = processed_categorias # Usa la lista procesada del formulario
                         break
