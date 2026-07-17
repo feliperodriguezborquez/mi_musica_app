@@ -71,14 +71,14 @@
 
     {% if FEATURES['floating_player'] %}
     <!-- ====== REPRODUCTOR FLOTANTE ====== -->
-    <div id="floating-player" class="floating-player hidden">
+    <div id="floating-player" class="floating-player">
         <div class="fp-song-info">
-            <span id="fp-title" class="fp-title">—</span>
+            <span id="fp-title" class="fp-title">Ninguna canción en reproducción</span>
         </div>
         <div class="fp-controls">
-            <a id="fp-prev" href="#" class="fp-btn fp-skip" title="Anterior">⏮</a>
+            <a id="fp-prev" href="#" class="fp-btn fp-skip" title="Anterior" style="opacity: 0.35;">⏮</a>
             <button id="fp-play" class="fp-btn fp-play-btn" title="Play/Pausa">▶</button>
-            <a id="fp-next" href="#" class="fp-btn fp-skip" title="Siguiente">⏭</a>
+            <a id="fp-next" href="#" class="fp-btn fp-skip" title="Siguiente" style="opacity: 0.35;">⏭</a>
         </div>
         <div class="fp-right">
             <div class="fp-progress-container">
@@ -94,22 +94,16 @@
 
 <script>
 // ─── window.FP: definido ANTES de DOMContentLoaded ────────────────────────
-// composicion.html llama a FP.init() al cargar la página. Si lo pusiéramos
-// dentro de DOMContentLoaded, habría una carrera — el listener de composicion.html
-// puede dispararse antes. Con este patrón de cola (queue), funciona siempre.
 const _fmt = s => { s = Math.floor(s || 0); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
 
 window.FP = {
     audio: null,
-    _queue: null,
+    _pending: null,
 
-    /** Llamado desde composicion.html al cargar la página */
     init(audioEl, title, prevUrl, nextUrl) {
         this.audio = audioEl;
         this._pending = { title, prevUrl, nextUrl };
-        if (document.readyState !== 'loading') {
-            this._setup();
-        }
+        this._setup();
     },
 
     _setup() {
@@ -117,15 +111,16 @@ window.FP = {
         const { title, prevUrl, nextUrl } = this._pending;
         this._pending = null;
 
-        const fp      = document.getElementById('floating-player');
         const fpTitle = document.getElementById('fp-title');
         const fpPrev  = document.getElementById('fp-prev');
         const fpNext  = document.getElementById('fp-next');
 
         if (fpTitle) fpTitle.textContent = title;
-        if (fpPrev)  { fpPrev.href  = prevUrl || '#'; fpPrev.style.opacity  = prevUrl  ? '1' : '0.3'; }
-        if (fpNext)  { fpNext.href  = nextUrl || '#'; fpNext.style.opacity  = nextUrl  ? '1' : '0.3'; }
-        if (fp)      fp.classList.remove('hidden');
+        if (fpPrev)  { fpPrev.href  = prevUrl || '#'; fpPrev.style.opacity  = prevUrl  ? '1' : '0.35'; }
+        if (fpNext)  { fpNext.href  = nextUrl || '#'; fpNext.style.opacity  = nextUrl  ? '1' : '0.35'; }
+        
+        const fp = document.getElementById('floating-player');
+        if (fp) fp.style.display = 'flex';
 
         this._bindAudio();
     },
@@ -162,7 +157,6 @@ window.FP = {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Si FP.init() ya fue llamado (caso normal), completar el setup ahora
     if (window.FP._pending) window.FP._setup();
 
     // ─── Botones del Reproductor Flotante ────────────────────────────────────
