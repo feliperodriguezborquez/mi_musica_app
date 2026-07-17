@@ -87,6 +87,18 @@
                 <span id="fp-duration">0:00</span>
             </div>
             <button id="fp-volume-btn" class="fp-btn" title="Silenciar">🔊</button>
+            <div class="fp-queue-container-wrapper">
+                <button id="fp-queue-btn" class="fp-btn" title="Cola de reproducción">📋 <span id="fp-queue-count" class="fp-queue-badge hidden">0</span></button>
+                <div id="fp-queue-dropdown" class="fp-queue-dropdown hidden">
+                    <div class="fp-queue-header">
+                        <span>Cola de reproducción</span>
+                        <button id="fp-clear-queue-btn">Limpiar</button>
+                    </div>
+                    <div id="fp-queue-items" class="fp-queue-items">
+                        <div class="fp-queue-empty">Cola vacía</div>
+                    </div>
+                </div>
+            </div>
             <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar reproductor">✕</button>
         </div>
     </div>
@@ -306,10 +318,157 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ====== COLA DE REPRODUCCIÓN (Queue State) ======
+    window.FP.queue = [];
+    window.FP.queueIndex = -1;
+
+    const fpQueueBtn = document.getElementById('fp-queue-btn');
+    const fpQueueDropdown = document.getElementById('fp-queue-dropdown');
+    const fpQueueItems = document.getElementById('fp-queue-items');
+    const fpQueueCount = document.getElementById('fp-queue-count');
+    const fpClearQueueBtn = document.getElementById('fp-clear-queue-btn');
+
+    // Toggle de la vista de la cola
+    if (fpQueueBtn) {
+        fpQueueBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fpQueueDropdown.classList.toggle('hidden');
+        });
+    }
+    document.addEventListener('click', () => {
+        if (fpQueueDropdown) fpQueueDropdown.classList.add('hidden');
+    });
+    if (fpQueueDropdown) {
+        fpQueueDropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    // Actualizar visualmente la cola
+    function updateQueueUI() {
+        if (!fpQueueItems) return;
+        fpQueueItems.innerHTML = '';
+        
+        if (window.FP.queue.length === 0) {
+            fpQueueItems.innerHTML = '<div class="fp-queue-empty">Cola vacía</div>';
+            if (fpQueueCount) fpQueueCount.classList.add('hidden');
+            return;
+        }
+
+        if (fpQueueCount) {
+            fpQueueCount.textContent = window.FP.queue.length;
+            fpQueueCount.classList.remove('hidden');
+        }
+
+        window.FP.queue.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = `fp-queue-item ${index === window.FP.queueIndex ? 'active' : ''}`;
+            div.innerHTML = `
+                <span class="fp-queue-item-title">${item.title}</span>
+                <div class="fp-queue-item-actions">
+                    <button class="fp-queue-item-play" data-index="${index}">▶</button>
+                    <button class="fp-queue-item-remove" data-index="${index}">✕</button>
+                </div>
+            `;
+            fpQueueItems.appendChild(div);
+        });
+    }
+
+    // Agregar canción a la cola
+    function addToQueue(id, title, audioUrl) {
+        window.FP.queue.push({ id, title, audioUrl });
+        updateQueueUI();
+        
+        // Si no hay nada reproduciéndose, iniciar de inmediato
+        if (!window.FP.audio || window.FP.audio.paused) {
+            playQueueIndex(window.FP.queue.length - 1);
+        }
+    }
+
+    function playQueueIndex(index) {
+        if (index < 0 || index >= window.FP.queue.length) return;
+        window.FP.queueIndex = index;
+        const item = window.FP.queue[index];
+
+        const globalAudio = document.getElementById('global-audio');
+        if (globalAudio) {
+            globalAudio.src = item.audioUrl;
+            globalAudio.load();
+            window.FP.init(globalAudio, item.title, null, null);
+            globalAudio.play().catch(err => console.log(err));
+        }
+        updateQueueUI();
+    }
+
+    if (fpClearQueueBtn) {
+        fpClearQueueBtn.addEventListener('click', () => {
+            window.FP.queue = [];
+            window.FP.queueIndex = -1;
+            updateQueueUI();
+        });
+    }
+
+    if (fpQueueItems) {
+        fpQueueItems.addEventListener('click', (e) => {
+            const playBtn = e.target.closest('.fp-queue-item-play');
+            const removeBtn = e.target.closest('.fp-queue-item-remove');
+            if (playBtn) {
+                const idx = parseInt(playBtn.getAttribute('data-index'), 10);
+                playQueueIndex(idx);
+            } else if (removeBtn) {
+                const idx = parseInt(removeBtn.getAttribute('data-index'), 10);
+                window.FP.queue.splice(idx, 1);
+                if (window.FP.queueIndex === idx) {
+                    if (window.FP.queue.length > 0) {
+                        playQueueIndex(Math.min(idx, window.FP.queue.length - 1));
+                    } else {
+                        window.FP.queueIndex = -1;
+                        if (window.FP.audio) window.FP.audio.pause();
+                    }
+                } else if (window.FP.queueIndex > idx) {
+                    window.FP.queueIndex--;
+                }
+                updateQueueUI();
+            }
+        });
+    }
+
+    // Conectar botones Skip al Queue index
+    const fpPrevBtn = document.getElementById('fp-prev');
+    const fpNextBtn = document.getElementById('fp-next');
+    
+    if (fpPrevBtn) {
+        fpPrevBtn.addEventListener('click', (e) => {
+            if (window.FP.queue.length > 0 && window.FP.queueIndex > 0) {
+                e.preventDefault();
+                playQueueIndex(window.FP.queueIndex - 1);
+            }
+        });
+    }
+    if (fpNextBtn) {
+        fpNextBtn.addEventListener('click', (e) => {
+            if (window.FP.queue.length > 0 && window.FP.queueIndex < window.FP.queue.length - 1) {
+                e.preventDefault();
+                playQueueIndex(window.FP.queueIndex + 1);
+            }
+        });
+    }
+
+    // Modificar lógica del Ended del reproductor global para que siga la cola
+    const globalAudio = document.getElementById('global-audio');
+    if (globalAudio) {
+        globalAudio.addEventListener('ended', () => {
+            if (window.FP.queue.length > 0 && window.FP.queueIndex < window.FP.queue.length - 1) {
+                playQueueIndex(window.FP.queueIndex + 1);
+            }
+        });
+    }
+
     // ====== Interceptar Clicks en Botones de Play de la Lista (Reproducción directa) ======
     if (songListContainer) {
         songListContainer.addEventListener('click', function(e) {
             const playBtn = e.target.closest('.list-play-btn');
+            const optionsBtn = e.target.closest('.card-options-btn');
+            const addQueueBtn = e.target.closest('.opt-add-queue');
+
             if (playBtn) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -318,39 +477,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (card) {
                     const audioUrl = card.getAttribute('data-audio');
                     const title = card.getAttribute('data-title');
+                    const id = card.getAttribute('data-id');
                     
                     if (audioUrl) {
-                        // Usar el audio global
-                        const globalAudio = document.getElementById('global-audio');
-                        if (globalAudio) {
-                            // Si es el mismo audio y está reproduciendo, pausamos
-                            if (globalAudio.src.includes(audioUrl)) {
-                                if (globalAudio.paused) {
-                                    globalAudio.play().catch(err => console.log(err));
-                                    playBtn.textContent = '⏸';
-                                } else {
-                                    globalAudio.pause();
-                                    playBtn.textContent = '▶';
-                                }
-                            } else {
-                                // Cargar un nuevo audio
-                                // Restablecer botones anteriores de play
-                                document.querySelectorAll('.list-play-btn').forEach(btn => btn.textContent = '▶');
-                                
-                                globalAudio.src = audioUrl;
-                                globalAudio.load();
-                                
-                                // Inicializar el reproductor flotante con este audio global
-                                window.FP.init(globalAudio, title, null, null);
-                                globalAudio.play().catch(err => console.log(err));
-                                playBtn.textContent = '⏸';
-                            }
-                        }
+                        // Limpiar cola existente y reproducir esta de inmediato
+                        window.FP.queue = [{ id, title, audioUrl }];
+                        playQueueIndex(0);
                     }
                 }
+            } else if (optionsBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Cerrar otros dropdowns de opciones
+                document.querySelectorAll('.card-options-dropdown').forEach(d => {
+                    if (d !== optionsBtn.nextElementSibling) d.classList.add('hidden');
+                });
+                optionsBtn.nextElementSibling.classList.toggle('hidden');
+            } else if (addQueueBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = addQueueBtn.getAttribute('data-id');
+                const title = addQueueBtn.getAttribute('data-title');
+                const audio = addQueueBtn.getAttribute('data-audio');
+                addToQueue(id, title, audio);
+                addQueueBtn.closest('.card-options-dropdown').classList.add('hidden');
             }
         });
     }
+
+    // Cerrar dropdown de opciones al hacer click afuera
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.card-options-dropdown').forEach(d => d.classList.add('hidden'));
+    });
 
 });
 </script>

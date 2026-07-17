@@ -1,30 +1,40 @@
 <div class="lista-composiciones">
     {% for obra in composiciones %}
-        <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query, sort_by=sort_by) }}" 
-           class="tarjeta-obra" 
-           data-id="{{ obra.id }}"
-           {% if obra.audio %}data-audio="{{ url_for('static', filename=obra.audio) }}"{% endif %}
-           data-title="{{ obra.titulo }}">
-            <div class="info-tarjeta">
-                <div class="song-title-with-number">
-                    <span class="song-number">{{ loop.index }}.</span>
-                    <h3>{{ obra.titulo }}</h3>
+        <div class="tarjeta-obra-wrapper">
+            <a href="{{ url_for('ver_composicion', comp_id=obra.id, context=page_context, tag_name=tag_nombre, search=search_query, sort_by=sort_by) }}" 
+               class="tarjeta-obra" 
+               data-id="{{ obra.id }}"
+               {% if obra.audio %}data-audio="{{ url_for('static', filename=obra.audio) }}"{% endif %}
+               data-title="{{ obra.titulo }}">
+                <div class="info-tarjeta">
+                    <div class="song-title-with-number">
+                        <span class="song-number">{{ loop.index }}.</span>
+                        <h3>{{ obra.titulo }}</h3>
+                    </div>
+                    <p>{{ obra.musica }}</p>
                 </div>
-                <p>{{ obra.musica }}</p>
-            </div>
-            <div class="tarjeta-right-section">
-                <div class="categoria-tags-container">
-                    {% if obra.categorias %}
-                        {% for cat in obra.categorias | sort_categories_for_page(page_context) %}
-                            <span class="categoria-tag">{{ cat }}</span>
-                        {% endfor %}
+                <div class="tarjeta-right-section">
+                    <div class="categoria-tags-container">
+                        {% if obra.categorias %}
+                            {% for cat in obra.categorias | sort_categories_for_page(page_context) %}
+                                <span class="categoria-tag">{{ cat }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if obra.audio %}
+                    <span class="list-play-btn" title="Reproducir">▶</span>
                     {% endif %}
                 </div>
-                {% if obra.audio %}
-                <span class="list-play-btn" title="Reproducir sin abrir página">▶</span>
-                {% endif %}
+            </a>
+            {% if obra.audio %}
+            <div class="card-options-container">
+                <button class="card-options-btn" title="Opciones">⋮</button>
+                <div class="card-options-dropdown hidden">
+                    <button class="opt-add-queue" data-id="{{ obra.id }}" data-audio="{{ url_for('static', filename=obra.audio) }}" data-title="{{ obra.titulo }}">Añadir a la cola</button>
+                </div>
             </div>
-        </a>
+            {% endif %}
+        </div>
     {% else %}
         <p style="padding: 20px;">No se encontraron canciones que coincidan con tu búsqueda.</p>
     {% endfor %}

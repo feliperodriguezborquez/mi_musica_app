@@ -1155,3 +1155,195 @@ body { padding-bottom: 90px; }
     color: var(--color-texto); max-width: 200px;
 }
 .kanban-promote-form { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* ================================================================
+   QUEUE AND OPTIONS DROPDOWNS
+   ================================================================ */
+.tarjeta-obra-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    background: var(--color-blanco);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+.tarjeta-obra-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+/* Sobrescribir estilos de la tarjeta interior */
+.tarjeta-obra-wrapper .tarjeta-obra {
+    border: none;
+    box-shadow: none;
+    margin-bottom: 0;
+    flex: 1;
+    background: transparent;
+}
+.tarjeta-obra-wrapper .tarjeta-obra:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.card-options-container {
+    position: relative;
+    padding-right: 16px;
+}
+.card-options-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--color-texto-secundario);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+.card-options-btn:hover {
+    background: var(--color-tag-bg);
+    color: var(--color-principal);
+}
+
+.card-options-dropdown {
+    position: absolute;
+    right: 16px;
+    top: 40px;
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    z-index: 100;
+    min-width: 150px;
+    overflow: hidden;
+}
+.card-options-dropdown.hidden {
+    display: none;
+}
+.card-options-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    color: var(--color-texto);
+    transition: background 0.15s;
+}
+.card-options-dropdown button:hover {
+    background: var(--color-tag-bg);
+    color: var(--color-principal);
+}
+
+/* Cola Dropdown en el player */
+.fp-queue-container-wrapper {
+    position: relative;
+}
+.fp-queue-badge {
+    background: var(--color-principal);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    border-radius: 10px;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-weight: bold;
+}
+.fp-queue-badge.hidden {
+    display: none;
+}
+.fp-queue-dropdown {
+    position: absolute;
+    bottom: 50px;
+    right: 0;
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    width: 320px;
+    max-height: 400px;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+}
+.fp-queue-dropdown.hidden {
+    display: none !important;
+}
+.fp-queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-borde);
+    background: var(--color-blanco);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.fp-clear-queue-btn, #fp-clear-queue-btn {
+    background: none;
+    border: none;
+    color: #c0392b;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+.fp-queue-items {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px 0;
+}
+.fp-queue-empty {
+    text-align: center;
+    color: var(--color-texto-secundario);
+    font-size: 0.85rem;
+    padding: 24px 0;
+}
+.fp-queue-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(0,0,0,0.02);
+}
+.fp-queue-item.active {
+    background: var(--color-tag-bg);
+    color: var(--color-principal);
+    font-weight: bold;
+}
+.fp-queue-item-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    margin-right: 12px;
+}
+.fp-queue-item-actions {
+    display: flex;
+    gap: 4px;
+}
+.fp-queue-item-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--color-texto-secundario);
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+.fp-queue-item-actions button:hover {
+    background: var(--color-blanco);
+    color: var(--color-principal);
+}
+
