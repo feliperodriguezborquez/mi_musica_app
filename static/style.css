@@ -993,16 +993,17 @@ footer { text-align: center; margin-top: 2rem; padding: 1rem; background-color: 
     background-color: var(--color-principal);
     color: #fff;
     border: none;
-    padding: 12px 28px;
-    font-size: 1.1rem;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: all 0.2s ease-in-out;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
 }
 .main-play-btn:hover {
     background-color: var(--color-acento);

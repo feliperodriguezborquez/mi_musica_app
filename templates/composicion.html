@@ -156,7 +156,7 @@
             </audio>
 
             <div class="main-play-button-container">
-                <button id="main-play-btn" class="main-play-btn" title="Reproducir canción">▶ Escuchar Canción</button>
+                <button id="main-play-btn" class="main-play-btn" title="Reproducir">▶</button>
             </div>
 
             <script>
@@ -173,10 +173,10 @@
 
                 // Sincronizar estado del botón de la página con el audio
                 audio.addEventListener('play', function() {
-                    if (playBtn) playBtn.innerHTML = '⏸ Pausar Canción';
+                    if (playBtn) playBtn.innerHTML = '⏸';
                 });
                 audio.addEventListener('pause', function() {
-                    if (playBtn) playBtn.innerHTML = '▶ Escuchar Canción';
+                    if (playBtn) playBtn.innerHTML = '▶';
                 });
 
                 if (playBtn) {
