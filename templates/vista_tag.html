@@ -7,20 +7,22 @@
 
         {# Mostramos los controles de orden solo si la categoría tiene un orden personalizado #}
         {% if (tag_nombre.split(':')[0] | trim) in ordenes_personalizados %}
-            <div class="sort-dropdown-container">
-                <span class="sort-label">Ordenar por:</span>
-                <a href="#" data-sort="canonico"
-                   class="sort-button {% if sort_by == 'canonico' %}active{% endif %}" >
-                   Canónico
-                </a>
-                <a href="#" data-sort="cronologico"
-                   class="sort-button {% if sort_by == 'cronologico' %}active{% endif %}" >
-                   Cronológico
-                </a>
-                <a href="#" data-sort="alfabetico"
-                   class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}" >
-                   Alfabético
-                </a>
+            <div class="filter-row-combined" style="margin-top: 10px;">
+                <div class="sort-pills-wrapper">
+                    <span class="filter-row-label">Ordenar por:</span>
+                    <a href="#" data-sort="canonico"
+                       class="sort-button {% if sort_by == 'canonico' %}active{% endif %}" >
+                       Canónico
+                    </a>
+                    <a href="#" data-sort="cronologico"
+                       class="sort-button {% if sort_by == 'cronologico' %}active{% endif %}" >
+                       Cronológico
+                    </a>
+                    <a href="#" data-sort="alfabetico"
+                       class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}" >
+                       Alfabético
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>

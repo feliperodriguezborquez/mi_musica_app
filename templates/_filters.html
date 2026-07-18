@@ -4,11 +4,39 @@
             <input type="search" name="search" id="search-input" placeholder="Buscar por título, autor, descripción..." value="{{ search_query or '' }}">
         </div>
     </form>
-    {% if FEATURES['category_pills'] %}
-    <div class="category-pills" style="margin-top: 12px;">
-        <button class="category-pill active" data-cat="">Todas</button>
-        <button class="category-pill" data-cat="Composición">Composiciones</button>
-        <button class="category-pill" data-cat="Arreglo">Arreglos</button>
+    
+    <div class="filter-row-combined">
+        {% if FEATURES['category_pills'] %}
+        <div class="category-pills-wrapper">
+            <button class="category-pill active" data-cat="">Todas</button>
+            <button class="category-pill" data-cat="Composición">Composiciones</button>
+            <button class="category-pill" data-cat="Arreglo">Arreglos</button>
+        </div>
+        {% endif %}
+        
+        {# Solo incluimos el separador y la ordenación si estamos en un contexto que la soporte #}
+        {% if page_context in ['tag', 'index', 'composiciones', 'arreglos'] or request.endpoint in ['index', 'composiciones', 'arreglos'] %}
+        <div class="filter-separator"></div>
+        <div class="sort-pills-wrapper">
+            <span class="filter-row-label">Ordenar por:</span>
+            
+            {% if (page_context == 'tag' and main_category in ordenes_personalizados) or (ordenes_personalizados and main_category in ordenes_personalizados) %}
+            <a href="{{ url_for(request.endpoint, tag_name=tag_nombre if tag_nombre else None, sort_by='canonico', search=search_query) }}" 
+               class="sort-button {% if sort_by == 'canonico' %}active{% endif %}">
+               Canónico
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for(request.endpoint, tag_name=tag_nombre if tag_nombre else None, sort_by='cronologico', search=search_query) }}" 
+               class="sort-button {% if sort_by == 'cronologico' %}active{% endif %}">
+               Cronológico
+            </a>
+
+            <a href="{{ url_for(request.endpoint, tag_name=tag_nombre if tag_nombre else None, sort_by='alfabetico', search=search_query) }}" 
+               class="sort-button {% if sort_by == 'alfabetico' %}active{% endif %}">
+               Alfabético
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>

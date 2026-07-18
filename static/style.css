@@ -1192,16 +1192,73 @@ footer p {
 .category-pills {
     display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
 }
-.category-pill {
-    padding: 6px 18px; border-radius: 20px;
+.category-pill, .sort-button {
+    padding: 6px 18px; 
+    border-radius: 20px;
     border: 1px solid var(--color-borde);
-    background: var(--color-blanco); color: var(--color-texto);
-    font-size: 0.88rem; cursor: pointer; font-weight: 500;
-    transition: all 0.2s;
+    background: var(--color-blanco); 
+    color: var(--color-texto);
+    font-size: 0.88rem; 
+    cursor: pointer; 
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
 }
-.category-pill:hover { border-color: var(--color-principal); color: var(--color-principal); }
-.category-pill.active {
-    background: var(--color-principal); color: #fff; border-color: var(--color-principal);
+.category-pill:hover, .sort-button:hover { 
+    border-color: var(--color-principal); 
+    color: var(--color-principal); 
+    transform: translateY(-1px);
+}
+.category-pill.active, .sort-button.active {
+    background: var(--color-principal); 
+    color: #fff; 
+    border-color: var(--color-principal);
+    font-weight: 600;
+}
+
+/* Fila combinada para filtros y ordenamiento en una sola línea */
+.filter-row-combined {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.category-pills-wrapper, .sort-pills-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-row-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-texto-secundario);
+}
+
+.filter-separator {
+    width: 1px;
+    height: 24px;
+    background-color: var(--color-borde);
+    align-self: center;
+}
+
+@media (max-width: 768px) {
+    .filter-row-combined {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .filter-separator {
+        width: 100%;
+        height: 1px;
+    }
 }
 
 /* ================================================================
@@ -1265,6 +1322,9 @@ footer p {
 /* ================================================================
    FLOATING PLAYER (Spotify Style)
    ================================================================ */
+/* ================================================================
+   FLOATING PLAYER (Spotify Style)
+   ================================================================ */
 .floating-player {
     position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 9000;
     background: var(--color-blanco);
@@ -1275,6 +1335,7 @@ footer p {
     padding: 14px 28px; min-height: 80px;
     box-sizing: border-box;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
 }
 .floating-player.hidden { display: none !important; }
 .fp-song-info { flex: 1.2; min-width: 0; }
@@ -1320,12 +1381,13 @@ footer p {
 }
 .fp-close-btn { color: var(--color-texto-secundario); font-size: 1.1rem; }
 
-/* Control de Volumen */
+/* Control de Volumen con comportamiento desplegable en hover/focus */
 .fp-volume-container {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-right: 8px;
+    position: relative;
 }
 .fp-volume-slider {
     width: 70px;
@@ -1335,14 +1397,110 @@ footer p {
     border-radius: 2px;
     background: var(--color-borde);
     border: none;
-    transition: width 0.2s ease;
+    transition: width 0.2s ease, opacity 0.2s ease;
 }
-.fp-volume-container:hover .fp-volume-slider {
+.fp-volume-container:hover .fp-volume-slider,
+.fp-volume-container:focus-within .fp-volume-slider {
     width: 90px;
+    opacity: 1;
+}
+
+/* --- RESPONSIVE PLAYER FOR MOBILE & TABLETS --- */
+@media (max-width: 768px) {
+    .floating-player {
+        bottom: 8px; left: 8px; right: 8px;
+        padding: 10px 16px;
+        min-height: 70px;
+        gap: 12px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    /* En móviles, dividimos en dos filas: arriba info/play/close, abajo barra de progreso */
+    .floating-player {
+        display: grid;
+        grid-template-areas: 
+            "info controls actions"
+            "progress progress progress";
+        grid-template-columns: 1fr auto auto;
+        row-gap: 8px;
+    }
+    
+    .fp-song-info {
+        grid-area: info;
+        align-self: center;
+    }
+    
+    .fp-controls {
+        grid-area: controls;
+        gap: 8px;
+        align-self: center;
+    }
+    
+    .fp-controls .fp-skip {
+        display: none; /* Ocultar botones anterior/siguiente en móvil para ahorrar espacio */
+    }
+    
+    .fp-right {
+        grid-area: actions;
+        flex: none;
+        align-self: center;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+    
+    .fp-progress-container {
+        grid-area: progress;
+        width: 100%;
+    }
+    
+    /* Ocultar el slider de volumen fijo en móvil para que no estorbe */
+    .fp-volume-slider {
+        display: none;
+    }
+    
+    /* Mostrar el volumen en un popup o simplemente ocultar slider y depender de controles físicos en celular */
+    .fp-volume-container:hover .fp-volume-slider,
+    .fp-volume-container:focus-within .fp-volume-slider {
+        display: block;
+        position: absolute;
+        bottom: 45px;
+        left: 50%;
+        transform: translateX(-50%) rotate(-90deg);
+        transform-origin: bottom center;
+        background: var(--color-blanco);
+        padding: 8px;
+        border: 1px solid var(--color-borde);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9100;
+        width: 80px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fp-title {
+        font-size: 0.9rem;
+    }
+    .fp-play-btn {
+        width: 38px;
+        height: 38px;
+    }
+    .floating-player {
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
+    }
+    .fp-queue-dropdown {
+        width: 100%; /* Pantalla completa en celular */
+    }
 }
 
 /* Separar el footer del final cuando el player está activo */
-body { padding-bottom: 110px; }
+body { padding-bottom: 120px; }
+@media (max-width: 768px) {
+    body { padding-bottom: 150px; }
+}
 
 
 /* ================================================================
