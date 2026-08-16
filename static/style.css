@@ -11,12 +11,12 @@
     --color-tag-texto: #8e6c13;  /* Texto de etiqueta */
     --color-borde: #e4d7c5;      /* Borde cálido */
     
-    /* Variables de Estructura - Vidrio Esmerilado & Minimalismo */
-    --color-header-bg: rgba(245, 238, 223, 0.85);
-    --color-header-texto: var(--color-texto);
-    --color-header-btn-bg: var(--color-blanco);
-    --color-footer-bg: transparent;
-    --color-footer-texto: var(--color-texto-secundario);
+    /* Variables de Estructura Clásicas */
+    --color-header-bg: var(--color-principal);
+    --color-header-texto: var(--color-blanco);
+    --color-header-btn-bg: var(--color-boton-nav);
+    --color-footer-bg: var(--color-principal);
+    --color-footer-texto: var(--color-blanco);
     --color-btn-bg: var(--color-principal);
     --color-btn-texto: var(--color-blanco);
     --color-btn-borde: transparent;
@@ -36,19 +36,20 @@
     --color-borde: #3f3936;      
     
     /* Variables de Estructura Ajustadas para Armonía */
-    --color-header-bg: rgba(31, 29, 27, 0.85);  
-    --color-header-texto: var(--color-texto); 
-    --color-header-btn-bg: var(--color-blanco); 
-    --color-footer-bg: transparent;  
+    --color-header-bg: #151312;  
+    --color-header-texto: var(--color-principal); 
+    --color-header-btn-bg: #2c2826; 
+    --color-footer-bg: #151312;  
     --color-footer-texto: var(--color-texto-secundario);
     --color-btn-bg: #2c2826;     
+    --color-btn-texto: var(--color-principal);
     --color-btn-borde: var(--color-principal);
 }
-
 
 /* Estilos Generales */
 /* --- BARRAS DE SCROLL TEMÁTICAS (Cero resplandor en modo oscuro) --- */
 html {
+    height: 100%;
     scrollbar-width: thin;
     scrollbar-color: var(--color-boton-nav) var(--color-fondo);
 }
@@ -79,9 +80,16 @@ body {
     margin: 0;
     line-height: 1.6;
     letter-spacing: -0.01em;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     padding-bottom: 110px; /* Evita que el reproductor flotante cubra el contenido inferior */
+    box-sizing: border-box;
 }
 
+main, #pjax-container {
+    flex: 1 0 auto;
+}
 
 h1, h2, h3, h4, h5, h6, .brand-logo {
     font-family: 'Lora', serif;
@@ -95,77 +103,66 @@ h1, h2, h3, h4, h5, h6, .brand-logo {
 }
 
 header { 
-    position: sticky;
-    top: 0;
-    z-index: 1000;
     background-color: var(--color-header-bg); 
     color: var(--color-header-texto); 
-    padding: 0.75rem 0; 
+    padding: 1rem 0; 
     margin-bottom: 2rem; 
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); 
-    border-bottom: 1px solid var(--color-borde);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 nav { display: flex; justify-content: space-between; align-items: center; }
 .brand-logo { 
     font-size: 1.55em; 
     font-weight: 700; 
-    color: var(--color-texto); 
+    color: var(--color-header-texto); 
     text-decoration: none; 
     letter-spacing: -0.02em;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: opacity 0.2s;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.brand-logo:hover {
-    opacity: 0.85;
-}
-nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 10px; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 12px; }
 nav ul li { margin-left: 0; }
 nav ul li > a,
 nav ul li > button.profile-btn { 
-    color: var(--color-texto); 
+    color: var(--color-header-texto); 
     text-decoration: none; 
     font-weight: 600; 
-    font-size: 0.88rem; 
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    font-size: 0.90rem; 
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
     padding: 7px 16px;
     border-radius: 20px;
-    background-color: var(--color-blanco);
-    border: 1px solid var(--color-borde);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+    background-color: var(--color-header-btn-bg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 nav ul li > a:hover,
 nav ul li > button.profile-btn:hover { 
-    background-color: var(--color-tag-bg);
-    color: var(--color-principal);
-    border-color: var(--color-principal);
+    background-color: var(--color-acento);
+    color: #ffffff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(184, 144, 32, 0.12);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .nav-separator { 
-    border-left: 1px solid var(--color-borde);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
     height: 18px;
     margin: 0 2px;
 }
 .nav-separator-thick {
-    border-left-color: var(--color-borde);
+    border-left-color: rgba(255, 255, 255, 0.5);
 }
 footer { 
+    flex-shrink: 0;
     text-align: center; 
-    margin-top: 4rem; 
-    padding: 2rem 1rem; 
-    background-color: transparent; 
-    color: var(--color-texto-secundario); 
-    border-top: 1px solid var(--color-borde);
+    margin-top: auto; 
+    padding: 2.5rem 1rem; 
+    background-color: var(--color-footer-bg); 
+    color: var(--color-footer-texto); 
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 footer p {
     margin: 4px 0;
-    font-size: 0.86rem;
-    opacity: 0.85;
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
+
 
 .filter-container { margin-bottom: 24px; }
 .search-bar {
