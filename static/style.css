@@ -220,19 +220,27 @@ footer p {
 
 .lista-composiciones {
     display: block; 
-    padding: 8px 2px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 0;
+}
+
+.tarjeta-obra-wrapper {
+    width: 100%;
+    display: block;
+    margin-bottom: 12px;
+    box-sizing: border-box;
 }
 
 .tarjeta-obra {
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
     text-decoration: none;
     color: var(--color-texto);
     background-color: var(--color-blanco);
     border-radius: 14px;
-    margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     border: 1px solid var(--color-borde);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -244,6 +252,7 @@ footer p {
     border-color: var(--color-acento);
     box-shadow: 0 8px 24px rgba(184, 144, 32, 0.12);
 }
+
 
 .song-title-with-number {
     display: flex;
@@ -1873,11 +1882,9 @@ body { padding-bottom: 120px; }
 /* ================================================================
    QUEUE AND OPTIONS DROPDOWNS
    ================================================================ */
-.tarjeta-obra-wrapper {
-    display: flex;
-    align-items: center;
-    width: 100%;
 .btn-add-queue {
+
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2252,6 +2259,11 @@ body { padding-bottom: 120px; }
 }
 
 .ui-polished .tarjeta-obra {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: var(--color-blanco);
     border: 1px solid var(--color-borde);
     border-radius: 14px;
@@ -2259,6 +2271,7 @@ body { padding-bottom: 120px; }
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(184, 144, 32, 0.04);
 }
+
 
 .ui-polished .tarjeta-obra:hover {
     transform: translateY(-2px);
