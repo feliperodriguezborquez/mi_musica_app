@@ -41,30 +41,40 @@
         {% endif %}
 
         <div class="title-container">
-            <h2>{{ obra.titulo }}</h2>
+            <h2>
+                {{ obra.titulo }}
+                {% if obra.audio %}
+                <button class="detail-play-btn list-play-btn" data-id="{{ obra.id }}" data-title="{{ obra.titulo }}" data-audio="{{ url_for('static', filename=obra.audio) }}" title="Reproducir / Pausar">▶</button>
+                {% endif %}
+            </h2>
             {% if obra.descripcion %}
                 <p class="song-subtitle">{{ obra.descripcion }}</p>
             {% endif %}
         </div>
         
-        <div class="metadata-grid">
-            <!-- Columna Izquierda -->
-            <div class="metadata-column">
-                <p><span class="metadata-label">Música:</span> <span class="metadata-value">{{ obra.musica }}</span></p>
-                <p><span class="metadata-label">Letra:</span> <span class="metadata-value">{{ obra.letra }}</span></p>
-                {% if obra.adaptacion %}
-                    <p><span class="metadata-label">Adaptación:</span> <span class="metadata-value">{{ obra.adaptacion }}</span></p>
+
+
+
+        <div class="compact-metadata-box">
+            <div class="compact-metadata-col">
+                <p><span class="metadata-label">Composición:</span> <span class="metadata-value">{{ obra.musica }}</span></p>
+                {% if obra.adaptacion or obra.arreglo %}
+                    <p><span class="metadata-label">Arreglo:</span> <span class="metadata-value">{{ obra.adaptacion or obra.arreglo }}</span></p>
                 {% endif %}
+                <p><span class="metadata-label">Texto:</span> <span class="metadata-value">{{ obra.letra }}</span></p>
                 {% if obra.interprete %}
                     <p><span class="metadata-label">Intérprete:</span> <span class="metadata-value">{{ obra.interprete }}</span></p>
                 {% endif %}
             </div>
-            <!-- Columna Derecha -->
-            <div class="metadata-column">
+            <div class="compact-metadata-col">
                 <p><span class="metadata-label">Idioma:</span> <span class="metadata-value">{{ obra.idioma }}</span></p>
                 <p><span class="metadata-label">Año:</span> <span class="metadata-value">{{ obra.anio }}</span></p>
             </div>
         </div>
+
+
+
+
 
         <!-- Botones flotantes para scroll -->
         <div class="scroll-buttons-container">
@@ -153,54 +163,23 @@
 
         {% if obra.tipo == 'local' %}
             {% if obra.audio %}
-            <!-- El audio real ahora se oculta de forma visual y se maneja con el reproductor flotante -->
-            <audio id="cancion-audio" style="display:none;" {% if request.args.get('play') %}data-autoplay="1"{% endif %}>
-                <source src="{{ url_for('static', filename=obra.audio) }}" type="audio/mpeg">
-            </audio>
-
-            <div class="main-play-button-container">
-                <button id="main-play-btn" class="main-play-btn" title="Reproducir">▶</button>
-            </div>
-
             <script>
             (function(){
-                var audio   = document.getElementById('cancion-audio');
-                var playBtn = document.getElementById('main-play-btn');
-                if (!audio) return;
-                
+                var globalAudio = document.getElementById('global-audio');
                 var prevUrl = {{ ('"' + prev_song_url + '"') | safe if prev_song_url else 'null' }};
                 var nextUrl = {{ ('"' + next_song_url + '"') | safe if next_song_url else 'null' }};
                 var title   = {{ ('"' + obra.titulo | replace('"', '\\"') + '"') | safe }};
+                var audioUrl = {{ ('"' + url_for('static', filename=obra.audio) + '"') | safe }};
 
-                if (window.FP) window.FP.init(audio, title, prevUrl, nextUrl);
-
-                // Sincronizar estado del botón de la página con el audio
-                audio.addEventListener('play', function() {
-                    if (playBtn) playBtn.innerHTML = '⏸';
-                });
-                audio.addEventListener('pause', function() {
-                    if (playBtn) playBtn.innerHTML = '▶';
-                });
-
-                if (playBtn) {
-                    playBtn.addEventListener('click', function() {
-                        if (audio.paused) {
-                            audio.play().catch(function(e){ console.log("Error al reproducir:", e); });
-                        } else {
-                            audio.pause();
-                        }
-                    });
-                }
-
-                if (audio.dataset.autoplay) {
-                    audio.addEventListener('canplay', function once() {
-                        audio.removeEventListener('canplay', once);
-                        audio.play().catch(function(){});
-                    }, { once: true });
+                if (window.FP && globalAudio) {
+                    window.FP.init(globalAudio, title, prevUrl, nextUrl, {{ obra.id }}, audioUrl);
+                    window.FP.syncAllPlayButtons();
                 }
             })();
             </script>
             {% endif %}
+
+
 
             {% if obra.partitura %}
                 <!-- El título de la sección ahora está fuera y siempre visible -->
@@ -317,13 +296,31 @@
                 }
 
                 if (osmd.sheet.Instruments.length > 1) { // Solo mostrar si hay más de un instrumento
+                    {% if obra.ensambles %}
+                    // 0. Crear sección destacada de Arreglos y Ensambles
+                    const ensamblesDiv = document.createElement('div');
+                    ensamblesDiv.className = 'ensambles-preset-container';
+                    ensamblesDiv.innerHTML = `
+                        <div class="ensambles-title">✨ Arreglos y Ensambles Disponibles:</div>
+                        <div class="ensambles-buttons-group">
+                            {% for ensamble in obra.ensambles %}
+                                <button class="ensamble-preset-btn" data-ensamble-name="{{ ensamble.nombre }}" data-instrumentos='{{ ensamble.instrumentos | tojson }}'>
+                                    {% if 'Órgano' in ensamble.nombre or 'Organo' in ensamble.nombre %}🎹{% elif 'Cuerdas' in ensamble.nombre %}🎻{% else %}🎼{% endif %}
+                                    {{ ensamble.nombre }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    `;
+                    instrumentControlsContainer.appendChild(ensamblesDiv);
+                    {% endif %}
+
                     // Crear botones de "Todos" y "Ninguno"
                     const controlsDiv = document.createElement('div');
                     controlsDiv.className = 'instrument-select-all-controls';
                     controlsDiv.innerHTML = `
                         <div class="instrument-checkbox-item master">
                             <input type="checkbox" id="toggle-all-instr-check" checked>
-                            <label for="toggle-all-instr-check">Todos</label>
+                            <label for="toggle-all-instr-check">Todos los Instrumentos</label>
                         </div>
                     `;
                     instrumentControlsContainer.appendChild(controlsDiv);
@@ -336,6 +333,8 @@
                         instrumentControlsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                             checkbox.checked = isChecked;
                         });
+                        // Quitar estado activo de los ensambles presets
+                        instrumentControlsContainer.querySelectorAll('.ensamble-preset-btn').forEach(btn => btn.classList.remove('active'));
                         osmd.render();
                     });
 
@@ -393,10 +392,45 @@
                         });
                     }
 
+                    // --- Configuración de los eventos de Presets de Ensambles ---
+                    const ensambleBtns = instrumentControlsContainer.querySelectorAll('.ensamble-preset-btn');
+                    function normalizeStr(str) {
+                        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                    }
+                    
+                    ensambleBtns.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            ensambleBtns.forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+
+                            const targetInstrs = JSON.parse(btn.dataset.instrumentos || '[]');
+                            const isTodos = targetInstrs.some(i => i.toLowerCase() === 'todos');
+                            const normalizedTargets = targetInstrs.map(i => normalizeStr(i));
+
+                            osmd.sheet.Instruments.forEach((instrument, idx) => {
+                                let visible = false;
+                                if (isTodos) {
+                                    visible = true;
+                                } else {
+                                    const normName = normalizeStr(instrument.Name);
+                                    visible = normalizedTargets.some(target => normName.includes(target) || target.includes(normName));
+                                }
+                                instrument.Visible = visible;
+                                const cb = document.getElementById(`instr-check-${idx}`);
+                                if (cb) cb.checked = visible;
+                            });
+
+                            updateMasterCheckboxes();
+                            osmd.render();
+                        });
+                    });
+
                     // 3. Lógica para los checkboxes
                     instrumentControlsContainer.addEventListener('change', (event) => {
                         if (event.target.type === 'checkbox') {
                             const isChecked = event.target.checked;
+                            // Al tocar un checkbox manual, desactivar el resaltado de botones de preset
+                            ensambleBtns.forEach(b => b.classList.remove('active'));
 
                             // Checkbox maestro de familia
                             if (event.target.dataset.family) {
@@ -420,6 +454,7 @@
                         }
                     });
                 }
+
             })
             .catch((error) => {
                 console.error("Error al cargar la partitura:", error);
@@ -561,44 +596,240 @@
             {% endif %}
 
             {% if obra.letras_acordes %}
-                <h4>Letras y Acordes</h4>
-                <embed src="{{ url_for('static', filename=obra.letras_acordes) }}" type="application/pdf" width="100%" height="700px" />
+                <h4>{% if obra.tipo_pdf == 'partitura' %}Partitura (PDF){% else %}Letras y Acordes{% endif %}</h4>
+                <div class="pdf-viewer-container" data-pdf-url="{{ url_for('static', filename=obra.letras_acordes) }}">
+                    <div class="pdf-controls">
+                        <div class="pdf-controls-group">
+                            <button class="pdf-btn pdf-prev-btn" title="Página anterior">◀ Anterior</button>
+                            <span class="pdf-page-num">Página <span class="pdf-current-page">1</span> de <span class="pdf-total-pages">1</span></span>
+                            <button class="pdf-btn pdf-next-btn" title="Página siguiente">Siguiente ▶</button>
+                        </div>
+                        <div class="pdf-controls-group pdf-zoom-group">
+                            <button class="pdf-btn pdf-zoom-btn pdf-zoom-out" title="Alejar">-</button>
+                            <button class="pdf-btn pdf-zoom-btn pdf-zoom-reset" title="Restablecer Zoom"><span class="pdf-zoom-val">100%</span></button>
+                            <button class="pdf-btn pdf-zoom-btn pdf-zoom-in" title="Acercar">+</button>
+                        </div>
+                        <div class="pdf-controls-group">
+                            <a href="{{ url_for('static', filename=obra.letras_acordes) }}" target="_blank" download class="pdf-btn pdf-open-btn" title="Descargar PDF">📥 Descargar</a>
+                        </div>
+                    </div>
+                    <div class="pdf-canvas-wrapper">
+                        <canvas class="pdf-render-canvas"></canvas>
+                    </div>
+                </div>
+                <script>
+                    (function() {
+                        const scriptEl = document.currentScript;
+                        const container = scriptEl ? scriptEl.closest('.pdf-viewer-container') || document.querySelector('.pdf-viewer-container') : document.querySelector('.pdf-viewer-container');
+                        if (!container) return;
+                        const rawUrl = container.dataset.pdfUrl;
+                        if (!rawUrl) return;
+                        const url = rawUrl;
+
+                        const canvas = container.querySelector('.pdf-render-canvas');
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+                        let pdfDoc = null, pageNum = 1, pageRendering = false, pageNumPending = null, currentRenderTask = null;
+                        let pdfZoomFactor = 1.0;
+
+                        function updateZoomDisplay() {
+                            const zoomValEl = container.querySelector('.pdf-zoom-val');
+                            if (zoomValEl) zoomValEl.textContent = Math.round(pdfZoomFactor * 100) + '%';
+                        }
+
+                        function renderPage(num) {
+                            pageRendering = true;
+                            if (currentRenderTask) {
+                                try { currentRenderTask.cancel(); } catch(e) {}
+                            }
+                            pdfDoc.getPage(num).then(page => {
+                                const parentWidth = canvas.parentElement ? canvas.parentElement.clientWidth : 0;
+                                const containerWidth = parentWidth > 50 ? (parentWidth - 32) : Math.min(950, window.innerWidth - 40);
+                                const unscaled = page.getViewport({ scale: 1.0 });
+                                const baseScale = (containerWidth / unscaled.width) * pdfZoomFactor;
+                                
+                                // Renderizado en Ultra Alta Definición (3.0x a 4.0x DPR real)
+                                const dpr = Math.max(window.devicePixelRatio || 1, 3.0);
+                                const displayViewport = page.getViewport({ scale: baseScale });
+                                const renderViewport = page.getViewport({ scale: baseScale * dpr });
+                                
+                                canvas.width = Math.round(renderViewport.width);
+                                canvas.height = Math.round(renderViewport.height);
+                                canvas.style.width = '100%';
+                                canvas.style.maxWidth = Math.round(displayViewport.width) + 'px';
+                                canvas.style.height = 'auto';
+
+                                ctx.fillStyle = '#ffffff';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                                const renderContext = { canvasContext: ctx, viewport: renderViewport };
+                                currentRenderTask = page.render(renderContext);
+                                currentRenderTask.promise.then(() => {
+                                    currentRenderTask = null;
+                                    pageRendering = false;
+                                    if (pageNumPending !== null) {
+                                        renderPage(pageNumPending);
+                                        pageNumPending = null;
+                                    }
+                                }).catch(err => {
+                                    if (err && err.name !== 'RenderingCancelledException') {
+                                        console.warn("Render task error:", err);
+                                    }
+                                });
+                            }).catch(err => {
+                                console.warn("getPage error:", err);
+                            });
+                            const curEl = container.querySelector('.pdf-current-page');
+                            if (curEl) curEl.textContent = num;
+                            updateZoomDisplay();
+                        }
+
+                        if (typeof pdfjsLib !== 'undefined') {
+                            try {
+                                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                            } catch(e){}
+
+                            pdfjsLib.getDocument(url).promise.then(doc => {
+                                pdfDoc = doc;
+                                const totEl = container.querySelector('.pdf-total-pages');
+                                if (totEl) totEl.textContent = doc.numPages;
+                                renderPage(pageNum);
+                            }).catch(err => {
+                                console.warn("PDF.js getDocument error:", err);
+                            });
+
+                            const prevBtn = container.querySelector('.pdf-prev-btn');
+                            const nextBtn = container.querySelector('.pdf-next-btn');
+                            const zoomInBtn = container.querySelector('.pdf-zoom-in');
+                            const zoomOutBtn = container.querySelector('.pdf-zoom-out');
+                            const zoomResetBtn = container.querySelector('.pdf-zoom-reset');
+
+                            if (prevBtn) prevBtn.addEventListener('click', () => {
+                                if (pageNum <= 1) return;
+                                pageNum--;
+                                if (pageRendering) pageNumPending = pageNum; else renderPage(pageNum);
+                            });
+                            if (nextBtn) nextBtn.addEventListener('click', () => {
+                                if (pdfDoc && pageNum >= pdfDoc.numPages) return;
+                                pageNum++;
+                                if (pageRendering) pageNumPending = pageNum; else renderPage(pageNum);
+                            });
+                            if (zoomInBtn) zoomInBtn.addEventListener('click', () => {
+                                pdfZoomFactor = Math.min(2.5, +(pdfZoomFactor + 0.15).toFixed(2));
+                                renderPage(pageNum);
+                            });
+                            if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => {
+                                pdfZoomFactor = Math.max(0.5, +(pdfZoomFactor - 0.15).toFixed(2));
+                                renderPage(pageNum);
+                            });
+                            if (zoomResetBtn) zoomResetBtn.addEventListener('click', () => {
+                                pdfZoomFactor = 1.0;
+                                renderPage(pageNum);
+                            });
+                        }
+                    })();
+                </script>
+            {% endif %}
+
+
+            {% if obra.youtube_video_embed or obra.youtube_audio_embed %}
+                <div class="youtube-local-container" style="margin-top: 30px; margin-bottom: 25px;">
+                    <h4>📹 Videos de YouTube</h4>
+                    {% if obra.youtube_video_embed and obra.youtube_audio_embed %}
+                        <div class="player-selection-buttons" style="margin-bottom: 15px;">
+                            <button class="player-button active" onclick="showLocalYtPlayer('video')">🎻 Arreglo Cuerdas (YouTube)</button>
+                            <button class="player-button" onclick="showLocalYtPlayer('audio')">🎹 Arreglo Órgano (YouTube)</button>
+                        </div>
+                        <div id="localYtVideoPlayer" class="embed-container">
+                            {{ obra.youtube_video_embed | safe }}
+                        </div>
+                        <div id="localYtAudioPlayer" class="embed-container" style="display:none;">
+                            {{ obra.youtube_audio_embed | safe }}
+                        </div>
+                        <script>
+                            window.showLocalYtPlayer = function(type) {
+                                const vPlayer = document.getElementById('localYtVideoPlayer');
+                                const aPlayer = document.getElementById('localYtAudioPlayer');
+                                const vBtn = document.querySelector('.player-button[onclick*="video"]');
+                                const aBtn = document.querySelector('.player-button[onclick*="audio"]');
+                                if (type === 'video') {
+                                    if(vPlayer) vPlayer.style.display = 'block';
+                                    if(aPlayer) aPlayer.style.display = 'none';
+                                    if(vBtn) vBtn.classList.add('active');
+                                    if(aBtn) aBtn.classList.remove('active');
+                                } else {
+                                    if(vPlayer) vPlayer.style.display = 'none';
+                                    if(aPlayer) aPlayer.style.display = 'block';
+                                    if(aBtn) aBtn.classList.add('active');
+                                    if(vBtn) vBtn.classList.remove('active');
+                                }
+                            };
+                        </script>
+                    {% else %}
+                        <div class="embed-container">
+                            {{ (obra.youtube_video_embed or obra.youtube_audio_embed) | safe }}
+                        </div>
+                    {% endif %}
+                </div>
             {% endif %}
         
         {% elif obra.tipo == 'youtube_selectable' %}
-            <h4>Reproductor</h4>
-            <div class="player-selection-buttons">
-                <button class="player-button active" onclick="showPlayer('audio')">Escuchar Canción</button>
-                <button class="player-button" onclick="showPlayer('video')">Ver Video</button>
+            {% if obra.youtube_video_embed and obra.youtube_audio_embed and obra.youtube_video_embed != obra.youtube_audio_embed %}
+                <h4>📹 Videos de YouTube</h4>
+                <div class="player-selection-buttons">
+                    <button class="player-button active" onclick="showPlayer('audio')">Escuchar Canción</button>
+                    <button class="player-button" onclick="showPlayer('video')">Ver Video</button>
+                </div>
+                <div id="audioPlayer" class="embed-container">
+                    {{ obra.youtube_audio_embed | safe }}
+                </div>
+                <div id="videoPlayer" class="embed-container" style="display:none;">
+                    {{ obra.youtube_video_embed | safe }}
+                </div>
+                <script>
+                    window.showPlayer = function(type) {
+                        const videoPlayer = document.getElementById('videoPlayer');
+                        const audioPlayer = document.getElementById('audioPlayer');
+                        const videoButton = document.querySelector('.player-button[onclick*="video"]');
+                        const audioButton = document.querySelector('.player-button[onclick*="audio"]');
+                        if (type === 'video') {
+                            if(videoPlayer) videoPlayer.style.display = 'block';
+                            if(audioPlayer) audioPlayer.style.display = 'none';
+                            if(videoButton) videoButton.classList.add('active');
+                            if(audioButton) audioButton.classList.remove('active');
+                        } else {
+                            if(videoPlayer) videoPlayer.style.display = 'none';
+                            if(audioPlayer) audioPlayer.style.display = 'block';
+                            if(audioButton) audioButton.classList.add('active');
+                            if(videoButton) videoButton.classList.remove('active');
+                        }
+                    };
+                </script>
+            {% else %}
+                <h4>Escuchar Canción</h4>
+                <div class="embed-container">
+                    {{ (obra.youtube_audio_embed or obra.youtube_video_embed) | safe }}
+                </div>
+            {% endif %}
+
+        {% endif %}
+
+        {% if obra.descargas %}
+
+            <div class="downloads-section" style="margin-top: 35px; margin-bottom: 25px;">
+                <h4>📥 Partituras y Documentos PDF para Descargar</h4>
+                <div class="downloads-buttons-grid" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;">
+                    {% for doc in obra.descargas %}
+                        <a href="{{ url_for('static', filename=doc.archivo) }}" target="_blank" download class="btn-download-pdf">
+                            📄 {{ doc.nombre }}
+                        </a>
+                    {% endfor %}
+                </div>
             </div>
-            <div id="audioPlayer" class="embed-container">
-                {{ obra.youtube_audio_embed | safe }}
-            </div>
-            <div id="videoPlayer" class="embed-container" style="display:none;">
-                {{ obra.youtube_video_embed | safe }}
-            </div>
-            <script>
-                function showPlayer(type) {
-                    const videoPlayer = document.getElementById('videoPlayer');
-                    const audioPlayer = document.getElementById('audioPlayer');
-                    const videoButton = document.querySelector('.player-button[onclick*="video"]');
-                    const audioButton = document.querySelector('.player-button[onclick*="audio"]');
-                    if (type === 'video') {
-                        videoPlayer.style.display = 'block';
-                        audioPlayer.style.display = 'none';
-                        videoButton.classList.add('active');
-                        audioButton.classList.remove('active');
-                    } else {
-                        videoPlayer.style.display = 'none';
-                        audioPlayer.style.display = 'block';
-                        audioButton.classList.add('active');
-                        videoButton.classList.remove('active');
-                    }
-                }
-            </script>
         {% endif %}
 
         {% if obra.tags %}
+
             <h4>Listas de Reproducción</h4>
             <div class="tags-container">
                 {% for tag in obra.tags %}

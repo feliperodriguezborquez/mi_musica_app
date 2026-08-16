@@ -9,11 +9,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.1/build/opensheetmusicdisplay.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <script>
-        // Aplicar el tema inmediatamente para evitar destellos blancos
+        // Aplicar el tema y diseño refinado por defecto
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.classList.add('ui-polished');
     </script>
+
 </head>
 <body>
     <header>
@@ -44,6 +48,7 @@
                         </div>
                         
                         <div class="dropdown-separator"></div>
+
                         
                         <!-- Sección: Cuenta / Admin -->
                         <div class="dropdown-section">
@@ -133,22 +138,41 @@ const _fmt = s => { s = Math.floor(s || 0); return `${Math.floor(s/60)}:${String
 
 window.FP = {
     audio: null,
+    songId: null,
+    title: null,
+    audioUrl: null,
     _pending: null,
 
-    // Vincula el reproductor flotante al elemento de audio actual (puede ser el de la página o el global-audio)
-    init(audioEl, title, prevUrl, nextUrl, songId) {
-        // Desvincular eventos del audio anterior si existía
-        if (this.audio) {
-            this._unbindAudio();
+    getGlobalAudio() {
+        if (!this.audio) {
+            this.audio = document.getElementById('global-audio');
         }
-
-        this.audio = audioEl;
-        this.songId = songId;
-        this._pending = { title, prevUrl, nextUrl, songId };
-        this._setup();
+        return this.audio;
     },
 
-    _setup() {
+    init(audioEl, title, prevUrl, nextUrl, songId, audioUrl) {
+        const a = this.getGlobalAudio();
+        
+        // Si es la misma canción que ya está sonando, solo actualizar metadatos prev/next sin pausar ni reiniciar
+        if (this.songId && String(this.songId) === String(songId) && a && !a.paused) {
+            this._pending = { title, prevUrl, nextUrl, songId };
+            this._setup(false);
+            return;
+        }
+
+        if (audioUrl && a && a.src !== audioUrl) {
+            a.src = audioUrl;
+            a.load();
+        }
+
+        this.songId = songId;
+        this.title = title;
+        this.audioUrl = audioUrl || (a ? a.src : '');
+        this._pending = { title, prevUrl, nextUrl, songId };
+        this._setup(true);
+    },
+
+    _setup(bindAudio = true) {
         if (!this._pending) return;
         const { title, prevUrl, nextUrl, songId } = this._pending;
         this._pending = null;
@@ -160,18 +184,6 @@ window.FP = {
         if (fpTitle) {
             if (songId) {
                 fpTitle.innerHTML = `<a href="/composicion/${songId}" class="fp-title-link" style="color: inherit; text-decoration: none; font-weight: 700;">${title}</a>`;
-                // Vincular enlace dinámico de SPA
-                const linkEl = fpTitle.querySelector('a');
-                if (linkEl) {
-                    linkEl.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (typeof navigateSPA === 'function') {
-                            navigateSPA(linkEl.href);
-                        } else {
-                            window.location.href = linkEl.href;
-                        }
-                    });
-                }
             } else {
                 fpTitle.textContent = title;
             }
@@ -182,7 +194,11 @@ window.FP = {
         const fp = document.getElementById('floating-player');
         if (fp) fp.classList.remove('hidden');
 
-        this._bindAudio();
+        if (bindAudio) {
+            this._bindAudio();
+        } else {
+            this.syncAllPlayButtons();
+        }
     },
 
     _timeUpdateHandler: null,
@@ -191,8 +207,10 @@ window.FP = {
     _endedHandler: null,
 
     _bindAudio() {
-        const a = this.audio;
+        const a = this.getGlobalAudio();
         if (!a) return;
+
+        this._unbindAudio();
 
         const seek = document.getElementById('fp-seek');
         const cur  = document.getElementById('fp-current');
@@ -201,21 +219,21 @@ window.FP = {
         const next = document.getElementById('fp-next');
 
         const updatePlayIcon = (paused) => {
-            if (!p) return;
-            const playSvg = document.getElementById('fp-play-svg');
-            if (playSvg) {
-                if (paused) {
-                    playSvg.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play icon
-                } else {
-                    playSvg.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+            if (p) {
+                const playSvg = document.getElementById('fp-play-svg');
+                if (playSvg) {
+                    if (paused) {
+                        playSvg.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                    } else {
+                        playSvg.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                    }
                 }
             }
+            this.syncAllPlayButtons();
         };
 
-        this._playHandler = () => {
-            updatePlayIcon(false);
-        };
-
+        this._playHandler = () => updatePlayIcon(false);
+        this._pauseHandler = () => updatePlayIcon(true);
         this._timeUpdateHandler = () => {
             if (!isNaN(a.duration)) {
                 if (seek) { seek.max = Math.floor(a.duration); seek.value = Math.floor(a.currentTime); }
@@ -223,11 +241,6 @@ window.FP = {
                 if (dur)  dur.textContent  = _fmt(a.duration);
             }
         };
-
-        this._pauseHandler = () => {
-            updatePlayIcon(true);
-        };
-
         this._endedHandler = () => {
             updatePlayIcon(true);
             if (localStorage.getItem('autoplay_playlist') === 'true' &&
@@ -243,19 +256,61 @@ window.FP = {
         a.addEventListener('pause', this._pauseHandler);
         a.addEventListener('ended', this._endedHandler);
 
-        // Inicializar el botón de play en la barra con el estado actual
         updatePlayIcon(a.paused);
     },
 
     _unbindAudio() {
-        const a = this.audio;
+        const a = this.getGlobalAudio();
         if (!a) return;
-        a.removeEventListener('timeupdate', this._timeUpdateHandler);
-        a.removeEventListener('play', this._playHandler);
-        a.removeEventListener('pause', this._pauseHandler);
-        a.removeEventListener('ended', this._endedHandler);
+        if (this._timeUpdateHandler) a.removeEventListener('timeupdate', this._timeUpdateHandler);
+        if (this._playHandler) a.removeEventListener('play', this._playHandler);
+        if (this._pauseHandler) a.removeEventListener('pause', this._pauseHandler);
+        if (this._endedHandler) a.removeEventListener('ended', this._endedHandler);
+    },
+
+    syncAllPlayButtons() {
+        const a = this.getGlobalAudio();
+        const activeSongId = String(this.songId || '');
+        const isPlaying = a && !a.paused;
+
+        document.querySelectorAll('.list-play-btn, .detail-play-btn').forEach(btn => {
+            const btnId = String(btn.dataset.id || '');
+            if (btnId && btnId === activeSongId) {
+                btn.innerHTML = isPlaying ? '⏸' : '▶';
+                btn.classList.toggle('playing', isPlaying);
+            } else {
+                btn.innerHTML = '▶';
+                btn.classList.remove('playing');
+            }
+        });
+    },
+
+    togglePlay(songId, title, audioUrl) {
+        const a = this.getGlobalAudio();
+        if (!a) return;
+
+        const activeSongId = String(this.songId || '');
+        const isSameSong = activeSongId === String(songId);
+
+        if (isSameSong && a.src) {
+            if (a.paused) {
+                a.play().catch(e => console.log(e));
+            } else {
+                a.pause();
+            }
+        } else {
+            a.pause();
+            if (audioUrl) {
+                a.src = audioUrl;
+                a.load();
+            }
+            this.init(a, title, null, null, songId, audioUrl);
+            a.play().catch(err => console.log(err));
+        }
     }
 };
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -301,22 +356,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    let lastNonZeroVolume = 1.0;
     if (fpVolBtn) {
         fpVolBtn.addEventListener('click', () => {
             if (!window.FP.audio) return;
-            window.FP.audio.muted = !window.FP.audio.muted;
-            updateVolIcon(window.FP.audio.muted);
-            if (fpVolSlider) fpVolSlider.value = window.FP.audio.muted ? 0 : window.FP.audio.volume;
+            if (window.FP.audio.muted || window.FP.audio.volume === 0) {
+                window.FP.audio.muted = false;
+                window.FP.audio.volume = lastNonZeroVolume || 1.0;
+                if (fpVolSlider) fpVolSlider.value = window.FP.audio.volume;
+                updateVolIcon(false);
+            } else {
+                lastNonZeroVolume = window.FP.audio.volume || 1.0;
+                window.FP.audio.muted = true;
+                if (fpVolSlider) fpVolSlider.value = 0;
+                updateVolIcon(true);
+            }
         });
     }
     if (fpVolSlider) {
         fpVolSlider.addEventListener('input', () => {
             if (!window.FP.audio) return;
-            window.FP.audio.volume = Number(fpVolSlider.value);
-            window.FP.audio.muted = (window.FP.audio.volume === 0);
-            updateVolIcon(window.FP.audio.muted);
+            const val = Number(fpVolSlider.value);
+            window.FP.audio.volume = val;
+            window.FP.audio.muted = (val === 0);
+            if (val > 0) lastNonZeroVolume = val;
+            updateVolIcon(val === 0);
         });
     }
+
     if (fpClose) {
         fpClose.addEventListener('click', () => {
             if (window.FP.audio) window.FP.audio.pause();
@@ -593,6 +660,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newMain = doc.getElementById('pjax-container');
                 if (currentMain && newMain) {
                     currentMain.innerHTML = newMain.innerHTML;
+
+                    // Re-ejecutar scripts dentro de currentMain
+                    currentMain.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
                 }
 
                 // Re-ejecutar scripts del bloque extra_js del template parcial
@@ -611,6 +686,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (pushState) {
                     window.history.pushState({ url }, '', url);
                 }
+                if (window.FP && typeof window.FP.syncAllPlayButtons === 'function') {
+                    window.FP.syncAllPlayButtons();
+                }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(err => {
@@ -619,47 +697,40 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+
     // ====== DELEGACIÓN GLOBAL UNIFICADA: Un único listener para todos los clicks ======
     document.addEventListener('click', (e) => {
 
-        // 1. Play en tarjetas
-        const playBtn = e.target.closest('.list-play-btn');
+        // 1. Play en tarjetas y página de detalle
+        const playBtn = e.target.closest('.list-play-btn, .detail-play-btn');
         if (playBtn) {
             e.preventDefault();
             e.stopPropagation();
             const card = playBtn.closest('.tarjeta-obra');
-            if (card) {
-                const audioUrl = card.getAttribute('data-audio');
-                const id = card.getAttribute('data-id');
-                if (audioUrl) {
-                    const allCards = Array.from(document.querySelectorAll('.tarjeta-obra-wrapper .tarjeta-obra'));
-                    const audioCards = allCards.filter(c => c.getAttribute('data-audio'));
+            const id = playBtn.dataset.id || card?.getAttribute('data-id');
+            const title = playBtn.dataset.title || card?.getAttribute('data-title');
+            const audioUrl = playBtn.dataset.audio || card?.getAttribute('data-audio');
+
+            if (id && audioUrl) {
+                const allCards = Array.from(document.querySelectorAll('.tarjeta-obra-wrapper .tarjeta-obra'));
+                const audioCards = allCards.filter(c => c.getAttribute('data-audio'));
+                if (audioCards.length > 0) {
                     window.FP.queue = audioCards.map(c => ({
                         id: c.getAttribute('data-id'),
                         title: c.getAttribute('data-title'),
                         audioUrl: c.getAttribute('data-audio')
                     }));
-                    const index = window.FP.queue.findIndex(item => item.id === id);
-                    playQueueIndex(index !== -1 ? index : 0);
+                    const index = window.FP.queue.findIndex(item => String(item.id) === String(id));
+                    if (index !== -1) window.FP.queueIndex = index;
                 }
+                window.FP.togglePlay(id, title, audioUrl);
             }
             return;
         }
 
-        // 2. Botón de opciones de tarjeta
-        const optionsBtn = e.target.closest('.card-options-btn');
-        if (optionsBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.querySelectorAll('.card-options-dropdown').forEach(d => {
-                if (d !== optionsBtn.nextElementSibling) d.classList.add('hidden');
-            });
-            optionsBtn.nextElementSibling?.classList.toggle('hidden');
-            return;
-        }
-
-        // 3. Añadir a la cola
+        // 2. Añadir a la cola directo (1-clic)
         const addQueueBtn = e.target.closest('.opt-add-queue');
+
         if (addQueueBtn) {
             e.preventDefault();
             e.stopPropagation();
@@ -668,7 +739,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 addQueueBtn.getAttribute('data-title'),
                 addQueueBtn.getAttribute('data-audio')
             );
-            addQueueBtn.closest('.card-options-dropdown')?.classList.add('hidden');
+            addQueueBtn.classList.add('added');
+            addQueueBtn.title = "¡Añadida a la cola!";
+            setTimeout(() => {
+                addQueueBtn.classList.remove('added');
+                addQueueBtn.title = "Añadir a la cola";
+            }, 1000);
             return;
         }
 
@@ -677,42 +753,60 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.card-options-dropdown').forEach(d => d.classList.add('hidden'));
         }
 
-        // 5. Category pills
+        // 5. Category pills (Todas / Composiciones / Arreglos)
         const pill = e.target.closest('.category-pill');
         if (pill) {
+            e.preventDefault();
             document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
             const container = document.getElementById('song-list-container');
             if (container) {
-                const form = document.getElementById('filter-form');
-                const params = new URLSearchParams(form ? new FormData(form) : {});
+                const params = new URLSearchParams();
                 if (pill.dataset.cat) params.set('categoria', pill.dataset.cat);
                 const searchInput = document.getElementById('search-input');
                 if (searchInput && searchInput.value) params.set('search', searchInput.value);
+                const activeSortBtn = document.querySelector('.sort-button.active');
+                if (activeSortBtn && activeSortBtn.dataset.sort) {
+                    params.set('sort_by', activeSortBtn.dataset.sort);
+                } else {
+                    const urlSort = new URLSearchParams(window.location.search).get('sort_by');
+                    if (urlSort) params.set('sort_by', urlSort);
+                }
+                
                 fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
                     .then(r => r.text())
-                    .then(html => { container.innerHTML = html; })
+                    .then(html => {
+                        container.innerHTML = html;
+                        window.FP.syncAllPlayButtons();
+                    })
                     .catch(err => console.error(err));
             }
             return;
         }
 
-        // 6. Sort buttons
+        // 6. Sort buttons (Cronológico / Alfabético / Canónico)
         const sortBtn = e.target.closest('.sort-button');
         if (sortBtn) {
             e.preventDefault();
             const container = document.getElementById('song-list-container');
             if (!container) return;
             const sortMethod = sortBtn.dataset.sort;
-            const tagName = window.location.pathname.split('/').pop();
             document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
             sortBtn.classList.add('active');
-            const fetchUrl = `{{ url_for('get_playlist_partial') }}?context=tag&tag_name=${tagName}&sort_by=${sortMethod}`;
+
+            const params = new URLSearchParams();
+            params.set('sort_by', sortMethod);
+            const activePill = document.querySelector('.category-pill.active');
+            if (activePill && activePill.dataset.cat) params.set('categoria', activePill.dataset.cat);
+            const searchInput = document.getElementById('search-input');
+            if (searchInput && searchInput.value) params.set('search', searchInput.value);
+
             container.innerHTML = '<p class="no-results">Cargando...</p>';
-            fetch(fetchUrl)
+            fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
                 .then(response => response.text())
                 .then(html => {
                     container.innerHTML = html;
+                    window.FP.syncAllPlayButtons();
                     const nextURL = new URL(window.location);
                     nextURL.searchParams.set('sort_by', sortMethod);
                     window.history.pushState({ path: nextURL.href }, '', nextURL.href);
@@ -723,12 +817,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // 7. Links internos → PJAX
         const link = e.target.closest('a');
         if (!link) return;
-        if (link.closest('#floating-player') || link.closest('#fp-queue-dropdown')) return;
+        if (link.closest('#fp-queue-dropdown')) return;
         if (shouldIntercept(link)) {
             e.preventDefault();
             navigateSPA(link.href);
         }
+
     });
+
 
     // Volver atrás / adelante en el navegador
     window.addEventListener('popstate', () => {
@@ -739,6 +835,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('input', function(e) {
         if (!e.target.matches('#search-input')) return;
         const searchInput = e.target;
+        const clearBtn = document.getElementById('search-clear-btn');
+        if (clearBtn) {
+            clearBtn.classList.toggle('hidden', !searchInput.value.trim());
+        }
         clearTimeout(searchInput._debounce);
         searchInput._debounce = setTimeout(() => {
             const form = document.getElementById('filter-form');
@@ -748,10 +848,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('song-list-container');
             fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
                 .then(r => r.text())
-                .then(html => { if (container) container.innerHTML = html; })
+                .then(html => { 
+                    if (container) container.innerHTML = html; 
+                    window.FP.syncAllPlayButtons();
+                })
                 .catch(e => console.error(e));
-        }, 300);
+        }, 250);
     });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.matches('#search-clear-btn')) return;
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            e.target.classList.add('hidden');
+            searchInput.focus();
+            const form = document.getElementById('filter-form');
+            const params = new URLSearchParams(form ? new FormData(form) : {});
+            const catFilter = document.querySelector('.category-pill.active');
+            if (catFilter && catFilter.dataset.cat) params.set('categoria', catFilter.dataset.cat);
+            const container = document.getElementById('song-list-container');
+            fetch(`{{ url_for('filter_songs') }}?${params.toString()}`)
+                .then(r => r.text())
+                .then(html => { 
+                    if (container) container.innerHTML = html; 
+                    window.FP.syncAllPlayButtons();
+                })
+                .catch(e => console.error(e));
+        }
+    });
+
 
 });
 </script>

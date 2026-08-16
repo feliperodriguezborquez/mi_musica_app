@@ -26,7 +26,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "partitura"
     },
     {
         "id": 2,
@@ -53,7 +54,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "partitura"
     },
     {
         "id": 3,
@@ -80,7 +82,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez"
+        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez",
+        "tipo_pdf": "partitura"
     },
     {
         "id": 4,
@@ -107,7 +110,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "partitura"
     },
     {
         "id": 5,
@@ -134,7 +138,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez"
+        "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez",
+        "tipo_pdf": "partitura"
     },
     {
         "id": 6,
@@ -162,7 +167,8 @@
         ],
         "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/N-NbPumDRxA?si=rZMWWiTpZuCPNWV1\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/v_kBycuLVTY?si=4bygFyP_lJmSoR6_\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
-        "interprete": "Coro Misión País"
+        "interprete": "Coro Misión País",
+        "tipo_pdf": null
     },
     {
         "id": 7,
@@ -186,9 +192,10 @@
         "categorias": [
             "Arreglo"
         ],
-        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_video_embed": null,
         "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/wqtjGwHt9Mg?si=WGlx-BeH5jehGpbG\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
-        "interprete": "Coro Misión País"
+        "interprete": "Coro Misión País",
+        "tipo_pdf": null
     },
     {
         "id": 8,
@@ -215,7 +222,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 9,
@@ -241,7 +249,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 10,
@@ -267,7 +276,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 11,
@@ -293,7 +303,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 12,
@@ -320,7 +331,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 13,
@@ -347,7 +359,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 14,
@@ -375,7 +388,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 15,
@@ -392,16 +406,15 @@
         "letras_acordes": "media/La Esperanza.pdf",
         "partitura": null,
         "midi": null,
-        "tags": [
-            ""
-        ],
+        "tags": [],
         "tipo": "local",
         "categorias": [
             "Composición"
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 16,
@@ -429,7 +442,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 17,
@@ -456,7 +470,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 18,
@@ -482,7 +497,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 19,
@@ -510,7 +526,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 20,
@@ -536,7 +553,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 21,
@@ -564,7 +582,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 22,
@@ -591,7 +610,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 23,
@@ -618,7 +638,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 24,
@@ -645,7 +666,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 25,
@@ -672,7 +694,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "partitura"
     },
     {
         "id": 26,
@@ -699,7 +722,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "partitura"
     },
     {
         "id": 27,
@@ -725,7 +749,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 28,
@@ -751,7 +776,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 31,
@@ -775,7 +801,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 32,
@@ -803,7 +830,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 37,
@@ -831,7 +859,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 38,
@@ -858,7 +887,8 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
     },
     {
         "id": 41,
@@ -884,6 +914,116 @@
         ],
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
-        "interprete": "Felipe Rodríguez"
+        "interprete": null,
+        "tipo_pdf": "letras_acordes"
+    },
+    {
+        "id": 42,
+        "titulo": "Himno a la Virgen del Carmen",
+        "musica": "Felipe Rodríguez",
+        "letra": "Oración por Chile (Obispos de Chile)",
+        "adaptacion": "Felipe Rodríguez",
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": 8,
+        "dia": 12,
+        "descripcion": "Himno a la Virgen del Carmen, Patrona de Chile. Incluye arreglos para Órgano y Coro y Arreglo para Cuerdas y Coro.",
+        "audio": "media/Himno a la Virgen del Carmen.mp3",
+        "letras_acordes": null,
+        "partitura": "media/Himno a la Virgen del Carmen.mxl",
+        "midi": "media/Himno a la Virgen del Carmen.mid",
+        "tags": [
+            "Virgen María",
+            "Tiempo Ordinario"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "ensambles": [
+            {
+                "nombre": "Arreglo para Órgano y Coro",
+                "instrumentos": [
+                    "Órgano",
+                    "Soprano",
+                    "Alto",
+                    "Tenor",
+                    "Bajo"
+                ],
+                "destacado": true
+            },
+            {
+                "nombre": "Arreglo para Cuerdas y Coro",
+                "instrumentos": [
+                    "Violines 1",
+                    "Violines 2",
+                    "Violas",
+                    "Violonchelos",
+                    "Contrabajos",
+                    "Soprano",
+                    "Alto",
+                    "Tenor",
+                    "Bajo"
+                ],
+                "destacado": true
+            },
+            {
+                "nombre": "Solo Cuerdas",
+                "instrumentos": [
+                    "Violines 1",
+                    "Violines 2",
+                    "Violas",
+                    "Violonchelos",
+                    "Contrabajos"
+                ],
+                "destacado": false
+            },
+            {
+                "nombre": "Partitura Completa (Tutti)",
+                "instrumentos": [
+                    "Todos"
+                ],
+                "destacado": false
+            }
+        ],
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/jMSFLPFQ1h4\" title=\"Arreglo para Cuerdas\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/4DER26xd5EY\" title=\"Arreglo para Órgano\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "descargas": [
+            {
+                "nombre": "Partitura General Completa (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen.pdf"
+            },
+            {
+                "nombre": "Arreglo Órgano y Coro (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Arreglo_para_órgano_y_coro.pdf"
+            },
+            {
+                "nombre": "Arreglo Cuerdas y Coro (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Arreglo_para_cuerdas_y_coro.pdf"
+            },
+            {
+                "nombre": "Particella Violines 1 (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Violines_1.pdf"
+            },
+            {
+                "nombre": "Particella Violines 2 (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Violines_2.pdf"
+            },
+            {
+                "nombre": "Particella Violas (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Violas.pdf"
+            },
+            {
+                "nombre": "Particella Violonchelos (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Violonchelos.pdf"
+            },
+            {
+                "nombre": "Particella Contrabajos (PDF)",
+                "archivo": "media/Himno a la Virgen del Carmen-Contrabajos.pdf"
+            }
+        ],
+        "interprete": null,
+        "tipo_pdf": null
     }
 ]

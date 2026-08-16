@@ -27,6 +27,8 @@ FEATURES = {
     'ideas_admin':     True,   # Tablero de ideas en admin
 }
 
+
+
 # --- Modelos de la Base de Datos (sin cambios) ---
 class Comentario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,12 +58,27 @@ class Cancion(db.Model):
     youtube_video_embed = db.Column(db.Text)
     youtube_audio_embed = db.Column(db.Text)
     interprete = db.Column(db.String(200), nullable=True)
+    ensambles_json = db.Column(db.Text, nullable=True)
+    descargas_json = db.Column(db.Text, nullable=True)
+    audios_json = db.Column(db.Text, nullable=True)
+    tipo_pdf = db.Column(db.String(50), nullable=True) # 'partitura' o 'letras_acordes'
     @property
     def tags(self):
         return json.loads(self.tags_json) if self.tags_json else []
     @property
     def categorias(self):
         return json.loads(self.categorias_json) if self.categorias_json else []
+    @property
+    def ensambles(self):
+        return json.loads(self.ensambles_json) if self.ensambles_json else []
+    @property
+    def descargas(self):
+        return json.loads(self.descargas_json) if self.descargas_json else []
+    @property
+    def audios(self):
+        return json.loads(self.audios_json) if self.audios_json else []
+
+
 
 class IdeaCancion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -234,26 +251,38 @@ def get_filtered_and_sorted_songs(base_query):
     filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     return filtered_songs, search_query
 
+def normalize_category_name(cat_name):
+    if not cat_name: return ""
+    c = unidecode(cat_name.lower().strip())
+    if c.startswith('arreglo'): return 'Arreglo'
+    if c.startswith('composic'): return 'Composición'
+    return cat_name
+
 def search_by_category(category_name):
     """
-    Busca canciones por categoría de forma robusta, ignorando tildes.
+    Busca canciones por categoría de forma robusta, ignorando tildes y plurales/singulares.
     Devuelve una lista de canciones que coinciden.
     """
     all_songs = Cancion.query.all()
-    normalized_category = unidecode(category_name.lower())
-    return [
-        song for song in all_songs if normalized_category in unidecode(str(song.categorias).lower())
-    ]
+    target_norm = unidecode(normalize_category_name(category_name).lower())
+    result = []
+    for song in all_songs:
+        song_cats = [unidecode(normalize_category_name(cat).lower()) for cat in song.categorias]
+        if target_norm in song_cats or any(target_norm in c for c in song_cats):
+            result.append(song)
+    return result
 
-def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='cronologico'):
+def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='cronologico', categoria=None):
     """
-    Reconstruye la lista de canciones (playlist) basada en el contexto y los filtros.
+    Reconstruye la lista de canciones (playlist) basada en el contexto, categoría y los filtros.
     Devuelve una lista ordenada de objetos Cancion.
     """
     base_songs = []
-    # 1. Obtener la lista base de canciones según el contexto
-    if context == 'index':
-        base_songs = Cancion.query.all()
+    norm_cat = normalize_category_name(categoria) if categoria else None
+
+    # 1. Obtener la lista base de canciones según contexto o categoría
+    if norm_cat:
+        base_songs = search_by_category(norm_cat)
     elif context == 'composiciones':
         base_songs = search_by_category("Composición")
     elif context == 'arreglos':
@@ -269,6 +298,9 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='crono
             for song in all_songs:
                 if any(t.replace(" ", "").lower() == normalized_tag_name for t in song.tags):
                     base_songs.append(song)
+    else:
+        base_songs = Cancion.query.all()
+
     
     # 2. Aplicar filtro de búsqueda de texto si existe
     if search_query:
@@ -317,10 +349,11 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='crono
             return (anio, mes, dia)
         base_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
     
-    else: # Orden alfabético por defecto para el resto
+    else: # Orden alfabético por defecto
         base_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
     
     return base_songs
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -519,13 +552,21 @@ def get_playlist_partial():
 @app.route('/filter')
 def filter_songs():
     categoria = request.args.get('categoria', '').strip()
-    if categoria:
-        base_songs = search_by_category(categoria)
-    else:
-        base_songs = Cancion.query.all()
-    filtered_songs, _ = search_songs(base_songs)
-    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-    return render_template('_song_list.html', composiciones=filtered_songs)
+    search_query = request.args.get('search', '').strip()
+    sort_by = request.args.get('sort_by', 'cronologico').strip()
+    context = request.args.get('context', 'index').strip()
+    tag_name = request.args.get('tag_name')
+
+    playlist = get_playlist_songs(context, tag_name=tag_name, search_query=search_query, sort_by=sort_by, categoria=categoria)
+    return render_template(
+        '_song_list.html',
+        composiciones=playlist,
+        page_context=context,
+        tag_nombre=tag_name,
+        search_query=search_query,
+        sort_by=sort_by
+    )
+
 
 # --- Rutas de detalle, edición, etc. (sin cambios) ---
 @app.route('/composicion/<int:comp_id>')
@@ -610,6 +651,8 @@ def edit_cancion(comp_id):
         cancion_a_editar.partitura = request.form.get('partitura') or None
         cancion_a_editar.midi = request.form.get('midi') or None
         cancion_a_editar.interprete = request.form.get('interprete') or None
+        cancion_a_editar.youtube_video_embed = request.form.get('youtube_video_embed') or None
+        cancion_a_editar.youtube_audio_embed = request.form.get('youtube_audio_embed') or None
 
         cancion_a_editar.tags_json = json.dumps([tag.strip() for tag in request.form['tags'].split(',') if tag.strip()])
         processed_categorias = [cat.strip() for cat in request.form['categorias'].split(',') if cat.strip()]
@@ -640,9 +683,12 @@ def edit_cancion(comp_id):
                         data[i]['partitura'] = cancion_a_editar.partitura
                         data[i]['midi'] = cancion_a_editar.midi
                         data[i]['interprete'] = cancion_a_editar.interprete
+                        data[i]['youtube_video_embed'] = cancion_a_editar.youtube_video_embed
+                        data[i]['youtube_audio_embed'] = cancion_a_editar.youtube_audio_embed
                         data[i]['tags'] = cancion_a_editar.tags # Usa la property que decodifica el JSON
                         data[i]['categorias'] = processed_categorias # Usa la lista procesada del formulario
                         break
+
                 
                 # Volver al inicio del archivo para sobrescribirlo
                 f.seek(0)

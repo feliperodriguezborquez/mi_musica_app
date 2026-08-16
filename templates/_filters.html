@@ -1,9 +1,12 @@
 <div class="filter-container">
     <form method="get" class="filter-form" id="filter-form" onsubmit="return false;">
         <div class="search-bar">
-            <input type="search" name="search" id="search-input" placeholder="Buscar por título, autor, descripción..." value="{{ search_query or '' }}">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="search" id="search-input" placeholder="Buscar por título, autor, descripción, texto..." value="{{ search_query or '' }}" autocomplete="off">
+            <button type="button" id="search-clear-btn" class="search-clear-btn {% if not search_query %}hidden{% endif %}" title="Limpiar búsqueda">✕</button>
         </div>
     </form>
+
     
     <div class="filter-row-combined">
         {% if FEATURES['category_pills'] %}

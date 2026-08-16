@@ -75,6 +75,11 @@
         </div>
 
         <div class="form-group">
+            <label for="youtube_video_embed">YouTube Video Embed Code / URL</label>
+            <textarea id="youtube_video_embed" name="youtube_video_embed" rows="3">{{ cancion.youtube_video_embed or '' }}</textarea>
+        </div>
+
+        <div class="form-group">
             <label for="tags">Etiquetas (separadas por comas)</label>
             <input type="text" id="tags" name="tags" value="{{ cancion.tags | join(', ') }}">
             <div class="tags-selector" style="margin-top: 8px;">

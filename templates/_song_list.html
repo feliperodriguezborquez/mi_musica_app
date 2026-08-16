@@ -24,20 +24,15 @@
                         {% endif %}
                     </div>
                     {% if obra.audio %}
-                    <span class="list-play-btn" title="Reproducir">▶</span>
+                    <button class="btn-add-queue opt-add-queue" data-id="{{ obra.id }}" data-audio="{{ url_for('static', filename=obra.audio) }}" data-title="{{ obra.titulo }}" title="Añadir a la cola">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </button>
+                    <button class="list-play-btn" data-id="{{ obra.id }}" data-title="{{ obra.titulo }}" data-audio="{{ url_for('static', filename=obra.audio) }}" title="Reproducir / Pausar">▶</button>
                     {% endif %}
                 </div>
             </a>
-            {% if obra.audio %}
-            <div class="card-options-container">
-                <button class="card-options-btn" title="Opciones">⋮</button>
-                <div class="card-options-dropdown hidden">
-                    <button class="opt-add-queue" data-id="{{ obra.id }}" data-audio="{{ url_for('static', filename=obra.audio) }}" data-title="{{ obra.titulo }}">Añadir a la cola</button>
-                </div>
-            </div>
-            {% endif %}
         </div>
     {% else %}
         <p style="padding: 20px;">No se encontraron canciones que coincidan con tu búsqueda.</p>
     {% endfor %}
-</div>
+</div>
