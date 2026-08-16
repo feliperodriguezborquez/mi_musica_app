@@ -531,16 +531,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Agregar canción a la cola
+    // Agregar canción a la cola (sin interrumpir ni iniciar reproducción automática)
     function addToQueue(id, title, audioUrl) {
         window.FP.queue.push({ id, title, audioUrl });
         updateQueueUI();
-        
-        // Si no hay nada reproduciéndose, iniciar de inmediato
-        if (!window.FP.audio || window.FP.audio.paused) {
-            playQueueIndex(window.FP.queue.length - 1);
-        }
     }
+
 
     function playQueueIndex(index) {
         if (index < 0 || index >= window.FP.queue.length) return;
