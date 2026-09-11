@@ -504,6 +504,7 @@ def admin_ideas_delete(idea_id):
 # PIPELINE CANTAMUS: OPTIMIZACIÓN Y MEZCLA DE AUDIOS
 # ============================================================
 @app.route('/cantamus')
+@login_required
 def cantamus_view():
     """Panel de preprocesamiento de partituras para Cantamus."""
     from scripts.cantamus_pipeline import get_recent_scores
@@ -512,6 +513,7 @@ def cantamus_view():
 
 
 @app.route('/cantamus/inspect', methods=['POST'])
+@login_required
 def cantamus_inspect():
     """Inspecciona metadatos y tempos de una partitura MusicXML/MXL."""
     from scripts.cantamus_pipeline import inspect_score_info
@@ -524,6 +526,7 @@ def cantamus_inspect():
 
 
 @app.route('/cantamus/process', methods=['POST'])
+@login_required
 def cantamus_process():
     """Procesa una partitura aplicando ritardando y optimizaciones vocales."""
     from scripts.cantamus_pipeline import process_cantamus
@@ -604,6 +607,7 @@ def cantamus_process():
 
 
 @app.route('/cantamus/mix', methods=['POST'])
+@login_required
 def cantamus_mix():
     """Mezcla pista vocal de Cantamus con pista instrumental de MuseSounds."""
     vocal_file = request.files.get('vocal_file')

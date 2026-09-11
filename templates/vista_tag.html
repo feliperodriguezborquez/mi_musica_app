@@ -3,30 +3,35 @@
 {% block content %}
 <div class="container">
     <div class="vista-tag-header">
-        {% if breadcrumbs and breadcrumbs|length > 1 %}
-            <div class="breadcrumbs" style="font-size: 0.88em; color: var(--color-texto-secundario); margin-bottom: 8px;">
-                <a href="{{ url_for('ver_listas') }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">Listas</a>
-                {% for crumb in breadcrumbs %}
-                    <span style="margin: 0 4px; opacity: 0.6;">/</span>
-                    {% if not loop.last %}
-                        <a href="{{ url_for('ver_tag', tag_name=crumb.tag_name) }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">{{ crumb.name }}</a>
-                    {% else %}
-                        <span style="font-weight: 600; color: var(--color-texto);">{{ crumb.name }}</span>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endif %}
+        <div class="vista-tag-header-left">
+            {% if breadcrumbs and breadcrumbs|length > 1 %}
+                <div class="breadcrumbs" style="font-size: 0.9em; margin-bottom: 6px;">
+                    <a href="{{ url_for('ver_listas') }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">Listas</a>
+                    {% for crumb in breadcrumbs %}
+                        <span style="margin: 0 4px; opacity: 0.6; color: var(--color-texto-secundario);">/</span>
+                        {% if not loop.last %}
+                            <a href="{{ url_for('ver_tag', tag_name=crumb.tag_name) }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">{{ crumb.name }}</a>
+                        {% else %}
+                            <span style="font-weight: 600; color: var(--color-acento);">{{ crumb.name }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-        <h2>{{ tag_nombre.split(':')[-1] | trim }}</h2>
+            {# Ocultamos el h2 para sub-subcategorías (3 o más niveles) para evitar duplicación con las rutas #}
+            {% if tag_nombre.split(':')|length < 3 %}
+                <h2>{{ tag_nombre.split(':')[-1] | trim }}</h2>
+            {% endif %}
 
-        {% if child_tags %}
-            <div class="child-tags-bar" style="margin-top: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <span style="font-weight: 600; font-size: 0.88em; color: var(--color-texto-secundario);">Subcategorías:</span>
-                {% for child in child_tags %}
-                    <a href="{{ url_for('ver_tag', tag_name=child.full_tag) }}" class="tag-link" style="font-size: 0.85em; padding: 4px 12px;">{{ child.name }}</a>
-                {% endfor %}
-            </div>
-        {% endif %}
+            {% if child_tags %}
+                <div class="child-tags-bar" style="margin-top: 10px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-weight: 600; font-size: 0.88em; color: var(--color-texto-secundario);">Subcategorías:</span>
+                    {% for child in child_tags %}
+                        <a href="{{ url_for('ver_tag', tag_name=child.full_tag) }}" class="tag-link" style="font-size: 0.85em; padding: 4px 12px;">{{ child.name }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
 
         {# Mostramos los controles de orden solo si la categoría tiene un orden personalizado #}
         {% if (tag_nombre.split(':')[0] | trim) in ordenes_personalizados %}

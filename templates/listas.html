@@ -11,21 +11,31 @@
                     <div class="tags-container">
                         <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver todas</a>
                         
-                        {# Solo mostramos el separador si hay sub-etiquetas #}
-                        {% if sub_items %}
+                        {# Solo mostramos el separador si hay sub-etiquetas en la fila superior #}
+                        {% set ns = namespace(has_top=false) %}
+                        {% for item in sub_items %}
+                            {% if not item.children %}
+                                {% set ns.has_top = true %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if ns.has_top %}
                             <span class="tag-separator">|</span>
                         {% endif %}
 
                         {% for item in sub_items %}
-                            <a href="{{ url_for('ver_tag', tag_name=item.full_tag) }}" class="tag-link">{{ item.name }}</a>
+                            {% if not item.children %}
+                                <a href="{{ url_for('ver_tag', tag_name=item.full_tag) }}" class="tag-link">{{ item.name }}</a>
+                            {% endif %}
                         {% endfor %}
                     </div>
 
-                    {# Si alguna sub-etiqueta tiene sub-subetiquetas (hijos), las mostramos abajo en una sub-fila identada #}
+                    {# Si alguna sub-etiqueta tiene sub-subetiquetas (hijos), las mostramos abajo como clickeables #}
                     {% for item in sub_items %}
                         {% if item.children %}
                             <div class="sub-tags-container" style="margin-top: 8px; margin-left: 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
-                                <span style="color: var(--color-texto-secundario); font-size: 0.85em; font-weight: 600;">↳ {{ item.name }}:</span>
+                                <span style="color: var(--color-texto-secundario); font-size: 0.88em; font-weight: 600;">↳</span>
+                                <a href="{{ url_for('ver_tag', tag_name=item.full_tag) }}" class="tag-link tag-link-parent" style="font-size: 0.85em; padding: 4px 12px;">{{ item.name }}</a>
+                                <span style="color: var(--color-texto-secundario); font-size: 0.88em; font-weight: 600;">:</span>
                                 {% for child in item.children %}
                                     <a href="{{ url_for('ver_tag', tag_name=child.full_tag) }}" class="tag-link tag-link-sub" style="font-size: 0.82em; padding: 4px 10px;">{{ child.name }}</a>
                                 {% endfor %}

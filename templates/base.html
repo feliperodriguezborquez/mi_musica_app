@@ -25,7 +25,9 @@
             <a href="{{ url_for('index') }}" class="brand-logo">Mis Canciones</a>
             <ul>
                 <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
+                {% if session.logged_in and FEATURES['cantamus'] %}
                 <li><a href="{{ url_for('cantamus_view') }}">Cantāmus</a></li>
+                {% endif %}
                 <li class="nav-separator"></li>
                 <li class="profile-menu-container">
                     <button id="profile-btn" class="profile-btn" title="Menú">⚙</button>
@@ -55,6 +57,9 @@
                         <div class="dropdown-section">
                             <div class="dropdown-section-title">Opciones</div>
                             {% if session.logged_in %}
+                                {% if FEATURES['cantamus'] %}
+                                <a href="{{ url_for('cantamus_view') }}" class="dropdown-item dropdown-link">Cantāmus</a>
+                                {% endif %}
                                 {% if FEATURES['ideas_admin'] %}
                                 <a href="{{ url_for('admin_ideas') }}" class="dropdown-item dropdown-link">Ideas de Canciones</a>
                                 {% endif %}
