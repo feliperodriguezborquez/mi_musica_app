@@ -1,13 +1,16 @@
 import json
-from app import app, db, Cancion
+from models import Cancion
 
-def export_data_to_json():
+def export_data_to_json(app_instance=None):
     """
     Lee todas las canciones de la base de datos y las exporta a data.json.
     Esto es útil para inicializar el archivo JSON con los datos existentes
     que fueron modificados a través de la interfaz web.
     """
-    with app.app_context():
+    if app_instance is None:
+        from app import app as app_instance
+
+    with app_instance.app_context():
         print("Iniciando exportación de la base de datos a data.json...")
         
         # 1. Obtener todas las canciones de la base de datos, ordenadas por ID
@@ -41,8 +44,16 @@ def export_data_to_json():
                 "tipo": cancion.tipo,
                 "categorias": cancion.categorias, # Usamos la property
                 "youtube_video_embed": cancion.youtube_video_embed,
-                "youtube_audio_embed": cancion.youtube_audio_embed
+                "youtube_audio_embed": cancion.youtube_audio_embed,
+                "interprete": cancion.interprete,
+                "tipo_pdf": cancion.tipo_pdf or "partitura"
             }
+            if cancion.ensambles:
+                cancion_dict["ensambles"] = cancion.ensambles
+            if cancion.descargas:
+                cancion_dict["descargas"] = cancion.descargas
+            if cancion.audios:
+                cancion_dict["audios"] = cancion.audios
             lista_de_datos.append(cancion_dict)
         
         # 3. Escribir la lista de diccionarios en el archivo data.json

@@ -1,13 +1,16 @@
 import json
-from app import app, db, Cancion
+from models import db, Cancion
 
-def sincronizar_canciones_desde_json():
+def sincronizar_canciones_desde_json(app_instance=None):
     """
     Sincroniza la base de datos con data.json.
     - Agrega canciones nuevas que no existen en la base de datos.
     - Actualiza las canciones existentes si sus datos en el JSON han cambiado.
     """
-    with app.app_context():
+    if app_instance is None:
+        from app import app as app_instance
+
+    with app_instance.app_context():
         # 1. Cargar datos desde el archivo JSON
         try:
             with open('data.json', 'r', encoding='utf-8') as f:

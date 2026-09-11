@@ -1,13 +1,15 @@
-from app import app
 from sqlalchemy import text, inspect
 
-def add_midi_column_to_db():
+def add_midi_column_to_db(app_instance=None):
     """
     Añade las columnas faltantes ('midi', 'arreglo') a la tabla 'cancion' si no existen.
     Compatible con SQLite y PostgreSQL en Render.
     """
-    with app.app_context():
-        engine = app.extensions['sqlalchemy'].engine
+    if app_instance is None:
+        from app import app as app_instance
+
+    with app_instance.app_context():
+        engine = app_instance.extensions['sqlalchemy'].engine
         
         with engine.connect() as connection:
             inspector = inspect(engine)

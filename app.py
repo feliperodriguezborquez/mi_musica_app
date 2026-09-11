@@ -1,112 +1,91 @@
-from flask import Flask, render_template, abort, request, redirect, url_for, session, flash, send_file, jsonify
-from flask_sqlalchemy import SQLAlchemy
-import datetime
+"""
+Aplicación Web: Catálogo Musical de Felipe Rodríguez.
+Módulo principal de Flask con configuración, rutas HTTP y ciclo de vida de la aplicación.
+"""
+
+import os
+import re
 import json
+import datetime
 from functools import wraps
-from collections import defaultdict
-from unidecode import unidecode
-import os # <-- Importamos la librería 'os'
-from dotenv import load_dotenv # <-- Importamos la nueva librería
+from pathlib import Path
+from dotenv import load_dotenv
 
-load_dotenv() # <-- Esto carga las variables del archivo .env
+from flask import (
+    Flask, render_template, abort, request, redirect,
+    url_for, session, flash, send_file, jsonify
+)
 
+# Cargar variables de entorno locales desde .env si existe
+load_dotenv()
+
+# ============================================================
+# INICIALIZACIÓN Y CONFIGURACIÓN DE LA APLICACIÓN
+# ============================================================
 app = Flask(__name__)
-# --- CONFIGURACIÓN DE SEGURIDAD ACTUALIZADA ---
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD')
 
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key_default')
+app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD', 'admin')
+
+# Normalizar URL de PostgreSQL para compatibilidad con SQLAlchemy 2.0 en Render
 db_url = os.environ.get('DATABASE_URL', 'sqlite:///comentarios.db')
 if db_url and db_url.startswith('postgres://'):
     db_url = db_url.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
-# --- Feature Flags (set to False to disable, code stays intact) ---
-FEATURES = {
-    'floating_player': True,   # Reproductor flotante estilo Spotify
-    'autoplay':        True,   # Opción de auto-reproducción en perfil
-    'category_pills':  True,   # Pestañas Todas/Composiciones/Arreglos
-    'ideas_admin':     True,   # Tablero de ideas en admin
-}
+# ============================================================
+# MODELOS Y CONSTANTES (IMPORTADOS Y RE-EXPORTADOS PARA COMPATIBILIDAD)
+# ============================================================
+from models import db, Cancion, Comentario, IdeaCancion
+from constants import (
+    FEATURES,
+    ORDEN_LIBROS_BIBLIA,
+    MAPEO_LIBROS_BIBLIA,
+    CITA_REGEX,
+    ORDEN_TIEMPOS_LITURGICOS,
+    ORDEN_SANTA_MISA,
+    ORDENES_PERSONALIZADOS,
+)
+from services.tag_service import (
+    tag_matches,
+    build_hierarchical_tags,
+    build_breadcrumbs,
+    get_child_tags,
+    process_song_tags,
+)
+from services.catalog_service import (
+    parse_cita_biblica,
+    normalize_for_sorting,
+    normalize_category_name,
+    search_songs,
+    search_by_category,
+    sort_songs,
+    get_playlist_songs,
+)
 
+# Inicializar SQLAlchemy con la app Flask
+db.init_app(app)
 
-
-# --- Modelos de la Base de Datos (sin cambios) ---
-class Comentario(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    obra_id = db.Column(db.Integer, nullable=False)
-    autor = db.Column(db.String(80), nullable=False)
-    contenido = db.Column(db.Text, nullable=False)
-    fecha_creacion = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-class Cancion(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(150), nullable=False)
-    musica = db.Column(db.String(100))
-    letra = db.Column(db.String(100))
-    adaptacion = db.Column(db.String(100))
-    arreglo = db.Column(db.String(100), nullable=True)
-    idioma = db.Column(db.String(50))
-    dia = db.Column(db.Integer, nullable=True)
-    mes = db.Column(db.Integer, nullable=True)
-    anio = db.Column(db.Integer)
-    descripcion = db.Column(db.Text)
-    audio = db.Column(db.String(150))
-    letras_acordes = db.Column(db.String(150)) # Antes 'partitura' (PDF)
-    partitura = db.Column(db.String(150))      # Antes 'partitura_xml' (MusicXML)
-    midi = db.Column(db.String(150))           # Archivo MIDI
-    tags_json = db.Column(db.String(500))
-    tipo = db.Column(db.String(50), nullable=False, default='local')
-    categorias_json = db.Column(db.String(200))
-    youtube_video_embed = db.Column(db.Text)
-    youtube_audio_embed = db.Column(db.Text)
-    interprete = db.Column(db.String(200), nullable=True)
-    ensambles_json = db.Column(db.Text, nullable=True)
-    descargas_json = db.Column(db.Text, nullable=True)
-    audios_json = db.Column(db.Text, nullable=True)
-    tipo_pdf = db.Column(db.String(50), nullable=True) # 'partitura' o 'letras_acordes'
-    @property
-    def tags(self):
-        return json.loads(self.tags_json) if self.tags_json else []
-    @property
-    def categorias(self):
-        return json.loads(self.categorias_json) if self.categorias_json else []
-    @property
-    def ensambles(self):
-        return json.loads(self.ensambles_json) if self.ensambles_json else []
-    @property
-    def descargas(self):
-        return json.loads(self.descargas_json) if self.descargas_json else []
-    @property
-    def audios(self):
-        return json.loads(self.audios_json) if self.audios_json else []
-
-
-
-class IdeaCancion(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(150), nullable=False)
-    notas = db.Column(db.Text, nullable=True)
-    estado = db.Column(db.String(20), nullable=False, default='idea')  # 'idea', 'mitad', 'lista'
-    cancion_id = db.Column(db.Integer, db.ForeignKey('cancion.id'), nullable=True)
-    cancion = db.relationship('Cancion', backref='idea', foreign_keys=[cancion_id])
-
+# ============================================================
+# FILTROS Y PROCESADORES DE CONTEXTO JINJA
+# ============================================================
 @app.template_filter('sort_categories_for_page')
 def sort_categories_for_page(categories, page_context='default'):
-    """Filtro de Jinja para ordenar las categorías según la página."""
-    sorted_cats = list(categories) # Crear una copia para no modificar la original
+    """Filtro de Jinja para ordenar las categorías de las obras según la página activa."""
+    sorted_cats = list(categories)
     if page_context == 'arreglos':
         # En la página de arreglos: Composición a la izquierda, Arreglo a la derecha
         sorted_cats.sort(key=lambda x: (x != 'Composición', x != 'Arreglo'))
     else:
-        # Orden por defecto (index, composiciones, etc.): Arreglo a la izquierda, Composición a la derecha
+        # Por defecto (catálogo completo, composiciones): Arreglo a la izquierda, Composición a la derecha
         sorted_cats.sort(key=lambda x: (x != 'Arreglo', x != 'Composición'))
     return sorted_cats
 
+
 @app.context_processor
 def inject_globals():
-    """Inyecta variables globales en todas las plantillas."""
+    """Inyecta la fecha de compilación y feature flags en todas las plantillas."""
     try:
         with open('build_date.txt', 'r', encoding='utf-8') as f:
             date_str = f.read().strip()
@@ -114,120 +93,12 @@ def inject_globals():
         date_str = "Desconocida"
     return dict(last_update=date_str, FEATURES=FEATURES)
 
-# --- LÓGICA DE ORDENAMIENTO BÍBLICO AVANZADO ---
-import re
 
-# 1. Orden canónico completo de los libros de la Biblia.
-ORDEN_LIBROS_BIBLIA = {
-    # Antiguo Testamento
-    "Génesis": 1, "Éxodo": 2, "Levítico": 3, "Números": 4, "Deuteronomio": 5, "Josué": 6, "Jueces": 7, "Rut": 8,
-    "1 Samuel": 9, "2 Samuel": 10, "1 Reyes": 11, "2 Reyes": 12, "1 Crónicas": 13, "2 Crónicas": 14, "Esdras": 15,
-    "Nehemías": 16, "Tobías": 17, "Judit": 18, "Ester": 19, "1 Macabeos": 20, "2 Macabeos": 21, "Job": 22, "Salmos": 23,
-    "Proverbios": 24, "Eclesiastés": 25, "Cantar de los Cantares": 26, "Sabiduría": 27, "Eclesiástico": 28,
-    "Isaías": 29, "Jeremías": 30, "Lamentaciones": 31, "Baruc": 32, "Ezequiel": 33, "Daniel": 34, "Oseas": 35,
-    "Joel": 36, "Amós": 37, "Abdías": 38, "Jonás": 39, "Miqueas": 40, "Nahúm": 41, "Habacuc": 42, "Sofonías": 43,
-    "Hageo": 44, "Zacarías": 45, "Malaquías": 46,
-    # Nuevo Testamento
-    "Mateo": 47, "Marcos": 48, "Lucas": 49, "Juan": 50, "Hechos de los Apóstoles": 51, "Romanos": 52,
-    "1 Corintios": 53, "2 Corintios": 54, "Gálatas": 55, "Efesios": 56, "Filipenses": 57, "Colosenses": 58,
-    "1 Tesalonicenses": 59, "2 Tesalonicenses": 60, "1 Timoteo": 61, "2 Timoteo": 62, "Tito": 63, "Filemón": 64,
-    "Hebreos": 65, "Santiago": 66, "1 Pedro": 67, "2 Pedro": 68, "1 Juan": 69, "2 Juan": 70, "3 Juan": 71,
-    "Judas": 72, "Apocalipsis": 73
-}
-
-# 2. Mapeo de abreviaturas y nombres alternativos al nombre canónico.
-MAPEO_LIBROS_BIBLIA = {
-    # Antiguo Testamento
-    'génesis': 'Génesis', 'gen': 'Génesis', 'gn': 'Génesis', 'éxodo': 'Éxodo', 'ex': 'Éxodo', 'levítico': 'Levítico', 'lv': 'Levítico',
-    'números': 'Números', 'num': 'Números', 'nm': 'Números', 'deuteronomio': 'Deuteronomio', 'dt': 'Deuteronomio', 'josué': 'Josué', 'jos': 'Josué',
-    'jueces': 'Jueces', 'jue': 'Jueces', 'rut': 'Rut', 'rt': 'Rut', '1 samuel': '1 Samuel', '1 sam': '1 Samuel', '1 sa': '1 Samuel',
-    '2 samuel': '2 Samuel', '2 sam': '2 Samuel', '2 sa': '2 Samuel', '1 reyes': '1 Reyes', '1 re': '1 Reyes', '2 reyes': '2 Reyes', '2 re': '2 Reyes',
-    '1 crónicas': '1 Crónicas', '1 cro': '1 Crónicas', '1 cr': '1 Crónicas', '2 crónicas': '2 Crónicas', '2 cro': '2 Crónicas', '2 cr': '2 Crónicas',
-    'esdras': 'Esdras', 'esd': 'Esdras', 'nehemías': 'Nehemías', 'neh': 'Nehemías', 'tobías': 'Tobías', 'tob': 'Tobías', 'judit': 'Judit', 'jdt': 'Judit',
-    'ester': 'Ester', 'est': 'Ester', '1 macabeos': '1 Macabeos', '1 mac': '1 Macabeos', '2 macabeos': '2 Macabeos', '2 mac': '2 Macabeos',
-    'job': 'Job', 'jb': 'Job', 'salmos': 'Salmos', 'salmo': 'Salmos', 'Sal': 'Salmos', 'sal': 'Salmos', 'proverbios': 'Proverbios', 'prov': 'Proverbios', 'pr': 'Proverbios',
-    'eclesiastés': 'Eclesiastés', 'ecl': 'Eclesiastés', 'qo': 'Eclesiastés', 'cantar de los cantares': 'Cantar de los Cantares', 'cant': 'Cantar de los Cantares',
-    'sabiduría': 'Sabiduría', 'sab': 'Sabiduría', 'eclesiástico': 'Eclesiástico', 'eclo': 'Eclesiástico', 'si': 'Eclesiástico', 'isaías': 'Isaías', 'is': 'Isaías',
-    'jeremías': 'Jeremías', 'jer': 'Jeremías', 'lamentaciones': 'Lamentaciones', 'lam': 'Lamentaciones', 'baruc': 'Baruc', 'bar': 'Baruc',
-    'ezequiel': 'Ezequiel', 'ez': 'Ezequiel', 'daniel': 'Daniel', 'dan': 'Daniel', 'dn': 'Daniel', 'oseas': 'Oseas', 'os': 'Oseas', 'joel': 'Joel', 'jl': 'Joel',
-    'amós': 'Amós', 'am': 'Amós', 'abdías': 'Abdías', 'abd': 'Abdías', 'jonás': 'Jonás', 'jon': 'Jonás', 'miqueas': 'Miqueas', 'miq': 'Miqueas',
-    'nahúm': 'Nahúm', 'nah': 'Nahúm', 'habacuc': 'Habacuc', 'hab': 'Habacuc', 'sofonías': 'Sofonías', 'sof': 'Sofonías', 'hageo': 'Hageo', 'hag': 'Hageo',
-    'zacarías': 'Zacarías', 'zac': 'Zacarías', 'malaquías': 'Malaquías', 'mal': 'Malaquías',
-    # Nuevo Testamento
-    'mateo': 'Mateo', 'mt': 'Mateo', 'marcos': 'Marcos', 'mc': 'Marcos', 'lucas': 'Lucas', 'lc': 'Lucas', 'juan': 'Juan', 'jn': 'Juan',
-    'evangelios': 'Evangelios', 'hechos de los apóstoles': 'Hechos de los Apóstoles', 'hechos': 'Hechos de los Apóstoles', 'hch': 'Hechos de los Apóstoles',
-    'romanos': 'Romanos', 'rom': 'Romanos', '1 corintios': '1 Corintios', '1 cor': '1 Corintios', '2 corintios': '2 Corintios', '2 cor': '2 Corintios',
-    'gálatas': 'Gálatas', 'gal': 'Gálatas', 'efesios': 'Efesios', 'ef': 'Efesios', 'filipenses': 'Filipenses', 'flp': 'Filipenses',
-    'colosenses': 'Colosenses', 'col': 'Colosenses', '1 tesalonicenses': '1 Tesalonicenses', '1 tes': '1 Tesalonicenses',
-    '2 tesalonicenses': '2 Tesalonicenses', '2 tes': '2 Tesalonicenses', '1 timoteo': '1 Timoteo', '1 tim': '1 Timoteo',
-    '2 timoteo': '2 Timoteo', '2 tim': '2 Timoteo', 'tito': 'Tito', 'tit': 'Tito', 'filemón': 'Filemón', 'flm': 'Filemón',
-    'hebreos': 'Hebreos', 'heb': 'Hebreos', 'santiago': 'Santiago', 'stgo': 'Santiago', '1 pedro': '1 Pedro', '1 pe': '1 Pedro',
-    '2 pedro': '2 Pedro', '2 pe': '2 Pedro', '1 juan': '1 Juan', '1 jn': '1 Juan', '2 juan': '2 Juan', '2 jn': '2 Juan',
-    '3 juan': '3 Juan', '3 jn': '3 Juan', 'judas': 'Judas', 'jud': 'Judas', 'apocalipsis': 'Apocalipsis', 'ap': 'Apocalipsis'
-}
-
-# 3. Expresión regular para encontrar citas bíblicas.
-CITA_REGEX = re.compile(
-    r'((?:\d\s)?[A-Za-zÀ-ÿ\s]+?)\s*(\d+)(?:,\s*(\d+))?', 
-    re.IGNORECASE
-)
-
-def parse_cita_biblica(texto):
-    """
-    Busca una cita bíblica en un texto y devuelve una tupla para ordenar.
-    Devuelve (orden_libro, capítulo, versículo) o None si no encuentra nada.
-    """
-    if not texto:
-        return None
-    
-    match = CITA_REGEX.search(texto)
-    if not match:
-        return None
-
-    nombre_libro_raw, capitulo_str, versiculo_str = match.groups()
-    nombre_libro_limpio = unidecode(nombre_libro_raw.strip().lower())
-    
-    nombre_canonico = MAPEO_LIBROS_BIBLIA.get(nombre_libro_limpio)
-    if not nombre_canonico:
-        return None
-
-    orden_libro = ORDEN_LIBROS_BIBLIA.get(nombre_canonico, 999)
-    capitulo = int(capitulo_str)
-    versiculo = int(versiculo_str) if versiculo_str else 0
-
-    return (orden_libro, capitulo, versiculo)
-
-def normalize_for_sorting(titulo):
-    """
-    Normaliza el título de la canción para que la ordenación alfabética
-    ignore signos de puntuación, exclamaciones, interrogaciones y acentos.
-    """
-    if not titulo:
-        return ""
-    # Eliminar acentos y convertir a minúsculas
-    titulo_normalizado = unidecode(titulo.lower())
-    # Quedarse solo con caracteres alfanuméricos y espacios
-    return "".join(c for c in titulo_normalizado if c.isalnum() or c.isspace()).strip()
-
-# --- LÓGICA DE ORDENAMIENTO PERSONALIZADO (CONSTANTES GLOBALES) ---
-# Se mueven aquí para ser accesibles desde múltiples rutas.
-ORDEN_TIEMPOS_LITURGICOS = {
-    "Adviento": 0, "Navidad": 1, "Cuaresma": 2, "Semana Santa": 3, 
-    "Pascua": 4, "Pentecostés": 5, "Tiempo Ordinario": 6
-}
-ORDEN_SANTA_MISA = {
-    "Entrada": 0, "Señor ten Piedad": 1, "Gloria": 2, "Salmo": 3, 
-    "Aleluya": 4, "Ofertorio": 5, "Santo": 6, "Aclamación Memorial": 7,
-    "Amén": 8, "Padre Nuestro": 9, "Cordero de Dios": 10, "Comunión": 11, "Salida": 12
-}
-ORDENES_PERSONALIZADOS = {
-    "Tiempos Litúrgicos": ORDEN_TIEMPOS_LITURGICOS,
-    "Santa Misa": ORDEN_SANTA_MISA,
-    "Cantos Bíblicos": ORDEN_LIBROS_BIBLIA # Usamos el diccionario completo
-}
-
-# --- Lógica de Autenticación y Búsqueda (sin cambios) ---
+# ============================================================
+# DECORADORES DE SEGURIDAD
+# ============================================================
 def login_required(f):
+    """Decorador para proteger rutas exclusivas de administración."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'logged_in' not in session:
@@ -235,357 +106,103 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def search_songs(base_songs):
-    search_query = request.args.get('search', '').strip()
-    if not search_query:
-        return base_songs, search_query
-    normalized_search = unidecode(search_query.lower())
-    filtered_songs = []
-    for song in base_songs:
-        full_text = ' '.join(filter(None, [song.titulo, song.musica, song.letra, song.descripcion, song.adaptacion]))
-        normalized_song_text = unidecode(full_text.lower())
-        if normalized_search in normalized_song_text:
-            filtered_songs.append(song)
-    return filtered_songs, search_query
 
-def get_filtered_and_sorted_songs(base_query):
-    """Aplica el filtro de búsqueda y el ordenamiento a una consulta de canciones."""
-    all_songs = base_query.all()
-    filtered_songs, search_query = search_songs(all_songs)
-    filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-    return filtered_songs, search_query
-
-def normalize_category_name(cat_name):
-    if not cat_name: return ""
-    c = unidecode(cat_name.lower().strip())
-    if c.startswith('arreglo'): return 'Arreglo'
-    if c.startswith('composic'): return 'Composición'
-    return cat_name
-
-def search_by_category(category_name):
-    """
-    Busca canciones por categoría de forma robusta, ignorando tildes y plurales/singulares.
-    Devuelve una lista de canciones que coinciden.
-    """
-    all_songs = Cancion.query.all()
-    target_norm = unidecode(normalize_category_name(category_name).lower())
-    result = []
-    for song in all_songs:
-        song_cats = [unidecode(normalize_category_name(cat).lower()) for cat in song.categorias]
-        if target_norm in song_cats or any(target_norm in c for c in song_cats):
-            result.append(song)
-    return result
-
-def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='cronologico', categoria=None):
-    """
-    Reconstruye la lista de canciones (playlist) basada en el contexto, categoría y los filtros.
-    Devuelve una lista ordenada de objetos Cancion.
-    """
-    base_songs = []
-    norm_cat = normalize_category_name(categoria) if categoria else None
-
-    # 1. Obtener la lista base de canciones según contexto o categoría
-    if norm_cat:
-        base_songs = search_by_category(norm_cat)
-    elif context == 'composiciones':
-        base_songs = search_by_category("Composición")
-    elif context == 'arreglos':
-        base_songs = search_by_category("Arreglo")
-    elif context == 'tag' and tag_name:
-        all_songs = Cancion.query.all()
-        normalized_tag_name = tag_name.replace(" ", "").lower()
-        for song in all_songs:
-            for t in song.tags:
-                if not t:
-                    continue
-                norm_t = t.replace(" ", "").lower()
-                if norm_t == normalized_tag_name or norm_t.startswith(normalized_tag_name + ":"):
-                    base_songs.append(song)
-                    break
-    else:
-        base_songs = Cancion.query.all()
-
-    
-    # 2. Aplicar filtro de búsqueda de texto si existe
-    if search_query:
-        normalized_search = unidecode(search_query.lower())
-        songs_after_search = []
-        for song in base_songs:
-            full_text = ' '.join(filter(None, [song.titulo, song.musica, song.letra, song.descripcion, song.adaptacion]))
-            if normalized_search in unidecode(full_text.lower()):
-                songs_after_search.append(song)
-        base_songs = songs_after_search
-
-    # Extraemos la categoría principal para la lógica de ordenamiento
-    main_category = tag_name.split(':')[0].strip() if tag_name else None
-
-    # 3. Aplicar el ordenamiento solicitado
-    if main_category == "Cantos Bíblicos" and sort_by == 'canonico':
-        def get_song_order_biblico(song):
-            cita_orden = parse_cita_biblica(song.letra)
-            if cita_orden: return (cita_orden[0], cita_orden[1], cita_orden[2])
-            for tag in song.tags:
-                if tag.startswith(main_category + ':'):
-                    parts = [p.strip() for p in tag.split(':')]
-                    sub_tag = parts[1] if len(parts) > 1 else ''
-                    orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
-                    return (orden_libro, 0, 0)
-            return (999, 0, 0)
-        base_songs.sort(key=lambda song: (get_song_order_biblico(song), normalize_for_sorting(song.titulo)))
-
-    elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
-        orden_categoria = ORDENES_PERSONALIZADOS[main_category]
-        def get_song_order(song):
-            min_order = 999
-            for tag in song.tags:
-                if tag.startswith(main_category + ':'):
-                    parts = [p.strip() for p in tag.split(':')]
-                    sub_tag = parts[1] if len(parts) > 1 else ''
-                    order = orden_categoria.get(sub_tag, 999)
-                    if order < min_order:
-                        min_order = order
-            return min_order
-        base_songs.sort(key=lambda song: (get_song_order(song), normalize_for_sorting(song.titulo)))
-    
-    elif sort_by == 'cronologico':
-        def get_song_order_cronologico(song):
-            anio = song.anio if song.anio is not None else 0
-            mes = song.mes if song.mes is not None else 0
-            dia = song.dia if song.dia is not None else 0
-            return (anio, mes, dia)
-        base_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
-    
-    else: # Orden alfabético por defecto
-        base_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-    
-    return base_songs
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        if request.form['password'] == app.config['ADMIN_PASSWORD']:
-            session['logged_in'] = True
-            flash('¡Has iniciado sesión correctamente!', 'success')
-            return redirect(url_for('index'))
-        else:
-            flash('Contraseña incorrecta.', 'danger')
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('Has cerrado sesión.', 'info')
-    return redirect(url_for('index'))
-
-# --- RUTAS PRINCIPALES (CON ORDENAMIENTO CORREGIDO) ---
-
+# ============================================================
+# RUTAS PÚBLICAS: CATÁLOGO DE OBRAS
+# ============================================================
 @app.route('/')
 def index():
-    # 1. Obtener canciones y aplicar filtro de búsqueda de texto
-    all_songs = Cancion.query.all()
-    filtered_songs, search_query = search_songs(all_songs)
-    
-    # 2. Obtener el método de ordenamiento y aplicarlo
-    sort_by = request.args.get('sort_by', 'cronologico') # Por defecto, cronológico
+    """Página de inicio: Catálogo completo con buscador en vivo y opciones de orden."""
+    base_songs = Cancion.query.all()
+    filtered_songs, search_query = search_songs(base_songs, request.args.get('search', '').strip())
+    sort_by = request.args.get('sort_by', 'cronologico')
+    sorted_songs = sort_songs(filtered_songs, sort_by=sort_by)
+    return render_template('index.html', composiciones=sorted_songs, search_query=search_query, page_context='index', sort_by=sort_by)
 
-    if sort_by == 'cronologico':
-        def get_song_order_cronologico(song):
-            # Para ordenar de más nuevo a más antiguo, los valores nulos deben ser los más pequeños.
-            anio = song.anio if song.anio is not None else 0
-            mes = song.mes if song.mes is not None else 0
-            dia = song.dia if song.dia is not None else 0
-            return (anio, mes, dia)
-        # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
-    else: # 'alfabetico' o cualquier otro caso
-        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-
-    return render_template('index.html', composiciones=filtered_songs, search_query=search_query, page_context='index', sort_by=sort_by)
 
 @app.route('/composiciones')
 def ver_composiciones():
-    sort_by = request.args.get('sort_by', 'cronologico')
+    """Vista filtrada por canciones con categoría 'Composición'."""
     base_songs = search_by_category("Composición")
-    filtered_songs, search_query = search_songs(base_songs)
-    
-    # Aplicar ordenamiento
-    if sort_by == 'cronologico':
-        def get_song_order_cronologico(song):
-            anio = song.anio if song.anio is not None else 0
-            mes = song.mes if song.mes is not None else 0
-            dia = song.dia if song.dia is not None else 0
-            return (anio, mes, dia)
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
-    else:
-        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-        
-    return render_template('composiciones.html', composiciones=filtered_songs, search_query=search_query, page_context='composiciones', sort_by=sort_by)
+    filtered_songs, search_query = search_songs(base_songs, request.args.get('search', '').strip())
+    sort_by = request.args.get('sort_by', 'cronologico')
+    sorted_songs = sort_songs(filtered_songs, sort_by=sort_by)
+    return render_template('composiciones.html', composiciones=sorted_songs, search_query=search_query, page_context='composiciones', sort_by=sort_by)
+
 
 @app.route('/arreglos')
 def ver_arreglos():
-    sort_by = request.args.get('sort_by', 'cronologico')
+    """Vista filtrada por canciones con categoría 'Arreglo'."""
     base_songs = search_by_category("Arreglo")
-    filtered_songs, search_query = search_songs(base_songs)
-    
-    # Aplicar ordenamiento
-    if sort_by == 'cronologico':
-        def get_song_order_cronologico(song):
-            anio = song.anio if song.anio is not None else 0
-            mes = song.mes if song.mes is not None else 0
-            dia = song.dia if song.dia is not None else 0
-            return (anio, mes, dia)
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
-    else:
-        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-        
-    return render_template('arreglos.html', composiciones=filtered_songs, search_query=search_query, page_context='arreglos', sort_by=sort_by)
+    filtered_songs, search_query = search_songs(base_songs, request.args.get('search', '').strip())
+    sort_by = request.args.get('sort_by', 'cronologico')
+    sorted_songs = sort_songs(filtered_songs, sort_by=sort_by)
+    return render_template('arreglos.html', composiciones=sorted_songs, search_query=search_query, page_context='arreglos', sort_by=sort_by)
+
+
+@app.route('/todos')
+def ver_todos():
+    """Vista alternativa del catálogo completo."""
+    base_songs = Cancion.query.all()
+    filtered_songs, search_query = search_songs(base_songs, request.args.get('search', '').strip())
+    sort_by = request.args.get('sort_by', 'cronologico')
+    sorted_songs = sort_songs(filtered_songs, sort_by=sort_by)
+    return render_template('todos.html', composiciones=sorted_songs, search_query=search_query, page_context='todos', sort_by=sort_by)
+
 
 @app.route('/tag/<tag_name>')
 def ver_tag(tag_name):
+    """Vista de obras filtradas por etiqueta o subetiqueta jerárquica."""
     all_songs = Cancion.query.all()
-    matching_songs = []
-    normalized_tag_name = tag_name.replace(" ", "").lower()
+    matching_songs = [s for s in all_songs if tag_matches(tag_name, s.tags)]
+    filtered_songs, search_query = search_songs(matching_songs, request.args.get('search', '').strip())
 
-    for song in all_songs:
-        for t in song.tags:
-            if not t:
-                continue
-            norm_t = t.replace(" ", "").lower()
-            if norm_t == normalized_tag_name or norm_t.startswith(normalized_tag_name + ":"):
-                matching_songs.append(song)
-                break
-    
-    # Generar migas de pan (breadcrumbs) para navegación jerárquica
-    breadcrumbs = []
-    crumbs_accum = []
-    for part in [p.strip() for p in tag_name.split(':')]:
-        crumbs_accum.append(part)
-        breadcrumbs.append({
-            'name': part,
-            'tag_name': ": ".join(crumbs_accum)
-        })
-
-    # Detectar subcategorías hijas directas si existen
-    child_tags = []
-    seen_child_tags = set()
-    norm_prefix = normalized_tag_name + ":"
-    cur_parts_count = len([p.strip() for p in tag_name.split(':')])
-    for song in all_songs:
-        for t in song.tags:
-            if not t:
-                continue
-            norm_t = t.replace(" ", "").lower()
-            if norm_t.startswith(norm_prefix):
-                t_parts = [p.strip() for p in t.split(':')]
-                if len(t_parts) > cur_parts_count:
-                    child_full_tag = ": ".join(t_parts[:cur_parts_count + 1])
-                    child_name = t_parts[cur_parts_count]
-                    if child_full_tag not in seen_child_tags:
-                        seen_child_tags.add(child_full_tag)
-                        child_tags.append({
-                            'name': child_name,
-                            'full_tag': child_full_tag
-                        })
-
-    # Aplicamos el filtro de búsqueda de texto y el ordenamiento sobre las canciones encontradas
-    filtered_songs, search_query = search_songs(matching_songs)
-    
-    # Obtenemos el método de ordenamiento desde la URL, por defecto 'canonico'
     sort_by = request.args.get('sort_by', 'canonico')
-    
-    # Extraemos la categoría principal para la lógica de ordenamiento
     main_category = tag_name.split(':')[0].strip()
+    sorted_songs = sort_songs(filtered_songs, sort_by=sort_by, main_category=main_category)
 
-    # --- LÓGICA DE ORDENAMIENTO DE CANCIONES DENTRO DE LA LISTA ---
-    # Solo aplicamos la lógica si la categoría tiene un orden personalizado y el usuario lo ha elegido.
-    if main_category == "Cantos Bíblicos" and sort_by == 'canonico':
-        def get_song_order_biblico(song):
-            # 1. Prioridad: Intentar parsear la cita desde el campo 'letra'.
-            cita_orden = parse_cita_biblica(song.letra)
-            if cita_orden:
-                # Devuelve una tupla de orden muy específica: (orden_libro, capítulo, versículo)
-                return (cita_orden[0], cita_orden[1], cita_orden[2])
+    breadcrumbs = build_breadcrumbs(tag_name)
+    child_tags = get_child_tags(tag_name, all_songs)
 
-            # 2. Fallback: Si no hay cita, usar el tag de la canción.
-            for tag in song.tags:
-                if tag.startswith(main_category + ':'):
-                    parts = [p.strip() for p in tag.split(':')]
-                    sub_tag = parts[1] if len(parts) > 1 else ''
-                    # Usamos el orden del libro, pero capítulo y versículo en 0.
-                    orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
-                    return (orden_libro, 0, 0)
-            
-            # 3. Último recurso: Si no tiene ni cita ni tag, va al final.
-            return (999, 0, 0)
+    return render_template(
+        'vista_tag.html',
+        composiciones=sorted_songs,
+        tag_nombre=tag_name,
+        search_query=search_query,
+        page_context='tag',
+        sort_by=sort_by,
+        ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(),
+        main_category=main_category,
+        breadcrumbs=breadcrumbs,
+        child_tags=child_tags
+    )
 
-        # Ordena por la tupla de orden y luego por título
-        filtered_songs.sort(key=lambda song: (get_song_order_biblico(song), normalize_for_sorting(song.titulo)))
 
-    elif main_category in ORDENES_PERSONALIZADOS and sort_by == 'canonico':
-        orden_categoria = ORDENES_PERSONALIZADOS[main_category]
-        
-        def get_song_order(song):
-            """
-            Encuentra el valor de orden más bajo para una canción dentro de una categoría.
-            Ej: Si una canción es de 'Adviento' y 'Navidad', usará el orden de 'Adviento'.
-            """
-            min_order = 999
-            for tag in song.tags:
-                if tag.startswith(main_category + ':'):
-                    parts = [p.strip() for p in tag.split(':')]
-                    sub_tag = parts[1] if len(parts) > 1 else ''
-                    order = orden_categoria.get(sub_tag, 999)
-                    if order < min_order:
-                        min_order = order
-            return min_order
+@app.route('/listas')
+def ver_listas():
+    """Directorio de listas de reproducción y taxonomía jerárquica de etiquetas."""
+    todas_las_canciones = Cancion.query.all()
+    set_de_tags = {tag.strip() for c in todas_las_canciones for tag in c.tags if tag and tag.strip()}
+    simple_tags, hierarchical_tags = build_hierarchical_tags(set_de_tags)
+    return render_template('listas.html', simple_tags=simple_tags, hierarchical_tags=hierarchical_tags)
 
-        # Ordena primero por el orden canónico y luego por título
-        filtered_songs.sort(key=lambda song: (get_song_order(song), normalize_for_sorting(song.titulo)))
-    elif sort_by == 'cronologico':
-        # Ordenamiento cronológico: año, mes, día. Los que no tienen fecha van al final.
-        # El desempate final es por título.
-        def get_song_order_cronologico(song):
-            # Para ordenar de más nuevo a más antiguo, los valores nulos deben ser los más pequeños.
-            anio = song.anio if song.anio is not None else 0
-            mes = song.mes if song.mes is not None else 0
-            dia = song.dia if song.dia is not None else 0
-            return (anio, mes, dia)
-        # Ordenamos en orden inverso (descendente) por fecha, y luego alfabético por título como desempate.
-        filtered_songs.sort(key=lambda song: (get_song_order_cronologico(song), normalize_for_sorting(song.titulo)), reverse=True)
-    else:
-        # Ordenamiento alfabético estándar para el resto de las listas
-        # o si el usuario eligió explícitamente 'alfabetico'.
-        filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
-
-    # Pasamos el método de ordenamiento actual a la plantilla
-    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(), main_category=main_category, breadcrumbs=breadcrumbs, child_tags=child_tags)
 
 @app.route('/get_playlist')
 def get_playlist_partial():
-    """
-    Devuelve solo el HTML de la lista de canciones para ser cargado con AJAX.
-    """
+    """Endpoint AJAX que retorna el partial HTML de la lista de canciones."""
     context = request.args.get('context', 'index')
     tag_name = request.args.get('tag_name')
     search_query = request.args.get('search')
     sort_by = request.args.get('sort_by', 'cronologico')
-    playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
-    
-    # Pasamos todos los parámetros de contexto a la plantilla parcial
-    # para que los enlaces url_for() se generen correctamente.
-    return render_template(
-        '_song_list.html', 
-        composiciones=playlist, 
-        page_context=context, 
-        tag_nombre=tag_name, 
-        search_query=search_query, 
-        sort_by=sort_by
-    )
+    categoria = request.args.get('categoria')
 
-# --- Ruta para la búsqueda en vivo (con ordenamiento corregido) ---
+    playlist = get_playlist_songs(context, tag_name=tag_name, search_query=search_query, sort_by=sort_by, categoria=categoria)
+    return render_template('_song_list.html', composiciones=playlist, page_context=context, tag_nombre=tag_name, search_query=search_query, sort_by=sort_by)
+
+
 @app.route('/filter')
 def filter_songs():
+    """Endpoint de búsqueda en vivo y filtrado AJAX utilizado por base.html."""
     categoria = request.args.get('categoria', '').strip()
     search_query = request.args.get('search', '').strip()
     sort_by = request.args.get('sort_by', 'cronologico').strip()
@@ -603,51 +220,39 @@ def filter_songs():
     )
 
 
-# --- Rutas de detalle, edición, etc. (sin cambios) ---
 @app.route('/composicion/<int:comp_id>')
 def ver_composicion(comp_id):
-    # Obtenemos el contexto de la playlist desde los argumentos de la URL
+    """Ficha detallada de una obra con reproductor, partitura, descargas y comentarios."""
     context = request.args.get('context', 'index')
     tag_name = request.args.get('tag_name')
     search_query = request.args.get('search')
-    
-    # Obtenemos el ordenamiento de la URL. Si no viene, usamos 'cronologico' como default.
     sort_by = request.args.get('sort_by', 'cronologico')
+    categoria = request.args.get('categoria')
 
-    # Reconstruimos la playlist
-    playlist = get_playlist_songs(context, tag_name, search_query, sort_by)
-    playlist_ids = [song.id for song in playlist]
+    playlist = get_playlist_songs(context, tag_name=tag_name, search_query=search_query, sort_by=sort_by, categoria=categoria)
 
-    # Encontramos la posición de la canción actual
+    # Navegación anterior / siguiente en la playlist
+    playlist_ids = [s.id for s in playlist]
     try:
         current_index = playlist_ids.index(comp_id)
     except ValueError:
         current_index = -1
 
-    # Determinamos las URLs de la canción anterior y siguiente
-    prev_song_url = None
-    if current_index > 0:
-        prev_id = playlist_ids[current_index - 1]
-        prev_song_url = url_for('ver_composicion', comp_id=prev_id, context=context, tag_name=tag_name, search=search_query, sort_by=sort_by)
-    next_song_url = None
-    if current_index != -1 and current_index < len(playlist_ids) - 1:
-        next_id = playlist_ids[current_index + 1]
-        next_song_url = url_for('ver_composicion', comp_id=next_id, context=context, tag_name=tag_name, search=search_query, sort_by=sort_by)
+    url_params = dict(context=context, tag_name=tag_name, search=search_query, sort_by=sort_by)
+    prev_song_url = url_for('ver_composicion', comp_id=playlist_ids[current_index - 1], **url_params) if current_index > 0 else None
+    next_song_url = url_for('ver_composicion', comp_id=playlist_ids[current_index + 1], **url_params) if (0 <= current_index < len(playlist_ids) - 1) else None
 
-    # Generar un título dinámico para la playlist
+    # Título dinámico para el menú lateral
     playlist_title = "Catálogo Completo"
     if context == 'composiciones':
         playlist_title = "Composiciones"
     elif context == 'arreglos':
         playlist_title = "Arreglos"
     elif context == 'tag' and tag_name:
-        if ':' in tag_name:
-            playlist_title = tag_name.split(':')[-1].strip()
-        else:
-            playlist_title = tag_name
+        playlist_title = tag_name.split(':')[-1].strip() if ':' in tag_name else tag_name
 
-    # Generar la URL para volver a la lista de reproducción
-    playlist_url = url_for('index') # URL por defecto
+    # URL de retorno a la lista
+    playlist_url = url_for('index')
     if context == 'composiciones':
         playlist_url = url_for('ver_composiciones', search=search_query, sort_by=sort_by)
     elif context == 'arreglos':
@@ -655,135 +260,176 @@ def ver_composicion(comp_id):
     elif context == 'tag' and tag_name:
         playlist_url = url_for('ver_tag', tag_name=tag_name, search=search_query, sort_by=sort_by)
     elif context == 'index':
-         playlist_url = url_for('index', search=search_query, sort_by=sort_by)
+        playlist_url = url_for('index', search=search_query, sort_by=sort_by)
 
     obra_encontrada = Cancion.query.get_or_404(comp_id)
     partitura_path = obra_encontrada.partitura
-
-    # Procesar etiquetas jerárquicas multinivel para la vista
-    processed_tags = []
-    seen_tags = set()
-    for tag in obra_encontrada.tags:
-        if not tag or not tag.strip():
-            continue
-        parts = [p.strip() for p in tag.split(':')]
-        accum = []
-        for idx, p in enumerate(parts):
-            accum.append(p)
-            tag_path = ": ".join(accum)
-            if tag_path not in seen_tags:
-                seen_tags.add(tag_path)
-                processed_tags.append({
-                    'tag_name': tag_path,
-                    'label': p,
-                    'is_root': (idx == 0 and len(parts) > 1)
-                })
-
+    processed_tags = process_song_tags(obra_encontrada.tags)
     comentarios_obra = Comentario.query.filter_by(obra_id=comp_id).order_by(Comentario.fecha_creacion.desc()).all()
-    return render_template('composicion.html', obra=obra_encontrada, partitura_path=partitura_path, comentarios=comentarios_obra, prev_song_url=prev_song_url, next_song_url=next_song_url, playlist=playlist, playlist_title=playlist_title, playlist_url=playlist_url, processed_tags=processed_tags)
 
+    return render_template(
+        'composicion.html',
+        obra=obra_encontrada,
+        partitura_path=partitura_path,
+        comentarios=comentarios_obra,
+        prev_song_url=prev_song_url,
+        next_song_url=next_song_url,
+        playlist=playlist,
+        playlist_title=playlist_title,
+        playlist_url=playlist_url,
+        processed_tags=processed_tags
+    )
+
+
+# ============================================================
+# AUTENTICACIÓN
+# ============================================================
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Inicio de sesión administrativo."""
+    if request.method == 'POST':
+        if request.form.get('password') == app.config['ADMIN_PASSWORD']:
+            session['logged_in'] = True
+            flash('¡Has iniciado sesión correctamente!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Contraseña incorrecta.', 'danger')
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    """Cierre de sesión administrativo."""
+    session.pop('logged_in', None)
+    flash('Has cerrado sesión.', 'info')
+    return redirect(url_for('index'))
+
+
+# ============================================================
+# COMENTARIOS
+# ============================================================
+@app.route('/composicion/<int:comp_id>/add_comment', methods=['POST'])
+def add_comment(comp_id):
+    """Registra un nuevo comentario en una obra."""
+    autor = request.form.get('autor', '').strip()
+    contenido = request.form.get('contenido', '').strip()
+    if autor and contenido:
+        nuevo_comentario = Comentario(obra_id=comp_id, autor=autor, contenido=contenido)
+        db.session.add(nuevo_comentario)
+        db.session.commit()
+    return redirect(url_for('ver_composicion', comp_id=comp_id))
+
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    """Elimina un comentario existente (requiere admin)."""
+    comentario_a_borrar = Comentario.query.get_or_404(comment_id)
+    obra_id = comentario_a_borrar.obra_id
+    db.session.delete(comentario_a_borrar)
+    db.session.commit()
+    flash('Comentario borrado con éxito.', 'success')
+    return redirect(url_for('ver_composicion', comp_id=obra_id))
+
+
+# ============================================================
+# ADMINISTRACIÓN DE OBRAS: EDICIÓN Y BORRADO
+# ============================================================
 @app.route('/composicion/<int:comp_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_cancion(comp_id):
+    """Edición completa de metadatos de una canción."""
     cancion_a_editar = Cancion.query.get_or_404(comp_id)
+
     if request.method == 'POST':
-        # Convertir campos vacíos a None para consistencia en la DB y JSON
-        cancion_a_editar.titulo = request.form['titulo']
-        cancion_a_editar.musica = request.form.get('musica') or None
-        cancion_a_editar.letra = request.form.get('letra') or None
-        cancion_a_editar.adaptacion = request.form.get('adaptacion') or None
-        cancion_a_editar.arreglo = request.form.get('arreglo') or None
-        cancion_a_editar.idioma = request.form.get('idioma') or None
-        dia_str = request.form.get('dia')
-        cancion_a_editar.dia = int(dia_str) if dia_str else None
-        mes_str = request.form.get('mes')
-        cancion_a_editar.mes = int(mes_str) if mes_str else None
-        anio_str = request.form.get('anio')
-        cancion_a_editar.anio = int(anio_str) if anio_str else None
-        cancion_a_editar.descripcion = request.form.get('descripcion') or None
-        cancion_a_editar.audio = request.form.get('audio') or None
-        cancion_a_editar.letras_acordes = request.form.get('letras_acordes') or None
-        cancion_a_editar.partitura = request.form.get('partitura') or None
-        cancion_a_editar.midi = request.form.get('midi') or None
-        cancion_a_editar.interprete = request.form.get('interprete') or None
-        cancion_a_editar.youtube_video_embed = request.form.get('youtube_video_embed') or None
-        cancion_a_editar.youtube_audio_embed = request.form.get('youtube_audio_embed') or None
+        cancion_a_editar.titulo = request.form.get('titulo')
+        cancion_a_editar.musica = request.form.get('musica')
+        cancion_a_editar.letra = request.form.get('letra')
+        cancion_a_editar.adaptacion = request.form.get('adaptacion')
+        cancion_a_editar.arreglo = request.form.get('arreglo')
+        cancion_a_editar.idioma = request.form.get('idioma')
+        cancion_a_editar.descripcion = request.form.get('descripcion')
+        cancion_a_editar.audio = request.form.get('audio')
+        cancion_a_editar.letras_acordes = request.form.get('letras_acordes')
+        cancion_a_editar.partitura = request.form.get('partitura')
+        cancion_a_editar.midi = request.form.get('midi')
+        cancion_a_editar.tipo = request.form.get('tipo', 'local')
+        cancion_a_editar.youtube_video_embed = request.form.get('youtube_video_embed')
+        cancion_a_editar.youtube_audio_embed = request.form.get('youtube_audio_embed')
+        cancion_a_editar.interprete = request.form.get('interprete')
+        cancion_a_editar.tipo_pdf = request.form.get('tipo_pdf')
 
-        cancion_a_editar.tags_json = json.dumps([tag.strip() for tag in request.form['tags'].split(',') if tag.strip()])
-        processed_categorias = [cat.strip() for cat in request.form['categorias'].split(',') if cat.strip()]
+        dia = request.form.get('dia')
+        mes = request.form.get('mes')
+        anio = request.form.get('anio')
+        cancion_a_editar.dia = int(dia) if dia and dia.isdigit() else None
+        cancion_a_editar.mes = int(mes) if mes and mes.isdigit() else None
+        cancion_a_editar.anio = int(anio) if anio and anio.isdigit() else None
+
+        processed_tags = [tag.strip() for tag in request.form.get('tags', '').split(',') if tag.strip()]
+        cancion_a_editar.tags_json = json.dumps(processed_tags)
+
+        processed_categorias = [cat.strip() for cat in request.form.get('categorias', '').split(',') if cat.strip()]
         cancion_a_editar.categorias_json = json.dumps(processed_categorias)
-        
-        # 1. Guardar en la base de datos para reflejar el cambio inmediatamente
-        db.session.commit()
 
-        # 2. Actualizar el archivo data.json para persistir el cambio
+        # Sincronizar cambios también en data.json
         try:
             with open('data.json', 'r+', encoding='utf-8') as f:
                 data = json.load(f)
-                
-                # Buscar la canción por ID y actualizarla
-                for i, cancion_json in enumerate(data):
-                    if cancion_json.get('id') == comp_id:
-                        data[i]['titulo'] = cancion_a_editar.titulo
-                        data[i]['musica'] = cancion_a_editar.musica
-                        data[i]['letra'] = cancion_a_editar.letra
-                        data[i]['adaptacion'] = cancion_a_editar.adaptacion
-                        data[i]['arreglo'] = cancion_a_editar.arreglo
-                        data[i]['idioma'] = cancion_a_editar.idioma
-                        data[i]['anio'] = cancion_a_editar.anio
-                        data[i]['mes'] = cancion_a_editar.mes
-                        data[i]['dia'] = cancion_a_editar.dia
-                        data[i]['descripcion'] = cancion_a_editar.descripcion
-                        data[i]['audio'] = cancion_a_editar.audio
-                        data[i]['letras_acordes'] = cancion_a_editar.letras_acordes
-                        data[i]['partitura'] = cancion_a_editar.partitura
-                        data[i]['midi'] = cancion_a_editar.midi
-                        data[i]['interprete'] = cancion_a_editar.interprete
-                        data[i]['youtube_video_embed'] = cancion_a_editar.youtube_video_embed
-                        data[i]['youtube_audio_embed'] = cancion_a_editar.youtube_audio_embed
-                        data[i]['tags'] = cancion_a_editar.tags # Usa la property que decodifica el JSON
-                        data[i]['categorias'] = processed_categorias # Usa la lista procesada del formulario
+                for i, c in enumerate(data):
+                    if c.get('id') == comp_id:
+                        data[i].update({
+                            'titulo': cancion_a_editar.titulo,
+                            'musica': cancion_a_editar.musica,
+                            'letra': cancion_a_editar.letra,
+                            'adaptacion': cancion_a_editar.adaptacion,
+                            'arreglo': cancion_a_editar.arreglo,
+                            'idioma': cancion_a_editar.idioma,
+                            'dia': cancion_a_editar.dia,
+                            'mes': cancion_a_editar.mes,
+                            'anio': cancion_a_editar.anio,
+                            'descripcion': cancion_a_editar.descripcion,
+                            'audio': cancion_a_editar.audio,
+                            'letras_acordes': cancion_a_editar.letras_acordes,
+                            'partitura': cancion_a_editar.partitura,
+                            'midi': cancion_a_editar.midi,
+                            'tipo': cancion_a_editar.tipo,
+                            'tags': processed_tags,
+                            'categorias': processed_categorias,
+                            'youtube_video_embed': cancion_a_editar.youtube_video_embed,
+                            'youtube_audio_embed': cancion_a_editar.youtube_audio_embed,
+                            'interprete': cancion_a_editar.interprete,
+                            'tipo_pdf': cancion_a_editar.tipo_pdf,
+                        })
                         break
-
-                
-                # Volver al inicio del archivo para sobrescribirlo
                 f.seek(0)
                 json.dump(data, f, ensure_ascii=False, indent=4)
                 f.truncate()
-        except (FileNotFoundError, json.JSONDecodeError) as e:
+        except Exception as e:
             flash(f'Error al guardar en data.json: {e}', 'danger')
 
+        db.session.commit()
+        flash('Canción actualizada con éxito.', 'success')
         return redirect(url_for('ver_composicion', comp_id=cancion_a_editar.id))
-        
-    # Obtener todas las etiquetas y categorías existentes para el selector
-    todas_las_canciones = Cancion.query.all()
-    set_de_tags = set()
-    for c in todas_las_canciones:
-        for tag in c.tags:
-            if tag and tag.strip():
-                set_de_tags.add(tag.strip())
-    todos_los_tags = sorted(list(set_de_tags))
 
-    set_de_categorias = set()
-    for c in todas_las_canciones:
-        for cat in c.categorias:
-            if cat and cat.strip():
-                set_de_categorias.add(cat.strip())
-    todas_las_categorias = sorted(list(set_de_categorias))
+    todas_las_canciones = Cancion.query.all()
+    todos_los_tags = sorted(list({t.strip() for c in todas_las_canciones for t in c.tags if t and t.strip()}))
+    todas_las_categorias = sorted(list({cat.strip() for c in todas_las_canciones for cat in c.categorias if cat and cat.strip()}))
 
     return render_template(
-        'edit_cancion.html', 
-        cancion=cancion_a_editar, 
-        todos_los_tags=todos_los_tags, 
+        'edit_cancion.html',
+        cancion=cancion_a_editar,
+        todos_los_tags=todos_los_tags,
         todas_las_categorias=todas_las_categorias
     )
+
 
 @app.route('/composicion/<int:comp_id>/delete', methods=['POST'])
 @login_required
 def delete_cancion(comp_id):
+    """Elimina una canción de la base de datos y de data.json."""
     cancion_a_borrar = Cancion.query.get_or_404(comp_id)
 
-    # Borrar también del archivo JSON
     try:
         with open('data.json', 'r+', encoding='utf-8') as f:
             data = json.load(f)
@@ -791,100 +437,22 @@ def delete_cancion(comp_id):
             f.seek(0)
             json.dump(data_filtrada, f, ensure_ascii=False, indent=4)
             f.truncate()
-    except (FileNotFoundError, json.JSONDecodeError) as e:
+    except Exception as e:
         flash(f'Error al borrar de data.json: {e}', 'danger')
 
     db.session.delete(cancion_a_borrar)
     db.session.commit()
+    flash('Canción eliminada correctamente.', 'success')
     return redirect(url_for('index'))
-
-@app.route('/listas')
-def ver_listas():
-    todas_las_canciones = Cancion.query.all()
-    set_de_tags = set()
-    for cancion in todas_las_canciones:
-        for tag in cancion.tags:
-            if tag and tag.strip():
-                set_de_tags.add(tag.strip())
-    simple_tags = sorted([tag for tag in set_de_tags if ':' not in tag])
-
-    cat_tree = defaultdict(dict)
-    for tag in set_de_tags:
-        if ':' not in tag:
-            continue
-        parts = [p.strip() for p in tag.split(':')]
-        cat = parts[0]
-        if len(parts) > 1:
-            sub = parts[1]
-            if sub not in cat_tree[cat]:
-                cat_tree[cat][sub] = {
-                    'name': sub,
-                    'full_tag': f"{cat}: {sub}",
-                    'children': {}
-                }
-            if len(parts) > 2:
-                subsub = parts[2]
-                subsub_full = f"{cat}: {sub}: {subsub}"
-                if subsub not in cat_tree[cat][sub]['children']:
-                    cat_tree[cat][sub]['children'][subsub] = {
-                        'name': subsub,
-                        'full_tag': subsub_full
-                    }
-
-    hierarchical_tags = {}
-    for cat in sorted(cat_tree.keys()):
-        subs_dict = cat_tree[cat]
-        if cat in ORDENES_PERSONALIZADOS:
-            orden = ORDENES_PERSONALIZADOS[cat]
-            if cat == "Cantos Bíblicos":
-                sorted_subs = sorted(subs_dict.values(), key=lambda item: orden.get(MAPEO_LIBROS_BIBLIA.get(item['name'].lower(), item['name']), 999))
-            else:
-                sorted_subs = sorted(subs_dict.values(), key=lambda item: orden.get(item['name'], 999))
-        else:
-            sorted_subs = sorted(subs_dict.values(), key=lambda item: item['name'])
-
-        for sub_item in sorted_subs:
-            sub_item['children'] = sorted(sub_item['children'].values(), key=lambda c: c['name'])
-
-        hierarchical_tags[cat] = sorted_subs
-
-    return render_template('listas.html', 
-                           simple_tags=simple_tags, 
-                           hierarchical_tags=hierarchical_tags)
-
-@app.route('/composicion/<int:comp_id>/add_comment', methods=['POST'])
-def add_comment(comp_id):
-    autor = request.form.get('autor')
-    contenido = request.form.get('contenido')
-    if autor and contenido:
-        nuevo_comentario = Comentario(obra_id=comp_id, autor=autor, contenido=contenido)
-        db.session.add(nuevo_comentario)
-        db.session.commit()
-    return redirect(url_for('ver_composicion', comp_id=comp_id))
-
-@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
-@login_required
-def delete_comment(comment_id):
-    # Busca el comentario por su ID o muestra un error 404 si no lo encuentra
-    comentario_a_borrar = Comentario.query.get_or_404(comment_id)
-    
-    # Guardamos el ID de la canción para saber a dónde volver
-    obra_id = comentario_a_borrar.obra_id
-    
-    # Borramos el comentario de la base de datos
-    db.session.delete(comentario_a_borrar)
-    db.session.commit()
-    
-    flash('Comentario borrado con éxito.', 'success')
-    return redirect(url_for('ver_composicion', comp_id=obra_id))
 
 
 # ============================================================
-# ADMIN: Ideas de Canciones (Tablero Kanban)
+# ADMINISTRACIÓN: TABLERO KANBAN DE IDEAS
 # ============================================================
 @app.route('/admin/ideas')
 @login_required
 def admin_ideas():
+    """Tablero Kanban de ideas y estados de composición."""
     if not FEATURES['ideas_admin']:
         abort(404)
     ideas = {
@@ -895,49 +463,58 @@ def admin_ideas():
     canciones = Cancion.query.order_by(Cancion.titulo).all()
     return render_template('admin/ideas.html', ideas=ideas, canciones=canciones)
 
+
 @app.route('/admin/ideas/add', methods=['POST'])
 @login_required
 def admin_ideas_add():
+    """Crea una nueva idea en la columna 'idea'."""
     titulo = request.form.get('titulo', '').strip()
-    notas  = request.form.get('notas', '').strip() or None
+    notas = request.form.get('notas', '').strip() or None
     if titulo:
         db.session.add(IdeaCancion(titulo=titulo, notas=notas, estado='idea'))
         db.session.commit()
     return redirect(url_for('admin_ideas'))
 
+
 @app.route('/admin/ideas/<int:idea_id>/update', methods=['POST'])
 @login_required
 def admin_ideas_update(idea_id):
+    """Actualiza el estado o metadatos de una idea."""
     idea = IdeaCancion.query.get_or_404(idea_id)
     idea.estado = request.form.get('estado', idea.estado)
     idea.titulo = request.form.get('titulo', idea.titulo).strip() or idea.titulo
-    idea.notas  = request.form.get('notas', idea.notas or '').strip() or None
+    idea.notas = request.form.get('notas', idea.notas or '').strip() or None
     cid = request.form.get('cancion_id', '').strip()
     idea.cancion_id = int(cid) if cid else None
     db.session.commit()
     return redirect(url_for('admin_ideas'))
 
+
 @app.route('/admin/ideas/<int:idea_id>/delete', methods=['POST'])
 @login_required
 def admin_ideas_delete(idea_id):
+    """Elimina una idea del tablero Kanban."""
     idea = IdeaCancion.query.get_or_404(idea_id)
     db.session.delete(idea)
     db.session.commit()
     return redirect(url_for('admin_ideas'))
 
-# --- CANTAMUS PREPROCESSOR ROUTES ---
-from scripts.cantamus_pipeline import (
-    get_recent_scores, inspect_score_info, process_cantamus
-)
-from pathlib import Path
 
+# ============================================================
+# PIPELINE CANTAMUS: OPTIMIZACIÓN Y MEZCLA DE AUDIOS
+# ============================================================
 @app.route('/cantamus')
 def cantamus_view():
+    """Panel de preprocesamiento de partituras para Cantamus."""
+    from scripts.cantamus_pipeline import get_recent_scores
     recent = get_recent_scores(limit=15)
     return render_template('cantamus.html', recent_scores=recent)
 
+
 @app.route('/cantamus/inspect', methods=['POST'])
 def cantamus_inspect():
+    """Inspecciona metadatos y tempos de una partitura MusicXML/MXL."""
+    from scripts.cantamus_pipeline import inspect_score_info
     data = request.get_json() or {}
     filepath = data.get('filepath')
     if not filepath or not os.path.exists(filepath):
@@ -945,8 +522,12 @@ def cantamus_inspect():
     info = inspect_score_info(filepath)
     return jsonify(info)
 
+
 @app.route('/cantamus/process', methods=['POST'])
 def cantamus_process():
+    """Procesa una partitura aplicando ritardando y optimizaciones vocales."""
+    from scripts.cantamus_pipeline import process_cantamus
+
     filepath = request.form.get('filepath', '').strip()
     uploaded_file = request.files.get('score_file')
     action_type = request.form.get('action_type', 'download')
@@ -1021,8 +602,10 @@ def cantamus_process():
             except Exception:
                 pass
 
+
 @app.route('/cantamus/mix', methods=['POST'])
 def cantamus_mix():
+    """Mezcla pista vocal de Cantamus con pista instrumental de MuseSounds."""
     vocal_file = request.files.get('vocal_file')
     inst_file = request.files.get('inst_file')
 
@@ -1081,42 +664,48 @@ def cantamus_mix():
                 except Exception:
                     pass
 
+
+# ============================================================
+# INICIALIZACIÓN, MIGRACIONES Y SINCRONIZACIÓN AL ARRANQUE
+# ============================================================
 with app.app_context():
     db.create_all()
-    # Asegurar que la columna 'midi' existe en la base de datos
+
+    # Verificar/migrar columnas adicionales en PostgreSQL / SQLite
     try:
         from add_midi_column import add_midi_column_to_db
         add_midi_column_to_db()
     except Exception as e:
-        print(f"Error al verificar/migrar columna midi: {e}")
-        
-    # Sincronizar canciones desde data.json automáticamente al iniciar
+        print(f"Nota columna midi/arreglo: {e}")
+
+    # Sincronizar catálogo desde data.json automáticamente al iniciar
     try:
         from sincronizar_canciones import sincronizar_canciones_desde_json
         sincronizar_canciones_desde_json()
     except Exception as e:
         print(f"Error al sincronizar canciones automáticamente: {e}")
 
-    # Seed inicial de Ideas si la tabla está vacía
+    # Semilla inicial para ideas si la tabla está vacía
     if FEATURES['ideas_admin'] and IdeaCancion.query.count() == 0:
         miserere = Cancion.query.filter(Cancion.titulo.ilike('%miserere%')).first()
         profundis = Cancion.query.filter(Cancion.titulo.ilike('%profundis%')).first()
         sembrador = Cancion.query.filter(Cancion.titulo.ilike('%sembrador%')).first()
         eripe = Cancion.query.filter(Cancion.titulo.ilike('%eripe%')).first()
         seeds = [
-            IdeaCancion(titulo='El Sembrador',    estado='lista', cancion_id=sembrador.id if sembrador else None),
-            IdeaCancion(titulo='Miserere',         estado='lista', cancion_id=miserere.id  if miserere  else None),
-            IdeaCancion(titulo='De Profundis',     estado='lista', cancion_id=profundis.id if profundis else None),
-            IdeaCancion(titulo='Salmo 6 (Señor, no me reprendas en tu enojo)',   estado='idea'),
-            IdeaCancion(titulo='Salmo 32 (Dichoso el que es absuelto)',          estado='idea'),
-            IdeaCancion(titulo='Salmo 38 (Señor, no me reprendas enojado)',      estado='idea'),
-            IdeaCancion(titulo='Salmo 102 (Bendice, alma mía, al Señor)',        estado='idea'),
-            IdeaCancion(titulo='Salmo 143 (Señor, escucha mi oración)',          estado='lista', cancion_id=eripe.id if eripe else None),
+            IdeaCancion(titulo='El Sembrador', estado='lista', cancion_id=sembrador.id if sembrador else None),
+            IdeaCancion(titulo='Miserere', estado='lista', cancion_id=miserere.id if miserere else None),
+            IdeaCancion(titulo='De Profundis', estado='lista', cancion_id=profundis.id if profundis else None),
+            IdeaCancion(titulo='Salmo 6 (Señor, no me reprendas en tu enojo)', estado='idea'),
+            IdeaCancion(titulo='Salmo 32 (Dichoso el que es absuelto)', estado='idea'),
+            IdeaCancion(titulo='Salmo 38 (Señor, no me reprendas enojado)', estado='idea'),
+            IdeaCancion(titulo='Salmo 102 (Bendice, alma mía, al Señor)', estado='idea'),
+            IdeaCancion(titulo='Salmo 143 (Señor, escucha mi oración)', estado='lista', cancion_id=eripe.id if eripe else None),
         ]
         for s in seeds:
             db.session.add(s)
         db.session.commit()
         print("Ideas iniciales sembradas.")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
