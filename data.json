@@ -781,7 +781,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 31,
+        "id": 29,
         "titulo": "Himno a San Francisco Javier",
         "musica": "Felipe Rodríguez",
         "letra": "Felipe Rodríguez",
@@ -806,7 +806,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 32,
+        "id": 30,
         "titulo": "Hoy Nos Ha Nacido un Salvador",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 95",
@@ -835,7 +835,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 37,
+        "id": 31,
         "titulo": "Oh Virginal Doncella",
         "musica": "Felipe Rodríguez",
         "letra": "Liturgia de las Horas",
@@ -864,7 +864,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 38,
+        "id": 32,
         "titulo": "Ojos Muertos que Miráis",
         "musica": "Felipe Rodríguez",
         "letra": "Liturgia de las Horas",
@@ -892,7 +892,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 41,
+        "id": 33,
         "titulo": "Ya No Temo, Señor",
         "musica": "Felipe Rodríguez",
         "letra": "Liturgia de las Horas",
@@ -919,7 +919,7 @@
         "tipo_pdf": "letras_acordes"
     },
     {
-        "id": 42,
+        "id": 34,
         "titulo": "Himno a la Virgen del Carmen",
         "musica": "Felipe Rodríguez",
         "letra": "Oración por Chile (Obispos de Chile)",
@@ -1028,7 +1028,7 @@
         "tipo_pdf": null
     },
     {
-        "id": 43,
+        "id": 35,
         "titulo": "Eripe Me",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 143 (142)",
