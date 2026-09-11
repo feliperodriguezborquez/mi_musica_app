@@ -1,25 +1,35 @@
-# c:\Users\felip\OneDrive - uc.cl\Yo\IA\GitHub\mi_musica_app\add_midi_column.py
 from app import app
-from sqlalchemy import text
-from sqlalchemy.exc import OperationalError
+from sqlalchemy import text, inspect
 
 def add_midi_column_to_db():
     """
-    Añade la columna 'midi' a la tabla 'cancion' si no existe.
+    Añade las columnas faltantes ('midi', 'arreglo') a la tabla 'cancion' si no existen.
+    Compatible con SQLite y PostgreSQL en Render.
     """
     with app.app_context():
         engine = app.extensions['sqlalchemy'].engine
         
         with engine.connect() as connection:
-            try:
-                print("Intentando añadir la columna 'midi' a la tabla 'cancion'...")
-                connection.execute(text('ALTER TABLE cancion ADD COLUMN midi VARCHAR(150)'))
-                print("¡Éxito! La columna 'midi' ha sido añadida.")
-            except OperationalError as e:
-                if 'duplicate column name' in str(e):
-                    print("La columna 'midi' ya existe. No se necesita ninguna acción.")
-                else:
-                    raise e
+            inspector = inspect(engine)
+            existing_cols = [c['name'] for c in inspector.get_columns('cancion')]
+            
+            if 'midi' not in existing_cols:
+                try:
+                    print("Añadiendo columna 'midi' a la tabla 'cancion'...")
+                    connection.execute(text('ALTER TABLE cancion ADD COLUMN midi VARCHAR(150)'))
+                    connection.commit()
+                    print("¡Éxito! La columna 'midi' ha sido añadida.")
+                except Exception as e:
+                    print(f"Nota columna midi: {e}")
+                    
+            if 'arreglo' not in existing_cols:
+                try:
+                    print("Añadiendo columna 'arreglo' a la tabla 'cancion'...")
+                    connection.execute(text('ALTER TABLE cancion ADD COLUMN arreglo VARCHAR(100)'))
+                    connection.commit()
+                    print("¡Éxito! La columna 'arreglo' ha sido añadida.")
+                except Exception as e:
+                    print(f"Nota columna arreglo: {e}")
 
 if __name__ == '__main__':
     add_midi_column_to_db()
