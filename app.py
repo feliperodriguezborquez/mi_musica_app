@@ -293,15 +293,15 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='crono
         base_songs = search_by_category("Arreglo")
     elif context == 'tag' and tag_name:
         all_songs = Cancion.query.all()
-        if ':' not in tag_name:
-            for song in all_songs:
-                if any(tag.startswith(tag_name) for tag in song.tags):
+        normalized_tag_name = tag_name.replace(" ", "").lower()
+        for song in all_songs:
+            for t in song.tags:
+                if not t:
+                    continue
+                norm_t = t.replace(" ", "").lower()
+                if norm_t == normalized_tag_name or norm_t.startswith(normalized_tag_name + ":"):
                     base_songs.append(song)
-        else:
-            normalized_tag_name = tag_name.replace(" ", "").lower()
-            for song in all_songs:
-                if any(t.replace(" ", "").lower() == normalized_tag_name for t in song.tags):
-                    base_songs.append(song)
+                    break
     else:
         base_songs = Cancion.query.all()
 
@@ -326,7 +326,8 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='crono
             if cita_orden: return (cita_orden[0], cita_orden[1], cita_orden[2])
             for tag in song.tags:
                 if tag.startswith(main_category + ':'):
-                    sub_tag = tag.split(':', 1)[1].strip()
+                    parts = [p.strip() for p in tag.split(':')]
+                    sub_tag = parts[1] if len(parts) > 1 else ''
                     orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
                     return (orden_libro, 0, 0)
             return (999, 0, 0)
@@ -338,7 +339,8 @@ def get_playlist_songs(context, tag_name=None, search_query=None, sort_by='crono
             min_order = 999
             for tag in song.tags:
                 if tag.startswith(main_category + ':'):
-                    sub_tag = tag.split(':', 1)[1].strip()
+                    parts = [p.strip() for p in tag.split(':')]
+                    sub_tag = parts[1] if len(parts) > 1 else ''
                     order = orden_categoria.get(sub_tag, 999)
                     if order < min_order:
                         min_order = order
@@ -443,22 +445,49 @@ def ver_arreglos():
 def ver_tag(tag_name):
     all_songs = Cancion.query.all()
     matching_songs = []
+    normalized_tag_name = tag_name.replace(" ", "").lower()
 
-    if ':' not in tag_name:
-        # Si es una categoría principal (ej: "Tiempos Litúrgicos"), busca todas las canciones
-        # que tengan cualquier tag que comience con ese nombre.
-        for song in all_songs:
-            if any(tag.startswith(tag_name) for tag in song.tags):
+    for song in all_songs:
+        for t in song.tags:
+            if not t:
+                continue
+            norm_t = t.replace(" ", "").lower()
+            if norm_t == normalized_tag_name or norm_t.startswith(normalized_tag_name + ":"):
                 matching_songs.append(song)
-    else:
-        # Si es una sub-etiqueta (ej: "Tiempos Litúrgicos:Pentecostés"), busca la coincidencia exacta.
-        for song in all_songs:
-            # Normalizamos ambas cadenas eliminando todos los espacios y convirtiendo a minúsculas
-            # para una comparación a prueba de errores.
-            normalized_tag_name = tag_name.replace(" ", "").lower()
-            if any(t.replace(" ", "").lower() == normalized_tag_name for t in song.tags):
-                 matching_songs.append(song)
+                break
     
+    # Generar migas de pan (breadcrumbs) para navegación jerárquica
+    breadcrumbs = []
+    crumbs_accum = []
+    for part in [p.strip() for p in tag_name.split(':')]:
+        crumbs_accum.append(part)
+        breadcrumbs.append({
+            'name': part,
+            'tag_name': ": ".join(crumbs_accum)
+        })
+
+    # Detectar subcategorías hijas directas si existen
+    child_tags = []
+    seen_child_tags = set()
+    norm_prefix = normalized_tag_name + ":"
+    cur_parts_count = len([p.strip() for p in tag_name.split(':')])
+    for song in all_songs:
+        for t in song.tags:
+            if not t:
+                continue
+            norm_t = t.replace(" ", "").lower()
+            if norm_t.startswith(norm_prefix):
+                t_parts = [p.strip() for p in t.split(':')]
+                if len(t_parts) > cur_parts_count:
+                    child_full_tag = ": ".join(t_parts[:cur_parts_count + 1])
+                    child_name = t_parts[cur_parts_count]
+                    if child_full_tag not in seen_child_tags:
+                        seen_child_tags.add(child_full_tag)
+                        child_tags.append({
+                            'name': child_name,
+                            'full_tag': child_full_tag
+                        })
+
     # Aplicamos el filtro de búsqueda de texto y el ordenamiento sobre las canciones encontradas
     filtered_songs, search_query = search_songs(matching_songs)
     
@@ -481,7 +510,8 @@ def ver_tag(tag_name):
             # 2. Fallback: Si no hay cita, usar el tag de la canción.
             for tag in song.tags:
                 if tag.startswith(main_category + ':'):
-                    sub_tag = tag.split(':', 1)[1].strip()
+                    parts = [p.strip() for p in tag.split(':')]
+                    sub_tag = parts[1] if len(parts) > 1 else ''
                     # Usamos el orden del libro, pero capítulo y versículo en 0.
                     orden_libro = ORDENES_PERSONALIZADOS[main_category].get(sub_tag, 999)
                     return (orden_libro, 0, 0)
@@ -503,7 +533,8 @@ def ver_tag(tag_name):
             min_order = 999
             for tag in song.tags:
                 if tag.startswith(main_category + ':'):
-                    sub_tag = tag.split(':', 1)[1].strip()
+                    parts = [p.strip() for p in tag.split(':')]
+                    sub_tag = parts[1] if len(parts) > 1 else ''
                     order = orden_categoria.get(sub_tag, 999)
                     if order < min_order:
                         min_order = order
@@ -528,7 +559,7 @@ def ver_tag(tag_name):
         filtered_songs.sort(key=lambda x: normalize_for_sorting(x.titulo))
 
     # Pasamos el método de ordenamiento actual a la plantilla
-    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(), main_category=main_category)
+    return render_template('vista_tag.html', composiciones=filtered_songs, tag_nombre=tag_name, search_query=search_query, page_context='tag', sort_by=sort_by, ordenes_personalizados=ORDENES_PERSONALIZADOS.keys(), main_category=main_category, breadcrumbs=breadcrumbs, child_tags=child_tags)
 
 @app.route('/get_playlist')
 def get_playlist_partial():
@@ -611,7 +642,7 @@ def ver_composicion(comp_id):
         playlist_title = "Arreglos"
     elif context == 'tag' and tag_name:
         if ':' in tag_name:
-            playlist_title = tag_name.split(':', 1)[1].strip()
+            playlist_title = tag_name.split(':')[-1].strip()
         else:
             playlist_title = tag_name
 
@@ -629,8 +660,27 @@ def ver_composicion(comp_id):
     obra_encontrada = Cancion.query.get_or_404(comp_id)
     partitura_path = obra_encontrada.partitura
 
+    # Procesar etiquetas jerárquicas multinivel para la vista
+    processed_tags = []
+    seen_tags = set()
+    for tag in obra_encontrada.tags:
+        if not tag or not tag.strip():
+            continue
+        parts = [p.strip() for p in tag.split(':')]
+        accum = []
+        for idx, p in enumerate(parts):
+            accum.append(p)
+            tag_path = ": ".join(accum)
+            if tag_path not in seen_tags:
+                seen_tags.add(tag_path)
+                processed_tags.append({
+                    'tag_name': tag_path,
+                    'label': p,
+                    'is_root': (idx == 0 and len(parts) > 1)
+                })
+
     comentarios_obra = Comentario.query.filter_by(obra_id=comp_id).order_by(Comentario.fecha_creacion.desc()).all()
-    return render_template('composicion.html', obra=obra_encontrada, partitura_path=partitura_path, comentarios=comentarios_obra, prev_song_url=prev_song_url, next_song_url=next_song_url, playlist=playlist, playlist_title=playlist_title, playlist_url=playlist_url)
+    return render_template('composicion.html', obra=obra_encontrada, partitura_path=partitura_path, comentarios=comentarios_obra, prev_song_url=prev_song_url, next_song_url=next_song_url, playlist=playlist, playlist_title=playlist_title, playlist_url=playlist_url, processed_tags=processed_tags)
 
 @app.route('/composicion/<int:comp_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -755,33 +805,52 @@ def ver_listas():
     for cancion in todas_las_canciones:
         for tag in cancion.tags:
             if tag and tag.strip():
-                set_de_tags.add(tag)
+                set_de_tags.add(tag.strip())
     simple_tags = sorted([tag for tag in set_de_tags if ':' not in tag])
-    hierarchical_tags = defaultdict(list)
-    for tag in set_de_tags:
-        if ':' in tag:
-            categoria, sub_etiqueta = tag.split(':', 1)
-            # Nos aseguramos de que la sub-etiqueta no esté vacía antes de añadirla
-            sub_etiqueta_limpia = sub_etiqueta.strip()
-            if sub_etiqueta_limpia:
-                hierarchical_tags[categoria.strip()].append(sub_etiqueta_limpia)
 
-    # Ordena las sub-etiquetas dentro de cada categoría
-    for categoria in hierarchical_tags:
-        if categoria in ORDENES_PERSONALIZADOS:
-            orden = ORDENES_PERSONALIZADOS[categoria]
-            # Para Cantos Bíblicos, las sub-etiquetas son los libros.
-            # Usamos el nombre canónico para obtener el orden numérico.
-            if categoria == "Cantos Bíblicos":
-                 hierarchical_tags[categoria].sort(key=lambda libro: orden.get(MAPEO_LIBROS_BIBLIA.get(libro.lower(), libro), 999))
+    cat_tree = defaultdict(dict)
+    for tag in set_de_tags:
+        if ':' not in tag:
+            continue
+        parts = [p.strip() for p in tag.split(':')]
+        cat = parts[0]
+        if len(parts) > 1:
+            sub = parts[1]
+            if sub not in cat_tree[cat]:
+                cat_tree[cat][sub] = {
+                    'name': sub,
+                    'full_tag': f"{cat}: {sub}",
+                    'children': {}
+                }
+            if len(parts) > 2:
+                subsub = parts[2]
+                subsub_full = f"{cat}: {sub}: {subsub}"
+                if subsub not in cat_tree[cat][sub]['children']:
+                    cat_tree[cat][sub]['children'][subsub] = {
+                        'name': subsub,
+                        'full_tag': subsub_full
+                    }
+
+    hierarchical_tags = {}
+    for cat in sorted(cat_tree.keys()):
+        subs_dict = cat_tree[cat]
+        if cat in ORDENES_PERSONALIZADOS:
+            orden = ORDENES_PERSONALIZADOS[cat]
+            if cat == "Cantos Bíblicos":
+                sorted_subs = sorted(subs_dict.values(), key=lambda item: orden.get(MAPEO_LIBROS_BIBLIA.get(item['name'].lower(), item['name']), 999))
             else:
-                hierarchical_tags[categoria].sort(key=lambda sub: orden.get(sub, 999))
+                sorted_subs = sorted(subs_dict.values(), key=lambda item: orden.get(item['name'], 999))
         else:
-            hierarchical_tags[categoria].sort() # Orden alfabético para el resto
+            sorted_subs = sorted(subs_dict.values(), key=lambda item: item['name'])
+
+        for sub_item in sorted_subs:
+            sub_item['children'] = sorted(sub_item['children'].values(), key=lambda c: c['name'])
+
+        hierarchical_tags[cat] = sorted_subs
 
     return render_template('listas.html', 
                            simple_tags=simple_tags, 
-                           hierarchical_tags=dict(sorted(hierarchical_tags.items())))
+                           hierarchical_tags=hierarchical_tags)
 
 @app.route('/composicion/<int:comp_id>/add_comment', methods=['POST'])
 def add_comment(comp_id):
@@ -952,8 +1021,6 @@ def cantamus_process():
             except Exception:
                 pass
 
-from scripts.mezclar_audio import mezclar_cantamus_musesounds
-
 @app.route('/cantamus/mix', methods=['POST'])
 def cantamus_mix():
     vocal_file = request.files.get('vocal_file')
@@ -961,6 +1028,12 @@ def cantamus_mix():
 
     if not vocal_file or not inst_file or not vocal_file.filename or not inst_file.filename:
         flash("Debes seleccionar ambos archivos de audio (voces e instrumental).", "error")
+        return redirect(url_for('cantamus_view'))
+
+    try:
+        from scripts.mezclar_audio import mezclar_cantamus_musesounds
+    except Exception as e:
+        flash(f"Error al cargar módulo de mezcla de audio: {e}", "error")
         return redirect(url_for('cantamus_view'))
 
     try:

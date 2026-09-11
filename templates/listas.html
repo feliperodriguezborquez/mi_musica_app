@@ -5,21 +5,33 @@
         <h2>Listas de Reproducción</h2>
 
         {% if hierarchical_tags %}
-            {% for categoria, sub_etiquetas in hierarchical_tags.items() %}
+            {% for categoria, sub_items in hierarchical_tags.items() %}
                 <div class="seccion-lista">
                     <h3>{{ categoria }}</h3>
                     <div class="tags-container">
                         <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">Ver todas</a>
                         
                         {# Solo mostramos el separador si hay sub-etiquetas #}
-                        {% if sub_etiquetas %}
+                        {% if sub_items %}
                             <span class="tag-separator">|</span>
                         {% endif %}
 
-                        {% for sub_etiqueta in sub_etiquetas %}
-                            <a href="{{ url_for('ver_tag', tag_name=categoria ~ ':' ~ sub_etiqueta) }}" class="tag-link">{{ sub_etiqueta }}</a>
+                        {% for item in sub_items %}
+                            <a href="{{ url_for('ver_tag', tag_name=item.full_tag) }}" class="tag-link">{{ item.name }}</a>
                         {% endfor %}
                     </div>
+
+                    {# Si alguna sub-etiqueta tiene sub-subetiquetas (hijos), las mostramos abajo en una sub-fila identada #}
+                    {% for item in sub_items %}
+                        {% if item.children %}
+                            <div class="sub-tags-container" style="margin-top: 8px; margin-left: 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+                                <span style="color: var(--color-texto-secundario); font-size: 0.85em; font-weight: 600;">↳ {{ item.name }}:</span>
+                                {% for child in item.children %}
+                                    <a href="{{ url_for('ver_tag', tag_name=child.full_tag) }}" class="tag-link tag-link-sub" style="font-size: 0.82em; padding: 4px 10px;">{{ child.name }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             {% endfor %}
         {% endif %}

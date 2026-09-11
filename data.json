@@ -31,7 +31,7 @@
     },
     {
         "id": 2,
-        "titulo": "De Profundis",
+        "titulo": "De Profundis (Salmo 129)",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 130 (129)",
         "adaptacion": "Felipe Rodríguez",
@@ -45,7 +45,7 @@
         "partitura": "media/De Profundis.musicxml",
         "midi": "media/De Profundis.mid",
         "tags": [
-            "Cantos Bíblicos: Salmos"
+            "Cantos Bíblicos: Salmos: Salmos Penitenciales"
         ],
         "tipo": "local",
         "categorias": [
@@ -699,7 +699,7 @@
     },
     {
         "id": 26,
-        "titulo": "Miserere",
+        "titulo": "Miserere (Salmo 50)",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 51 (50)",
         "adaptacion": "Felipe Rodríguez",
@@ -713,7 +713,7 @@
         "partitura": "media/Miserere.musicxml",
         "midi": "media/Miserere.mid",
         "tags": [
-            "Cantos Bíblicos: Salmos"
+            "Cantos Bíblicos: Salmos: Salmos Penitenciales"
         ],
         "tipo": "local",
         "categorias": [
@@ -807,7 +807,7 @@
     },
     {
         "id": 30,
-        "titulo": "Hoy Nos Ha Nacido un Salvador",
+        "titulo": "Hoy Nos Ha Nacido un Salvador (Salmo 95)",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 95",
         "adaptacion": null,
@@ -1029,7 +1029,7 @@
     },
     {
         "id": 35,
-        "titulo": "Eripe Me",
+        "titulo": "Eripe Me (Salmo 142)",
         "musica": "Felipe Rodríguez",
         "letra": "Salmo 143 (142)",
         "adaptacion": "Felipe Rodríguez",
@@ -1043,7 +1043,7 @@
         "partitura": "media/Eripe Me.musicxml",
         "midi": "media/Eripe Me.mid",
         "tags": [
-            "Cantos Bíblicos: Salmos"
+            "Cantos Bíblicos: Salmos: Salmos Penitenciales"
         ],
         "tipo": "local",
         "categorias": [

@@ -841,23 +841,23 @@
 
             <h4>Listas de Reproducción</h4>
             <div class="tags-container">
-                {% for tag in obra.tags %}
-                    {% set parts = tag.split(':', 1) %}
-                    
-                    {% if parts|length > 1 %}
-                        {# Si el tag es jerárquico (ej: "Cat: Sub"), crea dos botones #}
-                        {% set categoria = parts[0] | trim %}
-                        {% set sub_etiqueta = parts[1] | trim %}
-                        
-                        <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">{{ categoria }}</a>
-                        <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ sub_etiqueta }}</a>
-
-                    {% else %}
-                        {# Si el tag es simple, crea un solo botón #}
-                        <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
-                    {% endif %}
-
-                {% endfor %}
+                {% if processed_tags %}
+                    {% for item in processed_tags %}
+                        <a href="{{ url_for('ver_tag', tag_name=item.tag_name) }}" class="tag-link {% if item.is_root %}tag-link-todas{% endif %}">{{ item.label }}</a>
+                    {% endfor %}
+                {% else %}
+                    {% for tag in obra.tags %}
+                        {% set parts = tag.split(':', 1) %}
+                        {% if parts|length > 1 %}
+                            {% set categoria = parts[0] | trim %}
+                            {% set sub_etiqueta = parts[1] | trim %}
+                            <a href="{{ url_for('ver_tag', tag_name=categoria) }}" class="tag-link tag-link-todas">{{ categoria }}</a>
+                            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ sub_etiqueta }}</a>
+                        {% else %}
+                            <a href="{{ url_for('ver_tag', tag_name=tag) }}" class="tag-link">{{ tag }}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endif %}
 
