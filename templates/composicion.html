@@ -58,8 +58,13 @@
         <div class="compact-metadata-box">
             <div class="compact-metadata-col">
                 <p><span class="metadata-label">Composición:</span> <span class="metadata-value">{{ obra.musica }}</span></p>
-                {% if obra.adaptacion or obra.arreglo %}
-                    <p><span class="metadata-label">Arreglo:</span> <span class="metadata-value">{{ obra.adaptacion or obra.arreglo }}</span></p>
+                {% if obra.arreglo %}
+                    <p><span class="metadata-label">Arreglo:</span> <span class="metadata-value">{{ obra.arreglo }}</span></p>
+                {% elif 'Arreglo' in obra.categorias %}
+                    <p><span class="metadata-label">Arreglo:</span> <span class="metadata-value">{{ obra.musica }}</span></p>
+                {% endif %}
+                {% if obra.adaptacion %}
+                    <p><span class="metadata-label">Adaptación:</span> <span class="metadata-value">{{ obra.adaptacion }}</span></p>
                 {% endif %}
                 <p><span class="metadata-label">Texto:</span> <span class="metadata-value">{{ obra.letra }}</span></p>
                 {% if obra.interprete %}
@@ -68,7 +73,11 @@
             </div>
             <div class="compact-metadata-col">
                 <p><span class="metadata-label">Idioma:</span> <span class="metadata-value">{{ obra.idioma }}</span></p>
-                <p><span class="metadata-label">Año:</span> <span class="metadata-value">{{ obra.anio }}</span></p>
+                {% if obra.dia and obra.mes %}
+                    <p><span class="metadata-label">Fecha:</span> <span class="metadata-value">{{ obra.dia }}/{{ obra.mes }}/{{ obra.anio }}</span></p>
+                {% else %}
+                    <p><span class="metadata-label">Año:</span> <span class="metadata-value">{{ obra.anio }}</span></p>
+                {% endif %}
             </div>
         </div>
 

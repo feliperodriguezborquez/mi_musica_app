@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, request, redirect, url_for, session, flash
+from flask import Flask, render_template, abort, request, redirect, url_for, session, flash, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 import json
@@ -43,6 +43,7 @@ class Cancion(db.Model):
     musica = db.Column(db.String(100))
     letra = db.Column(db.String(100))
     adaptacion = db.Column(db.String(100))
+    arreglo = db.Column(db.String(100), nullable=True)
     idioma = db.Column(db.String(50))
     dia = db.Column(db.Integer, nullable=True)
     mes = db.Column(db.Integer, nullable=True)
@@ -638,6 +639,7 @@ def edit_cancion(comp_id):
         cancion_a_editar.musica = request.form.get('musica') or None
         cancion_a_editar.letra = request.form.get('letra') or None
         cancion_a_editar.adaptacion = request.form.get('adaptacion') or None
+        cancion_a_editar.arreglo = request.form.get('arreglo') or None
         cancion_a_editar.idioma = request.form.get('idioma') or None
         dia_str = request.form.get('dia')
         cancion_a_editar.dia = int(dia_str) if dia_str else None
@@ -673,6 +675,7 @@ def edit_cancion(comp_id):
                         data[i]['musica'] = cancion_a_editar.musica
                         data[i]['letra'] = cancion_a_editar.letra
                         data[i]['adaptacion'] = cancion_a_editar.adaptacion
+                        data[i]['arreglo'] = cancion_a_editar.arreglo
                         data[i]['idioma'] = cancion_a_editar.idioma
                         data[i]['anio'] = cancion_a_editar.anio
                         data[i]['mes'] = cancion_a_editar.mes
@@ -850,6 +853,158 @@ def admin_ideas_delete(idea_id):
     db.session.commit()
     return redirect(url_for('admin_ideas'))
 
+# --- CANTAMUS PREPROCESSOR ROUTES ---
+from scripts.cantamus_pipeline import (
+    get_recent_scores, inspect_score_info, process_cantamus
+)
+from pathlib import Path
+
+@app.route('/cantamus')
+def cantamus_view():
+    recent = get_recent_scores(limit=15)
+    return render_template('cantamus.html', recent_scores=recent)
+
+@app.route('/cantamus/inspect', methods=['POST'])
+def cantamus_inspect():
+    data = request.get_json() or {}
+    filepath = data.get('filepath')
+    if not filepath or not os.path.exists(filepath):
+        return jsonify({'error': 'Archivo no encontrado'}), 404
+    info = inspect_score_info(filepath)
+    return jsonify(info)
+
+@app.route('/cantamus/process', methods=['POST'])
+def cantamus_process():
+    filepath = request.form.get('filepath', '').strip()
+    uploaded_file = request.files.get('score_file')
+    action_type = request.form.get('action_type', 'download')
+
+    target_path = None
+    temp_upload = None
+
+    if uploaded_file and uploaded_file.filename:
+        temp_dir = Path.home() / 'Downloads'
+        temp_upload = temp_dir / f"_upload_{uploaded_file.filename}"
+        uploaded_file.save(str(temp_upload))
+        target_path = temp_upload
+    elif filepath and os.path.exists(filepath):
+        target_path = Path(filepath)
+    else:
+        flash("No se proporcionó un archivo válido.", "error")
+        return redirect(url_for('cantamus_view'))
+
+    try:
+        initial_bpm = int(request.form.get('initial_bpm', 71) or 71)
+    except ValueError:
+        initial_bpm = 71
+
+    rit_profile = request.form.get('rit_profile', 'ease-in')
+    try:
+        rit_drop = float(request.form.get('rit_drop', 75)) / 100.0
+    except ValueError:
+        rit_drop = 0.75
+
+    try:
+        rit_measures = int(request.form.get('rit_measures', 2) or 2)
+    except ValueError:
+        rit_measures = 2
+
+    solo_voces = request.form.get('solo_voces') == '1'
+    fix_tenor = request.form.get('fix_tenor') == '1'
+
+    downloads_dir = Path.home() / 'Downloads'
+    clean_stem = re.sub(r'_Cantamus.*$', '', target_path.stem)
+    out_file = downloads_dir / f"{clean_stem}_Cantamus.musicxml"
+
+    try:
+        process_cantamus(
+            input_path=target_path,
+            output_path=out_file,
+            initial_bpm=initial_bpm,
+            rit_profile=rit_profile,
+            rit_drop=rit_drop,
+            rit_measures=rit_measures,
+            keep_accompaniment=not solo_voces,
+            fix_tenor_breathing=fix_tenor
+        )
+
+        if action_type == 'download':
+            return send_file(
+                str(out_file),
+                as_attachment=True,
+                download_name=out_file.name,
+                mimetype='application/vnd.recordare.musicxml+xml'
+            )
+        else:
+            flash(f"✅ ¡Partitura procesada con éxito! Guardada en: {out_file}", "success")
+            return redirect(url_for('cantamus_view'))
+
+    except Exception as e:
+        flash(f"Error al procesar la partitura: {e}", "error")
+        return redirect(url_for('cantamus_view'))
+    finally:
+        if temp_upload and temp_upload.exists():
+            try:
+                temp_upload.unlink()
+            except Exception:
+                pass
+
+from scripts.mezclar_audio import mezclar_cantamus_musesounds
+
+@app.route('/cantamus/mix', methods=['POST'])
+def cantamus_mix():
+    vocal_file = request.files.get('vocal_file')
+    inst_file = request.files.get('inst_file')
+
+    if not vocal_file or not inst_file or not vocal_file.filename or not inst_file.filename:
+        flash("Debes seleccionar ambos archivos de audio (voces e instrumental).", "error")
+        return redirect(url_for('cantamus_view'))
+
+    try:
+        gain = float(request.form.get('vocal_gain', 2.5) or 2.5)
+    except ValueError:
+        gain = 2.5
+
+    try:
+        delay = int(request.form.get('vocal_delay', 0) or 0)
+    except ValueError:
+        delay = 0
+
+    temp_dir = Path.home() / 'Downloads'
+    vocal_temp = temp_dir / f"_temp_voces_{vocal_file.filename}"
+    inst_temp = temp_dir / f"_temp_inst_{inst_file.filename}"
+    clean_stem = re.sub(r'(_Cantamus|_voces|_vocal).*$', '', Path(vocal_file.filename).stem, flags=re.IGNORECASE)
+    out_master = temp_dir / f"{clean_stem}_Master_MuseSounds_Cantamus.mp3"
+
+    try:
+        vocal_file.save(str(vocal_temp))
+        inst_file.save(str(inst_temp))
+
+        mezclar_cantamus_musesounds(
+            vocal_path=vocal_temp,
+            instrumental_path=inst_temp,
+            output_path=out_master,
+            vocal_gain_db=gain,
+            vocal_delay_ms=delay
+        )
+
+        return send_file(
+            str(out_master),
+            as_attachment=True,
+            download_name=out_master.name,
+            mimetype='audio/mpeg'
+        )
+    except Exception as e:
+        flash(f"Error al mezclar audios: {e}", "error")
+        return redirect(url_for('cantamus_view'))
+    finally:
+        for tmp in [vocal_temp, inst_temp]:
+            if tmp.exists():
+                try:
+                    tmp.unlink()
+                except Exception:
+                    pass
+
 with app.app_context():
     db.create_all()
     # Asegurar que la columna 'midi' existe en la base de datos
@@ -871,6 +1026,7 @@ with app.app_context():
         miserere = Cancion.query.filter(Cancion.titulo.ilike('%miserere%')).first()
         profundis = Cancion.query.filter(Cancion.titulo.ilike('%profundis%')).first()
         sembrador = Cancion.query.filter(Cancion.titulo.ilike('%sembrador%')).first()
+        eripe = Cancion.query.filter(Cancion.titulo.ilike('%eripe%')).first()
         seeds = [
             IdeaCancion(titulo='El Sembrador',    estado='lista', cancion_id=sembrador.id if sembrador else None),
             IdeaCancion(titulo='Miserere',         estado='lista', cancion_id=miserere.id  if miserere  else None),
@@ -879,7 +1035,7 @@ with app.app_context():
             IdeaCancion(titulo='Salmo 32 (Dichoso el que es absuelto)',          estado='idea'),
             IdeaCancion(titulo='Salmo 38 (Señor, no me reprendas enojado)',      estado='idea'),
             IdeaCancion(titulo='Salmo 102 (Bendice, alma mía, al Señor)',        estado='idea'),
-            IdeaCancion(titulo='Salmo 143 (Señor, escucha mi oración)',          estado='idea'),
+            IdeaCancion(titulo='Salmo 143 (Señor, escucha mi oración)',          estado='lista', cancion_id=eripe.id if eripe else None),
         ]
         for s in seeds:
             db.session.add(s)

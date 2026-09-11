@@ -709,7 +709,7 @@
         "dia": 27,
         "descripcion": "Descripción de la obra.",
         "audio": "media/Miserere.mp3",
-        "letras_acordes": null,
+        "letras_acordes": "media/Miserere.pdf",
         "partitura": "media/Miserere.musicxml",
         "midi": "media/Miserere.mid",
         "tags": [
@@ -723,7 +723,8 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "arreglo": "Felipe Rodríguez"
     },
     {
         "id": 27,
@@ -1025,5 +1026,34 @@
         ],
         "interprete": null,
         "tipo_pdf": null
+    },
+    {
+        "id": 43,
+        "titulo": "Eripe Me",
+        "musica": "Felipe Rodríguez",
+        "letra": "Salmo 143 (142)",
+        "adaptacion": "Felipe Rodríguez",
+        "idioma": "Español",
+        "anio": 2025,
+        "mes": 11,
+        "dia": 8,
+        "descripcion": "Musicalización del Salmo 143 (142).",
+        "audio": "media/Eripe Me.mp3",
+        "letras_acordes": "media/Eripe Me.pdf",
+        "partitura": "media/Eripe Me.musicxml",
+        "midi": "media/Eripe Me.mid",
+        "tags": [
+            "Cantos Bíblicos: Salmos"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Composición",
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": null,
+        "interprete": null,
+        "tipo_pdf": "partitura",
+        "arreglo": "Felipe Rodríguez"
     }
 ]

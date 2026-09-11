@@ -42,6 +42,7 @@ def sincronizar_canciones_desde_json():
                 'musica': cancion_data.get('musica'),
                 'letra': cancion_data.get('letra'),
                 'adaptacion': cancion_data.get('adaptacion'),
+                'arreglo': cancion_data.get('arreglo'),
                 'idioma': cancion_data.get('idioma'),
                 'dia': int(dia) if dia else None,
                 'mes': int(mes) if mes else None,

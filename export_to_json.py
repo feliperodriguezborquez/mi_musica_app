@@ -27,6 +27,7 @@ def export_data_to_json():
                 "musica": cancion.musica,
                 "letra": cancion.letra,
                 "adaptacion": cancion.adaptacion,
+                "arreglo": cancion.arreglo,
                 "idioma": cancion.idioma,
                 "anio": cancion.anio,
                 "mes": cancion.mes,

@@ -1,0 +1,694 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cantamus-wrapper">
+    <div class="cantamus-header">
+        <div class="cantamus-title-row">
+            <h1>Cantāmus Studio</h1>
+            <span class="badge-cantamus">MusicXML 3.1 & MuseScore 4</span>
+        </div>
+        <p class="cantamus-subtitle">
+            Preprocesador automatizado de partituras para síntesis coral con inteligencia artificial en Cantāmus.
+            Resuelve monofonía, fusión de sinalefas, tempo baking y articulación fonética con 1 solo clic.
+        </p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flashes-container">
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="cantamus-grid">
+        <!-- Columna Izquierda: Selección de Partitura -->
+        <div class="cantamus-col">
+            <div class="cantamus-card">
+                <h2>1. Selecciona tu partitura</h2>
+
+                <!-- Zona Drag & Drop -->
+                <div id="drop-zone" class="drop-zone">
+                    <input type="file" id="file-input" name="score_file" accept=".musicxml,.xml,.mxl,.mscz" style="display: none;">
+                    <div class="drop-zone-content">
+                        <svg class="drop-icon" viewBox="0 0 24 24" width="40" height="40" fill="currentColor">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                        </svg>
+                        <p class="drop-text">Arrastra aquí tu partitura <strong>.musicxml</strong> o <strong>.mscz</strong></p>
+                        <button type="button" class="btn-secondary" onclick="document.getElementById('file-input').click()">Examinar archivo local</button>
+                    </div>
+                </div>
+
+                <!-- Lista de Partituras Recientes Detectadas -->
+                <div class="recent-section">
+                    <div class="recent-header">
+                        <h3>Partituras recientes detectadas</h3>
+                        <span class="recent-hint">Downloads y MuseScore Cloud</span>
+                    </div>
+
+                    <div class="recent-list" id="recent-list">
+                        {% for score in recent_scores %}
+                        <div class="recent-item" data-path="{{ score.path }}" data-title="{{ score.title }}" data-name="{{ score.name }}">
+                            <div class="recent-info">
+                                <span class="recent-title">{{ score.title }}</span>
+                                <span class="recent-meta">
+                                    <span class="source-tag source-{{ 'cloud' if score.source == 'MuseScore Cloud' else 'downloads' }}">
+                                        {{ score.source }}
+                                    </span>
+                                    {{ score.mtime_str }} &bull; {{ score.ext }}
+                                </span>
+                            </div>
+                            <button type="button" class="btn-select-score">Elegir</button>
+                        </div>
+                        {% else %}
+                        <p class="no-recent">No se detectaron archivos recientes en Downloads ni en Cloud.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Parámetros y Procesamiento -->
+        <div class="cantamus-col">
+            <form id="cantamus-form" action="{{ url_for('cantamus_process') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="filepath" id="selected-filepath" value="">
+                <input type="hidden" name="action_type" id="action-type" value="download">
+
+                <div class="cantamus-card">
+                    <h2>2. Opciones de Síntesis</h2>
+
+                    <!-- Preview de la partitura seleccionada -->
+                    <div id="selected-preview" class="selected-preview empty">
+                        <div class="preview-placeholder">Ninguna partitura seleccionada</div>
+                        <div class="preview-details" style="display: none;">
+                            <div class="preview-title" id="pv-title">-</div>
+                            <div class="preview-badges">
+                                <span class="badge" id="pv-bpm">BPM: -</span>
+                                <span class="badge" id="pv-measures">Compases: -</span>
+                                <span class="badge" id="pv-parts">Voces: -</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de Tempo y Ritardando -->
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="initial_bpm">BPM Inicial</label>
+                            <input type="number" id="initial_bpm" name="initial_bpm" min="30" max="240" value="71" class="form-input">
+                            <span class="field-hint">Auto-detectado de la partitura</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="rit_profile">Curva de Ritardando Final</label>
+                            <select id="rit_profile" name="rit_profile" class="form-input">
+                                <option value="ease-in" selected>Ease-In (t²) - Caída suave al final</option>
+                                <option value="ease-out">Ease-Out (1-(1-t)²) - Frena al inicio</option>
+                                <option value="linear">Lineal - Descenso uniforme</option>
+                                <option value="none">Sin ritardando</option>
+                            </select>
+                            <span class="field-hint">Baking de BPM nota a nota</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="rit_drop">Velocidad final del Rit (% BPM)</label>
+                            <div class="slider-row">
+                                <input type="range" id="rit_drop" name="rit_drop" min="30" max="95" value="75" class="form-slider">
+                                <span id="rit-drop-val" class="slider-val">75%</span>
+                            </div>
+                            <span class="field-hint">75% = desacelera hasta 3/4 del tempo base</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="rit_measures">Compases de Ritardando</label>
+                            <input type="number" id="rit_measures" name="rit_measures" min="1" max="8" value="2" class="form-input">
+                            <span class="field-hint">Compases previos al final</span>
+                        </div>
+                    </div>
+
+                    <!-- Opciones de Cuerdas -->
+                    <div class="options-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="solo_voces" value="1" checked>
+                            <span><strong>Solo pistas vocales (SATB)</strong> (reindexa limpiamente a P1..Pn eliminando instrumentos de acompañamiento)</span>
+                        </label>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="action-buttons">
+                        <button type="button" id="btn-download" class="btn-primary btn-large" disabled>
+                            ⚡ Procesar y Descargar MusicXML
+                        </button>
+                        <button type="button" id="btn-save-downloads" class="btn-secondary" disabled>
+                            💾 Guardar directo en Downloads
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: MEZCLADOR CANTAMUS + MUSESOUNDS -->
+    <div class="cantamus-card mixer-card" style="margin-bottom: 2rem;">
+        <div class="cantamus-title-row" style="margin-bottom: 0.8rem;">
+            <h2>🎵 Mezclador: Voces Cantāmus + Instrumental MuseSounds</h2>
+            <span class="badge-cantamus" style="background: #2e7d32;">Mastering Automático</span>
+        </div>
+        <p class="cantamus-subtitle" style="margin: 0 0 1.5rem;">
+            Combina las voces con letra sintetizadas en Cantāmus con el acompañamiento acústico de alta fidelidad exportado desde MuseScore con MuseSounds. La sincronización se mantiene perfecta gracias al tempo baking.
+        </p>
+
+        <form action="{{ url_for('cantamus_mix') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label><strong>1. Audio de Voces (Cantāmus)</strong></label>
+                    <input type="file" name="vocal_file" accept=".mp3,.wav,.m4a" required class="form-input">
+                    <span class="field-hint">Archivo MP3 o WAV descargado desde Cantāmus</span>
+                </div>
+
+                <div class="form-group">
+                    <label><strong>2. Audio Instrumental (MuseScore MuseSounds)</strong></label>
+                    <input type="file" name="inst_file" accept=".mp3,.wav,.m4a" required class="form-input">
+                    <span class="field-hint">Exportado desde MuseScore con las voces silenciadas</span>
+                </div>
+            </div>
+
+            <div class="form-group-row" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="vocal_gain">Realce Vocal (+dB)</label>
+                    <input type="number" id="vocal_gain" name="vocal_gain" step="0.5" min="-6" max="12" value="2.5" class="form-input">
+                    <span class="field-hint">+2.5 dB recomendado para que el texto resalte claro sobre el piano/cuerdas</span>
+                </div>
+                <div class="form-group">
+                    <label for="vocal_delay">Ajuste de Sincronización (ms)</label>
+                    <input type="number" id="vocal_delay" name="vocal_delay" step="10" min="-1000" max="1000" value="0" class="form-input">
+                    <span class="field-hint">0 ms (alineado al primer pulso)</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" class="btn-primary btn-large" style="width: 100%;">
+                    ✨ Mezclar, Nivelar y Descargar Canción Completa (.mp3)
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tarjeta informativa de Requisitos Cantāmus -->
+    <div class="cantamus-card cantamus-guide">
+        <h3>💡 Requisitos Clave de Cantāmus aplicados automáticamente</h3>
+        <div class="guide-grid">
+            <div class="guide-item">
+                <strong>1. Monofonía estricta (Voz 1):</strong> Elimina segundas voces y acordes divisi que desincronizan el sintetizador.
+            </div>
+            <div class="guide-item">
+                <strong>2. Fusión de sinalefas:</strong> Fusiona espacios intra-nota (<code>te i</code> &rarr; <code>tei</code>, <code>va a</code> &rarr; <code>vaa</code>) para evitar que Cantāmus desplace sílabas.
+            </div>
+            <div class="guide-item">
+                <strong>3. Boca cerrada a "U":</strong> Traduce <code>mmm</code>, <code>mm</code> y <code>hm</code> a la vocal <strong>U</strong> para que el motor coral mantenga formantes resonantes.
+            </div>
+            <div class="guide-item">
+                <strong>4. Calderones y Cesuras:</strong> Convierte marcas visuales en un BPM al 50% duplicando exactamente el tiempo de duración.
+            </div>
+            <div class="guide-item">
+                <strong>5. Tempo Multicuerda:</strong> Duplica las marcas de metrónomo a todas las partes para que ninguna voz se atrase o adelante.
+            </div>
+            <div class="guide-item">
+                <strong>6. Recordatorio en Cantāmus:</strong> Al crear la pieza en la web de Cantāmus, recuerda siempre <em>asignar una carpeta existente</em> para evitar rechazo de subida.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cantamus-wrapper {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+.cantamus-header {
+    margin-bottom: 2rem;
+}
+.cantamus-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.cantamus-title-row h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-family: 'Lora', serif;
+    color: var(--color-texto);
+}
+.badge-cantamus {
+    background: var(--color-principal);
+    color: var(--color-blanco);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.cantamus-subtitle {
+    color: var(--color-texto-secundario);
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+.cantamus-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+@media (max-width: 880px) {
+    .cantamus-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.cantamus-card {
+    background: var(--color-blanco);
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    padding: 1.8rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+.cantamus-card h2 {
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    color: var(--color-texto);
+    border-bottom: 1px solid var(--color-borde);
+    padding-bottom: 0.6rem;
+}
+.drop-zone {
+    border: 2px dashed var(--color-principal);
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(184, 144, 32, 0.03);
+    transition: all 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+.drop-zone.dragover {
+    background: rgba(184, 144, 32, 0.12);
+    border-color: var(--color-acento);
+    transform: scale(1.01);
+}
+.drop-icon {
+    color: var(--color-principal);
+    margin-bottom: 0.5rem;
+}
+.drop-text {
+    margin: 0.5rem 0 1rem;
+    color: var(--color-texto);
+    font-size: 0.95rem;
+}
+.recent-section {
+    margin-top: 1rem;
+}
+.recent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.8rem;
+}
+.recent-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-texto);
+}
+.recent-hint {
+    font-size: 0.75rem;
+    color: var(--color-texto-secundario);
+}
+.recent-list {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    background: var(--color-fondo);
+    transition: background 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
+}
+.recent-item:hover, .recent-item.active {
+    border-color: var(--color-principal);
+    background: rgba(184, 144, 32, 0.08);
+}
+.recent-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: hidden;
+}
+.recent-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.recent-meta {
+    font-size: 0.75rem;
+    color: var(--color-texto-secundario);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.source-tag {
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.source-cloud {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+.source-downloads {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+.btn-select-score {
+    background: var(--color-principal);
+    color: var(--color-blanco);
+    border: none;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.selected-preview {
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+    background: var(--color-fondo);
+}
+.selected-preview.empty {
+    text-align: center;
+    color: var(--color-texto-secundario);
+    font-style: italic;
+}
+.preview-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--color-texto);
+    margin-bottom: 0.5rem;
+}
+.preview-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.badge {
+    background: var(--color-principal);
+    color: var(--color-blanco);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-texto);
+}
+.form-input {
+    padding: 0.5rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    font-size: 0.9rem;
+}
+.field-hint {
+    font-size: 0.72rem;
+    color: var(--color-texto-secundario);
+}
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.form-slider {
+    flex: 1;
+}
+.slider-val {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-principal);
+    min-width: 35px;
+}
+.options-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1.2rem 0;
+    padding: 0.8rem;
+    background: var(--color-fondo);
+    border-radius: 8px;
+}
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--color-texto);
+    cursor: pointer;
+}
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+}
+.btn-primary {
+    background: var(--color-principal);
+    color: var(--color-blanco);
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-primary:disabled, .btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn-secondary {
+    background: transparent;
+    color: var(--color-texto);
+    border: 1px solid var(--color-principal);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.cantamus-guide h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--color-texto);
+    margin-bottom: 1rem;
+}
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+.guide-item {
+    background: var(--color-fondo);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--color-texto);
+    border-left: 3px solid var(--color-principal);
+}
+.guide-item code {
+    background: rgba(0,0,0,0.06);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-family: monospace;
+}
+.flashes-container {
+    margin-bottom: 1.5rem;
+}
+.flash-alert {
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+.flash-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.flash-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const recentItems = document.querySelectorAll('.recent-item');
+    const selectedFilepath = document.getElementById('selected-filepath');
+    const previewContainer = document.getElementById('selected-preview');
+    const pvTitle = document.getElementById('pv-title');
+    const pvBpm = document.getElementById('pv-bpm');
+    const pvMeasures = document.getElementById('pv-measures');
+    const pvParts = document.getElementById('pv-parts');
+    const initialBpmInput = document.getElementById('initial_bpm');
+    const ritDropSlider = document.getElementById('rit_drop');
+    const ritDropVal = document.getElementById('rit-drop-val');
+    const btnDownload = document.getElementById('btn-download');
+    const btnSaveDownloads = document.getElementById('btn-save-downloads');
+    const cantamusForm = document.getElementById('cantamus-form');
+    const actionType = document.getElementById('action-type');
+
+    // Slider de Ritardando
+    ritDropSlider.addEventListener('input', function() {
+        ritDropVal.textContent = this.value + '%';
+    });
+
+    // Inspección de partitura vía AJAX
+    function inspectPath(path, title) {
+        selectedFilepath.value = path;
+        fileInput.value = ''; // Limpiar input file si se seleccionó archivo reciente
+
+        previewContainer.classList.remove('empty');
+        previewContainer.querySelector('.preview-placeholder').style.display = 'none';
+        previewContainer.querySelector('.preview-details').style.display = 'block';
+        pvTitle.textContent = title || path.split('\\').pop();
+        pvBpm.textContent = 'Analizando BPM...';
+
+        btnDownload.disabled = false;
+        btnSaveDownloads.disabled = false;
+
+        fetch('{{ url_for("cantamus_inspect") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({filepath: path})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.bpm) {
+                initialBpmInput.value = data.bpm;
+                pvBpm.textContent = 'BPM: ' + data.bpm;
+            }
+            if (data.title) pvTitle.textContent = data.title;
+            if (data.measures) pvMeasures.textContent = 'Compases: ' + data.measures;
+            if (data.parts) pvParts.textContent = 'Voces: ' + data.parts.length;
+        })
+        .catch(err => {
+            console.error('Error al inspeccionar partitura:', err);
+            pvBpm.textContent = 'BPM: ' + initialBpmInput.value;
+        });
+    }
+
+    // Clic en items recientes
+    recentItems.forEach(item => {
+        item.addEventListener('click', function() {
+            recentItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const path = this.getAttribute('data-path');
+            const title = this.getAttribute('data-title');
+            inspectPath(path, title);
+        });
+    });
+
+    // Manejo de archivo subido o arrastrado
+    function handleFile(file) {
+        if (!file) return;
+        selectedFilepath.value = ''; // Limpiar filepath si subió archivo
+        recentItems.forEach(i => i.classList.remove('active'));
+
+        previewContainer.classList.remove('empty');
+        previewContainer.querySelector('.preview-placeholder').style.display = 'none';
+        previewContainer.querySelector('.preview-details').style.display = 'block';
+        pvTitle.textContent = file.name;
+        pvBpm.textContent = 'Archivo cargado para síntesis';
+        pvMeasures.textContent = '';
+        pvParts.textContent = '';
+
+        btnDownload.disabled = false;
+        btnSaveDownloads.disabled = false;
+    }
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            handleFile(this.files[0]);
+        }
+    });
+
+    // Drag & Drop
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt.files && dt.files.length > 0) {
+            fileInput.files = dt.files;
+            handleFile(dt.files[0]);
+        }
+    });
+
+    // Auto-seleccionar la primera partitura reciente si existe
+    if (recentItems.length > 0) {
+        recentItems[0].click();
+    }
+
+    // Botones de acción
+    btnDownload.addEventListener('click', function() {
+        actionType.value = 'download';
+        cantamusForm.submit();
+    });
+
+    btnSaveDownloads.addEventListener('click', function() {
+        actionType.value = 'save_downloads';
+        cantamusForm.submit();
+    });
+});
+</script>
+{% endblock %}
