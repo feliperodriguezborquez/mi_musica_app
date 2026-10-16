@@ -115,7 +115,8 @@
             });
 
             // Lógica para mover el botón de la playlist al hacer scroll
-            document.addEventListener('scroll', function() {
+            if (window.__playlistBtnScroll) document.removeEventListener('scroll', window.__playlistBtnScroll);
+            window.__playlistBtnScroll = function() {
                 const header = document.querySelector('header');
                 const playlistBtn = document.getElementById('open-playlist-btn');
 
@@ -140,7 +141,8 @@
 
                 // Aplicamos el nuevo estilo.
                 playlistBtn.style.top = `${newTop}px`;
-            });
+            };
+            document.addEventListener('scroll', window.__playlistBtnScroll);
 
             // --- Lógica para recargar la lista de canciones del menú lateral ---
             // Esta función se llamará cuando se cambie el orden en la página de la lista.
@@ -216,6 +218,7 @@
                 </div>
     
     <script>
+    (function() {
         const musicXmlUrl = "{{ url_for('static', filename=obra.partitura) }}";
         const container = document.getElementById('osmd-container');
         const zoomDisplay = document.getElementById('zoom-display-btn');
@@ -570,8 +573,10 @@
         });
 
         // Escuchamos el evento de cambio de pantalla completa para limpiar estilos y re-renderizar
-        document.addEventListener('fullscreenchange', function() {
+        if (window.__scoreFsHandler) document.removeEventListener('fullscreenchange', window.__scoreFsHandler);
+        window.__scoreFsHandler = function() {
             const wrapper = document.getElementById('score-wrapper');
+            if (!wrapper) return;
             if (document.fullscreenElement === wrapper) {
                 wrapper.classList.add('fullscreen-mode');
             } else {
@@ -579,7 +584,8 @@
             }
             // Forzamos un re-renderizado para que OSMD se ajuste al nuevo tamaño
             if (osmd) setTimeout(() => osmd.render(), 50);
-        });
+        };
+        document.addEventListener('fullscreenchange', window.__scoreFsHandler);
 
         // --- Lógica para el botón de Mostrar/Ocultar Partitura ---
         document.getElementById('toggle-score-btn').addEventListener('click', function() {
@@ -601,6 +607,7 @@
             }
         });
 
+    })();
     </script>
             {% endif %}
 

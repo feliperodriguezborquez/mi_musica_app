@@ -780,6 +780,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(html => {
                         container.innerHTML = html;
                         window.FP.syncAllPlayButtons();
+                        const nextURL = new URL(window.location);
+                        if (pill.dataset.cat) nextURL.searchParams.set('categoria', pill.dataset.cat);
+                        else nextURL.searchParams.delete('categoria');
+                        window.history.replaceState(window.history.state, '', nextURL.href);
                     })
                     .catch(err => console.error(err));
             }
