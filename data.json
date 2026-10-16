@@ -975,7 +975,7 @@
             "Composición",
             "Arreglo"
         ],
-        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/jMSFLPFQ1h4\" title=\"Arreglo para Cuerdas\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/NAuEExyp4ks\" title=\"Arreglo para Cuerdas\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/4DER26xd5EY\" title=\"Arreglo para Órgano\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "interprete": null,
         "tipo_pdf": "partitura",
@@ -1037,6 +1037,10 @@
             {
                 "nombre": "Arreglo Cuerdas y Coro (PDF)",
                 "archivo": "media/Himno a la Virgen del Carmen-Arreglo_para_cuerdas_y_coro.pdf"
+            },
+            {
+                "nombre": "Arreglo Coral (MXL)",
+                "archivo": "media/Himno a la Virgen del Carmen-Arreglo_coral.mxl"
             },
             {
                 "nombre": "Particella Violines 1 (PDF)",
