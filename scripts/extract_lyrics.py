@@ -273,6 +273,9 @@ def extract(path, part_ref='auto', offset=0.0, verse=None, gap_split=2.0, tempo_
     for t, txt, syl in chosen:
         if cur_t is None:
             cur_t = t
+        elif prev_syl in ('begin', 'middle') and syl in ('begin', 'single') and cur_text.strip():
+            lines.append({'t': round(cur_t + offset, 2), 'text': cur_text.strip()})
+            cur_text, cur_t = '', t
         elif (prev_end_t is not None and prev_syl in ('end', 'single')
               and (t - prev_end_t) > gap_split and cur_text.strip()):
             lines.append({'t': round(cur_t + offset, 2), 'text': cur_text.strip()})

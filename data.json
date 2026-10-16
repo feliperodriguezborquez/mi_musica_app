@@ -62,11 +62,7 @@
                 },
                 {
                     "t": 95.45,
-                    "text": "Y,"
-                },
-                {
-                    "t": 96.36,
-                    "text": "Si el pecho se enfría ven y tu calor santo en él envía."
+                    "text": "Y, si el pecho se enfría ven y tu calor santo en él envía."
                 },
                 {
                     "t": 109.09,
@@ -94,7 +90,7 @@
                 },
                 {
                     "t": 153.18,
-                    "text": "Que sobre los apóstoles ardíaa,"
+                    "text": "Que sobre los apóstoles ardía,"
                 },
                 {
                     "t": 162.27,
@@ -184,7 +180,11 @@
                 },
                 {
                     "t": 51.5,
-                    "text": "Estén tus oídos atentos a la voz de mi súpliDe lo profundo a ti grito,"
+                    "text": "Estén tus oídos atentos a la voz de mi súplica!"
+                },
+                {
+                    "t": 69.0,
+                    "text": "De lo profundo a ti grito,"
                 },
                 {
                     "t": 71.5,
@@ -204,7 +204,7 @@
                 },
                 {
                     "t": 100.0,
-                    "text": "Cuentas las culpas,"
+                    "text": "Si tú cuentas las culpas, Señor,"
                 },
                 {
                     "t": 103.5,
@@ -240,7 +240,7 @@
                 },
                 {
                     "t": 166.0,
-                    "text": "Cuentas las culpas,"
+                    "text": "Si tú cuentas las culpas, Señor,"
                 },
                 {
                     "t": 169.5,
@@ -276,7 +276,7 @@
                 },
                 {
                     "t": 232.0,
-                    "text": "Cuentas las culpas,"
+                    "text": "Si tú cuentas las culpas, Señor,"
                 },
                 {
                     "t": 235.5,
@@ -532,11 +532,11 @@
                 },
                 {
                     "t": 56.54,
-                    "text": "Bendito es el que vine en el nombre del Señor."
+                    "text": "Bendito es el que viene en el nombre del Señor."
                 },
                 {
                     "t": 62.54,
-                    "text": "Bendito es el que vine en el nombre del Señor."
+                    "text": "Bendito es el que viene en el nombre del Señor."
                 },
                 {
                     "t": 68.54,
@@ -666,7 +666,7 @@
                 },
                 {
                     "t": 66.0,
-                    "text": "Ten piedad de nososotros."
+                    "text": "Ten piedad de nosotros."
                 }
             ]
         }
@@ -4371,7 +4371,7 @@
                 },
                 {
                     "t": 35.13,
-                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
                 },
                 {
                     "t": 45.13,
@@ -4382,8 +4382,16 @@
                     "text": "Oh Virgen María,"
                 },
                 {
+                    "t": 55.13,
+                    "text": "Desde nuestra bandera y en lo hondo del corazón."
+                },
+                {
+                    "t": 65.13,
+                    "text": "Y en las noches de tormenta eres nuestra estrella,"
+                },
+                {
                     "t": 75.13,
-                    "text": "Sabiamente iluminas el camino y nuestra misión."
+                    "text": "Sabiamente iluminas el camino y nuestra misión."
                 },
                 {
                     "t": 85.13,
@@ -4395,7 +4403,7 @@
                 },
                 {
                     "t": 95.13,
-                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
                 },
                 {
                     "t": 105.13,
@@ -4403,11 +4411,23 @@
                 },
                 {
                     "t": 110.13,
-                    "text": "Madre de la Iglesia,"
+                    "text": "Madre de la Iglesia,"
+                },
+                {
+                    "t": 115.13,
+                    "text": "Que su cruz nos invite a anhelar la resurrección."
+                },
+                {
+                    "t": 125.13,
+                    "text": "Como hijos nos recibes,"
+                },
+                {
+                    "t": 130.13,
+                    "text": "Oh Reina de Chile,"
                 },
                 {
                     "t": 135.13,
-                    "text": "Que sus brazos se extiendan sobre nuestra amada nación."
+                    "text": "Que sus brazos se extiendan sobre nuestra amada nación."
                 },
                 {
                     "t": 145.13,
@@ -4419,19 +4439,19 @@
                 },
                 {
                     "t": 155.13,
-                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
                 },
                 {
-                    "t": 165.45,
+                    "t": 165.13,
                     "text": "Virgen del Carmen,"
                 },
                 {
-                    "t": 171.66,
+                    "t": 171.33,
                     "text": "Reina de Chile:"
                 },
                 {
-                    "t": 177.87,
-                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                    "t": 177.54,
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
                 }
             ]
         }
