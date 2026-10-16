@@ -55,6 +55,11 @@
         </div>
 
         <div class="form-group">
+            <label for="letras_lrc">Letra de la Canción (LRC sincronizado <code>[mm:ss.xx] verso</code> o texto plano, una línea por verso)</label>
+            <textarea id="letras_lrc" name="letras_lrc" rows="10" style="font-family: monospace; font-size: 0.9rem;" placeholder="[00:25.13] Virgen del Carmen,&#10;[00:30.13] Reina de Chile:">{{ letras_lrc or '' }}</textarea>
+        </div>
+
+        <div class="form-group">
             <label for="audio">Archivo de Audio (ej: media/Santo.mp3)</label>
             <input type="text" id="audio" name="audio" value="{{ cancion.audio or '' }}">
         </div>

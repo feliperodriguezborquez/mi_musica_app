@@ -64,7 +64,8 @@ def sincronizar_canciones_desde_json(app_instance=None):
                 'ensambles_json': json.dumps(cancion_data.get('ensambles', [])) if cancion_data.get('ensambles') else None,
                 'descargas_json': json.dumps(cancion_data.get('descargas', [])) if cancion_data.get('descargas') else None,
                 'audios_json': json.dumps(cancion_data.get('audios', [])) if cancion_data.get('audios') else None,
-                'tipo_pdf': cancion_data.get('tipo_pdf')
+                'tipo_pdf': cancion_data.get('tipo_pdf'),
+                'letras_json': json.dumps(cancion_data.get('letras'), ensure_ascii=False) if cancion_data.get('letras') else None
             }
 
 

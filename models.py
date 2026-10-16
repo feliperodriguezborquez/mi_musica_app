@@ -56,6 +56,12 @@ class Cancion(db.Model):
     descargas_json = db.Column(db.Text, nullable=True)
     audios_json = db.Column(db.Text, nullable=True)
     tipo_pdf = db.Column(db.String(50), nullable=True)  # 'partitura' o 'letras_acordes'
+    letras_json = db.Column(db.Text, nullable=True)  # {"sincronizada": bool, "lineas": [{"t": seg|null, "text": str}]}
+
+    @property
+    def letras(self):
+        """Letra deserializada: dict con 'sincronizada' y 'lineas', o None si no hay."""
+        return json.loads(self.letras_json) if self.letras_json else None
 
     @property
     def tags(self):

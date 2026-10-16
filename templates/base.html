@@ -112,6 +112,9 @@
                 </button>
                 <input type="range" id="fp-volume-slider" class="fp-volume-slider" min="0" max="1" step="0.05" value="1">
             </div>
+            <button id="fp-lyrics-btn" class="fp-btn fp-lyrics-btn" title="Letra de la canción">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+            </button>
             <div class="fp-queue-container-wrapper">
                 <button id="fp-queue-btn" class="fp-btn" title="Cola de reproducción">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
@@ -121,6 +124,23 @@
             <button id="fp-close" class="fp-btn fp-close-btn" title="Cerrar reproductor">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
+        </div>
+    </div>
+
+    <!-- Panel de Letras Pantalla Completa (estilo Spotify / Musixmatch) -->
+    <div id="fp-lyrics-overlay" class="fp-lyrics-overlay hidden" aria-hidden="true">
+        <div class="fp-lyrics-header">
+            <div class="fp-lyrics-meta">
+                <a id="fp-lyrics-title" href="#" class="fp-lyrics-title">Ninguna canción</a>
+                <span id="fp-lyrics-sub" class="fp-lyrics-sub"></span>
+            </div>
+            <div class="fp-lyrics-header-actions">
+                <span id="fp-lyrics-badge" class="fp-lyrics-badge hidden">Sincronizada</span>
+                <button id="fp-lyrics-close" class="fp-lyrics-close" title="Cerrar letra (Esc)">✕</button>
+            </div>
+        </div>
+        <div id="fp-lyrics-body" class="fp-lyrics-body">
+            <div class="fp-lyrics-empty">Selecciona una canción para ver su letra.</div>
         </div>
     </div>
 
@@ -202,8 +222,162 @@ window.FP = {
 
         if (bindAudio) {
             this._bindAudio();
+            this.loadLyrics(songId, title);
         } else {
             this.syncAllPlayButtons();
+            if (String(this._lyricsLoadedId || '') !== String(songId || '')) {
+                this.loadLyrics(songId, title);
+            }
+        }
+    },
+
+    _lyricsLoadedId: null,
+    _lyricsData: null,
+    _activeLyricIdx: -1,
+
+    loadLyrics(songId, fallbackTitle) {
+        this._lyricsLoadedId = songId;
+        this._lyricsData = null;
+        this._activeLyricIdx = -1;
+
+        const btn = document.getElementById('fp-lyrics-btn');
+        const titleEl = document.getElementById('fp-lyrics-title');
+        const subEl = document.getElementById('fp-lyrics-sub');
+        const badgeEl = document.getElementById('fp-lyrics-badge');
+        const bodyEl = document.getElementById('fp-lyrics-body');
+
+        if (titleEl) {
+            titleEl.textContent = fallbackTitle || this.title || 'Canción';
+            titleEl.href = songId ? `/composicion/${songId}` : '#';
+        }
+        if (subEl) subEl.textContent = '';
+        if (badgeEl) badgeEl.classList.add('hidden');
+
+        if (!songId) {
+            if (btn) { btn.disabled = true; btn.classList.remove('has-lyrics'); }
+            if (bodyEl) bodyEl.innerHTML = '<div class="fp-lyrics-empty">No hay letra disponible para esta obra.</div>';
+            return;
+        }
+
+        if (bodyEl) bodyEl.innerHTML = '<div class="fp-lyrics-empty">Cargando letra…</div>';
+
+        fetch(`/api/letras/${songId}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (String(this.songId) !== String(songId)) return;
+                if (titleEl && data && data.titulo) titleEl.textContent = data.titulo;
+                if (subEl && data) {
+                    const parts = [];
+                    if (data.musica) parts.push(`Música: ${data.musica}`);
+                    if (data.letra_autor && data.letra_autor !== data.musica) parts.push(`Letra: ${data.letra_autor}`);
+                    subEl.textContent = parts.join(' · ');
+                }
+                const letras = data && data.letras;
+                const lineas = (letras && Array.isArray(letras.lineas)) ? letras.lineas : [];
+                this._lyricsData = letras;
+
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.toggle('has-lyrics', lineas.length > 0);
+                    btn.title = lineas.length > 0
+                        ? (letras.sincronizada ? 'Ver letra sincronizada' : 'Ver letra')
+                        : 'Letra aún no cargada';
+                }
+
+                if (!lineas.length) {
+                    if (badgeEl) badgeEl.classList.add('hidden');
+                    if (bodyEl) bodyEl.innerHTML = '<div class="fp-lyrics-empty">Esta obra aún no tiene letra cargada.</div>';
+                    return;
+                }
+
+                const synced = Boolean(letras.sincronizada);
+                if (badgeEl) {
+                    badgeEl.textContent = synced ? 'Sincronizada' : 'Texto completo';
+                    badgeEl.classList.toggle('is-synced', synced);
+                    badgeEl.classList.remove('hidden');
+                }
+
+                if (bodyEl) {
+                    bodyEl.innerHTML = '';
+                    const list = document.createElement('div');
+                    list.className = 'fp-lyrics-lines ' + (synced ? 'is-synced' : 'is-static');
+                    lineas.forEach((ln, idx) => {
+                        const p = document.createElement('p');
+                        p.className = 'fp-lyric-line';
+                        p.dataset.idx = idx;
+                        if (synced && ln.t !== null && ln.t !== undefined) {
+                            p.dataset.t = ln.t;
+                            p.title = `Saltar a ${_fmt(ln.t)}`;
+                            p.addEventListener('click', () => {
+                                const a = this.getGlobalAudio();
+                                if (a) {
+                                    a.currentTime = Number(ln.t);
+                                    if (a.paused) a.play().catch(() => {});
+                                }
+                            });
+                        }
+                        p.textContent = ln.text || '';
+                        list.appendChild(p);
+                    });
+                    bodyEl.appendChild(list);
+                    bodyEl.scrollTop = 0;
+                }
+                const a = this.getGlobalAudio();
+                if (a && synced) this.syncLyricsTime(a.currentTime);
+            })
+            .catch(() => {
+                if (bodyEl) bodyEl.innerHTML = '<div class="fp-lyrics-empty">No se pudo cargar la letra.</div>';
+            });
+    },
+
+    syncLyricsTime(currentTime) {
+        if (!this._lyricsData || !this._lyricsData.sincronizada) return;
+        const lineas = this._lyricsData.lineas || [];
+        if (!lineas.length) return;
+
+        let activeIdx = -1;
+        for (let i = 0; i < lineas.length; i++) {
+            const t = lineas[i].t;
+            if (t !== null && t !== undefined && currentTime + 0.12 >= t) {
+                activeIdx = i;
+            } else if (t !== null && t !== undefined && currentTime + 0.12 < t) {
+                break;
+            }
+        }
+
+        if (activeIdx === this._activeLyricIdx) return;
+        this._activeLyricIdx = activeIdx;
+
+        const bodyEl = document.getElementById('fp-lyrics-body');
+        if (!bodyEl) return;
+        const nodes = bodyEl.querySelectorAll('.fp-lyric-line');
+        nodes.forEach((el, i) => {
+            el.classList.toggle('is-active', i === activeIdx);
+            el.classList.toggle('is-past', activeIdx !== -1 && i < activeIdx);
+        });
+
+        const overlay = document.getElementById('fp-lyrics-overlay');
+        if (activeIdx >= 0 && nodes[activeIdx] && overlay && !overlay.classList.contains('hidden')) {
+            nodes[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    },
+
+    toggleLyricsOverlay(forceState) {
+        const overlay = document.getElementById('fp-lyrics-overlay');
+        const btn = document.getElementById('fp-lyrics-btn');
+        if (!overlay) return;
+        const willOpen = forceState !== undefined ? forceState : overlay.classList.contains('hidden');
+        overlay.classList.toggle('hidden', !willOpen);
+        overlay.setAttribute('aria-hidden', String(!willOpen));
+        if (btn) btn.classList.toggle('active', willOpen);
+        document.body.classList.toggle('lyrics-overlay-open', willOpen);
+
+        if (willOpen) {
+            const a = this.getGlobalAudio();
+            if (a && this._lyricsData && this._lyricsData.sincronizada) {
+                this._activeLyricIdx = -1;
+                this.syncLyricsTime(a.currentTime);
+            }
         }
     },
 
@@ -246,6 +420,7 @@ window.FP = {
                 if (cur)  cur.textContent  = _fmt(a.currentTime);
                 if (dur)  dur.textContent  = _fmt(a.duration);
             }
+            this.syncLyricsTime(a.currentTime);
         };
         this._endedHandler = () => {
             updatePlayIcon(true);
@@ -332,6 +507,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const fpVolBtn       = document.getElementById('fp-volume-btn');
     const fpVolSlider    = document.getElementById('fp-volume-slider');
     const fpClose        = document.getElementById('fp-close');
+    const fpLyricsBtn    = document.getElementById('fp-lyrics-btn');
+    const fpLyricsClose  = document.getElementById('fp-lyrics-close');
+    const fpLyricsTitle  = document.getElementById('fp-lyrics-title');
+
+    if (fpLyricsBtn) {
+        fpLyricsBtn.addEventListener('click', () => window.FP.toggleLyricsOverlay());
+    }
+    if (fpLyricsClose) {
+        fpLyricsClose.addEventListener('click', () => window.FP.toggleLyricsOverlay(false));
+    }
+    if (fpLyricsTitle) {
+        fpLyricsTitle.addEventListener('click', () => window.FP.toggleLyricsOverlay(false));
+    }
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape') {
+            const ov = document.getElementById('fp-lyrics-overlay');
+            if (ov && !ov.classList.contains('hidden')) window.FP.toggleLyricsOverlay(false);
+        }
+    });
 
     if (fpPlay) {
         fpPlay.addEventListener('click', () => {
@@ -345,7 +539,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (fpSeek) {
         fpSeek.addEventListener('input', () => {
-            if (window.FP.audio) window.FP.audio.currentTime = Number(fpSeek.value);
+            if (window.FP.audio) {
+                window.FP.audio.currentTime = Number(fpSeek.value);
+                window.FP.syncLyricsTime(window.FP.audio.currentTime);
+            }
         });
     }
     const updateVolIcon = (muted) => {
@@ -393,6 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (fpClose) {
         fpClose.addEventListener('click', () => {
             if (window.FP.audio) window.FP.audio.pause();
+            window.FP.toggleLyricsOverlay(false);
             const fp = document.getElementById('floating-player');
             if (fp) fp.classList.add('hidden');
         });
@@ -636,8 +834,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = new URL(link.href, window.location.origin);
             if (url.origin !== window.location.origin) return false;
             // Rutas que siempre navegan de forma completa (formularios, auth, admin)
-            const excluded = ['/admin', '/login', '/logout', '/register', '/editar_cancion', '/agregar_cancion', '/subir_'];
+            const excluded = ['/admin', '/login', '/logout', '/register', '/editar_cancion', '/agregar_cancion', '/subir_', '/cantamus'];
             if (excluded.some(p => url.pathname.startsWith(p))) return false;
+            if (url.pathname.endsWith('/edit') || url.pathname.endsWith('/delete')) return false;
             if (link.getAttribute('target') === '_blank') return false;
             if (link.getAttribute('download') != null) return false;
             if (url.hash && url.pathname === window.location.pathname) return false;

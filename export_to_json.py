@@ -54,6 +54,8 @@ def export_data_to_json(app_instance=None):
                 cancion_dict["descargas"] = cancion.descargas
             if cancion.audios:
                 cancion_dict["audios"] = cancion.audios
+            if cancion.letras:
+                cancion_dict["letras"] = cancion.letras
             lista_de_datos.append(cancion_dict)
         
         # 3. Escribir la lista de diccionarios en el archivo data.json

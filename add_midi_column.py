@@ -33,5 +33,13 @@ def add_midi_column_to_db(app_instance=None):
                 except Exception as e:
                     print(f"Nota columna arreglo: {e}")
 
+            if 'letras_json' not in existing_cols:
+                try:
+                    print("Añadiendo columna 'letras_json' a la tabla 'cancion'...")
+                    connection.execute(text('ALTER TABLE cancion ADD COLUMN letras_json TEXT'))
+                    connection.commit()
+                except Exception as e:
+                    print(f"Nota columna letras_json: {e}")
+
 if __name__ == '__main__':
     add_midi_column_to_db()

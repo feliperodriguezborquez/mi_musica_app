@@ -28,7 +28,112 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 36.36,
+                    "text": "¡Oh bienvenido seas,"
+                },
+                {
+                    "t": 44.09,
+                    "text": "Paráclito eternal,"
+                },
+                {
+                    "t": 48.64,
+                    "text": "Que con tus dones nos nutres y recreas!"
+                },
+                {
+                    "t": 59.09,
+                    "text": "Lluevan tus bendiciones sobre nuestros contritos corazones."
+                },
+                {
+                    "t": 72.73,
+                    "text": "Si alguna vez caemos,"
+                },
+                {
+                    "t": 80.45,
+                    "text": "Tú a levantarnos ven,"
+                },
+                {
+                    "t": 85.0,
+                    "text": "Y tú nos guíes y alumbra si no vemos,"
+                },
+                {
+                    "t": 95.45,
+                    "text": "Y,"
+                },
+                {
+                    "t": 96.36,
+                    "text": "Si el pecho se enfría ven y tu calor santo en él envía."
+                },
+                {
+                    "t": 109.09,
+                    "text": "Ven y nos fortalece,"
+                },
+                {
+                    "t": 116.82,
+                    "text": "Si alguna vez nuestro valor flaquea,"
+                },
+                {
+                    "t": 125.91,
+                    "text": "Y tu ley enderece el pie,"
+                },
+                {
+                    "t": 134.09,
+                    "text": "Si se ladea,"
+                },
+                {
+                    "t": 138.64,
+                    "text": "Si tímido se para y titubea."
+                },
+                {
+                    "t": 145.45,
+                    "text": "El fuego centelleante,"
+                },
+                {
+                    "t": 153.18,
+                    "text": "Que sobre los apóstoles ardíaa,"
+                },
+                {
+                    "t": 162.27,
+                    "text": "Al pecho de diamante,"
+                },
+                {
+                    "t": 168.18,
+                    "text": "Al alma seca y fría,"
+                },
+                {
+                    "t": 175.0,
+                    "text": "Ablande y dé calor en este día."
+                },
+                {
+                    "t": 181.82,
+                    "text": "Y unidos y enlazados en tus lazos,"
+                },
+                {
+                    "t": 192.73,
+                    "text": "Amor omnipotente,"
+                },
+                {
+                    "t": 198.64,
+                    "text": "De pueblos apartados haz una sola gente,"
+                },
+                {
+                    "t": 210.45,
+                    "text": "Un corazón,"
+                },
+                {
+                    "t": 213.18,
+                    "text": "Un alma solamente."
+                },
+                {
+                    "t": 219.09,
+                    "text": "Amén."
+                }
+            ]
+        }
     },
     {
         "id": 2,
@@ -57,7 +162,156 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 34.5,
+                    "text": "De lo profundo a ti grito,"
+                },
+                {
+                    "t": 39.5,
+                    "text": "Señor:"
+                },
+                {
+                    "t": 43.5,
+                    "text": "¡Señor,"
+                },
+                {
+                    "t": 45.5,
+                    "text": "Escucha mi oración,"
+                },
+                {
+                    "t": 51.5,
+                    "text": "Estén tus oídos atentos a la voz de mi súpliDe lo profundo a ti grito,"
+                },
+                {
+                    "t": 71.5,
+                    "text": "Señor:"
+                },
+                {
+                    "t": 75.5,
+                    "text": "¡Señor,"
+                },
+                {
+                    "t": 77.5,
+                    "text": "Escucha mi oración,"
+                },
+                {
+                    "t": 83.5,
+                    "text": "Estén tus oídos atentos a la voz de mi súplica!"
+                },
+                {
+                    "t": 100.0,
+                    "text": "Cuentas las culpas,"
+                },
+                {
+                    "t": 103.5,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 108.0,
+                    "text": "¿quién podrá resistir?"
+                },
+                {
+                    "t": 115.0,
+                    "text": "Pero en ti está el perdón"
+                },
+                {
+                    "t": 132.5,
+                    "text": "De lo profundo a ti grito,"
+                },
+                {
+                    "t": 137.5,
+                    "text": "Señor:"
+                },
+                {
+                    "t": 141.5,
+                    "text": "¡Señor,"
+                },
+                {
+                    "t": 143.5,
+                    "text": "Escucha mi oración,"
+                },
+                {
+                    "t": 149.5,
+                    "text": "Estén tus oídos atentos a la voz de mi súplica!"
+                },
+                {
+                    "t": 166.0,
+                    "text": "Cuentas las culpas,"
+                },
+                {
+                    "t": 169.5,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 174.0,
+                    "text": "¿quién podrá resistir?"
+                },
+                {
+                    "t": 181.0,
+                    "text": "Pero en ti está el perdón"
+                },
+                {
+                    "t": 198.5,
+                    "text": "De lo profundo a ti grito,"
+                },
+                {
+                    "t": 203.5,
+                    "text": "Señor:"
+                },
+                {
+                    "t": 207.5,
+                    "text": "¡Señor,"
+                },
+                {
+                    "t": 209.5,
+                    "text": "Escucha mi oración,"
+                },
+                {
+                    "t": 215.5,
+                    "text": "Estén tus oídos atentos a la voz de mi súplica!"
+                },
+                {
+                    "t": 232.0,
+                    "text": "Cuentas las culpas,"
+                },
+                {
+                    "t": 235.5,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 240.0,
+                    "text": "¿quién podrá resistir?"
+                },
+                {
+                    "t": 247.0,
+                    "text": "Pero en ti está el perdón"
+                },
+                {
+                    "t": 264.5,
+                    "text": "De lo profundo a ti grito,"
+                },
+                {
+                    "t": 269.5,
+                    "text": "Señor:"
+                },
+                {
+                    "t": 273.5,
+                    "text": "¡Señor,"
+                },
+                {
+                    "t": 275.5,
+                    "text": "Escucha mi oración,"
+                },
+                {
+                    "t": 281.5,
+                    "text": "Estén tus oídos atentos a la voz de mi súplica!"
+                }
+            ]
+        }
     },
     {
         "id": 3,
@@ -86,7 +340,108 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez",
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 7.27,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 10.91,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 14.55,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 18.18,
+                    "text": "Ten piedad."
+                },
+                {
+                    "t": 21.82,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 25.45,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 29.09,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 32.73,
+                    "text": "Ten piedad."
+                },
+                {
+                    "t": 36.36,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 40.0,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 43.64,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 47.27,
+                    "text": "Ten piedad."
+                },
+                {
+                    "t": 50.91,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 54.55,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 58.18,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 61.82,
+                    "text": "Ten piedad."
+                },
+                {
+                    "t": 65.45,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 69.09,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 72.73,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 76.36,
+                    "text": "Ten piedad."
+                },
+                {
+                    "t": 80.0,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 83.64,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 87.27,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 90.91,
+                    "text": "Ten piedad."
+                }
+            ]
+        }
     },
     {
         "id": 4,
@@ -115,7 +470,116 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 3.29,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 4.11,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 4.93,
+                    "text": "Santo es el Señor."
+                },
+                {
+                    "t": 9.86,
+                    "text": "Dios del universo es el Señor."
+                },
+                {
+                    "t": 17.79,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 18.54,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 19.29,
+                    "text": "Santo es el Señor."
+                },
+                {
+                    "t": 23.79,
+                    "text": "Dios del universo es el Señor."
+                },
+                {
+                    "t": 31.29,
+                    "text": "Llenos están el cielo y la tierra de tu gloria."
+                },
+                {
+                    "t": 37.29,
+                    "text": "Llenos están el cielo y la tierra de tu gloria."
+                },
+                {
+                    "t": 43.04,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 46.04,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 49.04,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 52.04,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 56.54,
+                    "text": "Bendito es el que vine en el nombre del Señor."
+                },
+                {
+                    "t": 62.54,
+                    "text": "Bendito es el que vine en el nombre del Señor."
+                },
+                {
+                    "t": 68.54,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 71.54,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 74.54,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 77.54,
+                    "text": "Hosanna en el cielo."
+                },
+                {
+                    "t": 82.29,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 83.04,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 83.79,
+                    "text": "Santo es el Señor."
+                },
+                {
+                    "t": 88.29,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 89.04,
+                    "text": "Santo,"
+                },
+                {
+                    "t": 89.79,
+                    "text": "Santo es el Señor."
+                }
+            ]
+        }
     },
     {
         "id": 5,
@@ -144,7 +608,68 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": "Magdalena Palomer, Francisca Aguirre, Nicolás Van Wersch, Felipe Rodríguez",
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 2.62,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 6.0,
+                    "text": "Ten piedad de nosotros."
+                },
+                {
+                    "t": 14.62,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 18.0,
+                    "text": "Ten piedad de nosotros."
+                },
+                {
+                    "t": 27.0,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 28.5,
+                    "text": "Ten piedad"
+                },
+                {
+                    "t": 33.0,
+                    "text": "De nosotros."
+                },
+                {
+                    "t": 39.0,
+                    "text": "Cristo,"
+                },
+                {
+                    "t": 40.5,
+                    "text": "Ten piedad"
+                },
+                {
+                    "t": 45.0,
+                    "text": "De nosotros."
+                },
+                {
+                    "t": 50.62,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 54.0,
+                    "text": "Ten piedad de nosotros."
+                },
+                {
+                    "t": 62.62,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 66.0,
+                    "text": "Ten piedad de nososotros."
+                }
+            ]
+        }
     },
     {
         "id": 6,
@@ -231,7 +756,80 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "De rodillas, Señor, ante el sagrario,"
+                },
+                {
+                    "t": null,
+                    "text": "que guarda cuanto queda de amor y de unidad,"
+                },
+                {
+                    "t": null,
+                    "text": "venimos con las flores de un deseo,"
+                },
+                {
+                    "t": null,
+                    "text": "para que nos las cambies en frutos de verdad."
+                },
+                {
+                    "t": null,
+                    "text": "Cristo en todas las almas, y en el mundo la paz."
+                },
+                {
+                    "t": null,
+                    "text": "Cristo en todas las almas, y en el mundo la paz."
+                },
+                {
+                    "t": null,
+                    "text": "Como ciervos sedientos que van hacia la fuente,"
+                },
+                {
+                    "t": null,
+                    "text": "vamos hacia tu encuentro, sabiendo que vendrás;"
+                },
+                {
+                    "t": null,
+                    "text": "porque el que la busca es porque ya en la frente"
+                },
+                {
+                    "t": null,
+                    "text": "lleva un beso de paz, lleva un beso de paz."
+                },
+                {
+                    "t": null,
+                    "text": "Cómo estás, mi Señor, en la custodia"
+                },
+                {
+                    "t": null,
+                    "text": "igual que la palmera que alegra el arenal,"
+                },
+                {
+                    "t": null,
+                    "text": "queremos que en el centro de la vida"
+                },
+                {
+                    "t": null,
+                    "text": "reine sobre las cosas tu ardiente caridad."
+                },
+                {
+                    "t": null,
+                    "text": "Cristo en todas las almas, y en el mundo la paz."
+                },
+                {
+                    "t": null,
+                    "text": "Cristo en todas las almas, y en el mundo la paz."
+                },
+                {
+                    "t": null,
+                    "text": "Amén."
+                }
+            ]
+        }
     },
     {
         "id": 9,
@@ -259,7 +857,92 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Hay semillas que cayeron"
+                },
+                {
+                    "t": null,
+                    "text": "a lo largo del camino;"
+                },
+                {
+                    "t": null,
+                    "text": "se escuchó de pronto un trino y"
+                },
+                {
+                    "t": null,
+                    "text": "luego desaparecieron."
+                },
+                {
+                    "t": null,
+                    "text": "Son las aves que vinieron"
+                },
+                {
+                    "t": null,
+                    "text": "conducidas por el viento:"
+                },
+                {
+                    "t": null,
+                    "text": "así el diablo busca hambriento"
+                },
+                {
+                    "t": null,
+                    "text": "corazones que le abran"
+                },
+                {
+                    "t": null,
+                    "text": "y no entiendan la palabra"
+                },
+                {
+                    "t": null,
+                    "text": "sembrada como alimento."
+                },
+                {
+                    "t": null,
+                    "text": "Otra simiente caía"
+                },
+                {
+                    "t": null,
+                    "text": "en medio de un pedregal"
+                },
+                {
+                    "t": null,
+                    "text": "y que, al ser superficial,"
+                },
+                {
+                    "t": null,
+                    "text": "en seguida brotaría"
+                },
+                {
+                    "t": null,
+                    "text": "como el que con alegría"
+                },
+                {
+                    "t": null,
+                    "text": "la palabra escucha atento,"
+                },
+                {
+                    "t": null,
+                    "text": "pero que, ante el sufrimiento, al"
+                },
+                {
+                    "t": null,
+                    "text": "no tener raíz profunda,"
+                },
+                {
+                    "t": null,
+                    "text": "la tristeza lo inunda"
+                },
+                {
+                    "t": null,
+                    "text": "y se seca en un momento."
+                }
+            ]
+        }
     },
     {
         "id": 10,
@@ -287,7 +970,84 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "El mejor vino de su viña,"
+                },
+                {
+                    "t": null,
+                    "text": "mi vida, tiene el Señor reservado,"
+                },
+                {
+                    "t": null,
+                    "text": "mi vida, tiene el Señor reservado."
+                },
+                {
+                    "t": null,
+                    "text": "Sembró trigo en su campiña,"
+                },
+                {
+                    "t": null,
+                    "text": "mi vida, campo de flores bordado,"
+                },
+                {
+                    "t": null,
+                    "text": "mi vida, el mejor vino de su viña."
+                },
+                {
+                    "t": null,
+                    "text": "Deja ahí la cizaña,"
+                },
+                {
+                    "t": null,
+                    "text": "allá va, no mata al trigo."
+                },
+                {
+                    "t": null,
+                    "text": "Esas son artimañas,"
+                },
+                {
+                    "t": null,
+                    "text": "allá va, allá va, del enemigo."
+                },
+                {
+                    "t": null,
+                    "text": "Deja ahí la cizaña,"
+                },
+                {
+                    "t": null,
+                    "text": "allá va, allá va, no mata al trigo."
+                },
+                {
+                    "t": null,
+                    "text": "¿Del enemigo, ay sí,"
+                },
+                {
+                    "t": null,
+                    "text": "quién nos libera?"
+                },
+                {
+                    "t": null,
+                    "text": "La cizaña en la siega,"
+                },
+                {
+                    "t": null,
+                    "text": "allá va, allá va, fue pa' la hoguera."
+                },
+                {
+                    "t": null,
+                    "text": "Y el trigo pa'l molino:"
+                },
+                {
+                    "t": null,
+                    "text": "¡Ya hay pan y vino!"
+                }
+            ]
+        }
     },
     {
         "id": 11,
@@ -315,7 +1075,148 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Emprenda la esperanza"
+                },
+                {
+                    "t": null,
+                    "text": "raudo vuelo"
+                },
+                {
+                    "t": null,
+                    "text": "siguiendo los caminos"
+                },
+                {
+                    "t": null,
+                    "text": "de nuestro Salvador"
+                },
+                {
+                    "t": null,
+                    "text": "y libre de nostalgias,"
+                },
+                {
+                    "t": null,
+                    "text": "camino de los cielos,"
+                },
+                {
+                    "t": null,
+                    "text": "alegre,"
+                },
+                {
+                    "t": null,
+                    "text": "alegre el corazón."
+                },
+                {
+                    "t": null,
+                    "text": "Dijeron que te fuiste"
+                },
+                {
+                    "t": null,
+                    "text": "a las alturas"
+                },
+                {
+                    "t": null,
+                    "text": "juntándote a los coros"
+                },
+                {
+                    "t": null,
+                    "text": "del «Gloria» de Belén,"
+                },
+                {
+                    "t": null,
+                    "text": "acaban hoy su canto"
+                },
+                {
+                    "t": null,
+                    "text": "en melodías puras"
+                },
+                {
+                    "t": null,
+                    "text": "solemnes,"
+                },
+                {
+                    "t": null,
+                    "text": "con un solemne «Amén»."
+                },
+                {
+                    "t": null,
+                    "text": "Jamás te irás, Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "porque eres nuestro,"
+                },
+                {
+                    "t": null,
+                    "text": "serás Hijo del hombre"
+                },
+                {
+                    "t": null,
+                    "text": "sin fin de eternidad;"
+                },
+                {
+                    "t": null,
+                    "text": "los hombres, por tu nombre"
+                },
+                {
+                    "t": null,
+                    "text": "de Dios hijos dilectos,"
+                },
+                {
+                    "t": null,
+                    "text": "hermanos,"
+                },
+                {
+                    "t": null,
+                    "text": "hermanos te serán."
+                },
+                {
+                    "t": null,
+                    "text": "Asciende victorioso"
+                },
+                {
+                    "t": null,
+                    "text": "del combate,"
+                },
+                {
+                    "t": null,
+                    "text": "derrama sobre el mundo"
+                },
+                {
+                    "t": null,
+                    "text": "tu Espíritu de amor,"
+                },
+                {
+                    "t": null,
+                    "text": "retorna jubiloso"
+                },
+                {
+                    "t": null,
+                    "text": "al seno de tu Padre:"
+                },
+                {
+                    "t": null,
+                    "text": "volverás,"
+                },
+                {
+                    "t": null,
+                    "text": "tú volverás, Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "volverás,"
+                },
+                {
+                    "t": null,
+                    "text": "tú volverás, Señor."
+                }
+            ]
+        }
     },
     {
         "id": 12,
@@ -344,7 +1245,140 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Oh, mi Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "hemos visto a su hermano Esaú,"
+                },
+                {
+                    "t": null,
+                    "text": "y él mismo viene con"
+                },
+                {
+                    "t": null,
+                    "text": "cuatrocientos hombres a su encuentro."
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Abraham,"
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Isaac,"
+                },
+                {
+                    "t": null,
+                    "text": "líbrame de la mano de mi hermano,"
+                },
+                {
+                    "t": null,
+                    "text": "líbrame de la mano de mi hermano."
+                },
+                {
+                    "t": null,
+                    "text": "Oh, mi Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "diremos a su hermano Esaú"
+                },
+                {
+                    "t": null,
+                    "text": "que Jacob viene"
+                },
+                {
+                    "t": null,
+                    "text": "precisamente detrás a su encuentro."
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Abraham,"
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Isaac,"
+                },
+                {
+                    "t": null,
+                    "text": "líbrame de la mano de mi hermano,"
+                },
+                {
+                    "t": null,
+                    "text": "líbrame de la mano de Esaú."
+                },
+                {
+                    "t": null,
+                    "text": "Cruzaremos de noche el vado,"
+                },
+                {
+                    "t": null,
+                    "text": "estaremos seguros al otro lado."
+                },
+                {
+                    "t": null,
+                    "text": "¿Por qué no viene? No sé."
+                },
+                {
+                    "t": null,
+                    "text": "¿Y con quién lucha? No lo sé."
+                },
+                {
+                    "t": null,
+                    "text": "Suéltame, que ha rayado el alba."
+                },
+                {
+                    "t": null,
+                    "text": "No te soltaré si no me bendices."
+                },
+                {
+                    "t": null,
+                    "text": "¿Cómo te llamas? Jacob."
+                },
+                {
+                    "t": null,
+                    "text": "Ya no te llamarás más Jacob,"
+                },
+                {
+                    "t": null,
+                    "text": "sino Israel."
+                },
+                {
+                    "t": null,
+                    "text": "Oh, mi Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "ahí viene mi hermano Esaú,"
+                },
+                {
+                    "t": null,
+                    "text": "llorando viene,"
+                },
+                {
+                    "t": null,
+                    "text": "emocionado corriendo a mi encuentro."
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Abraham,"
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi padre Isaac,"
+                },
+                {
+                    "t": null,
+                    "text": "Dios de mi hermano Esaú."
+                }
+            ]
+        }
     },
     {
         "id": 13,
@@ -373,7 +1407,116 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Estate, Señor, conmigo"
+                },
+                {
+                    "t": null,
+                    "text": "siempre, sin jamás partirte,"
+                },
+                {
+                    "t": null,
+                    "text": "y, cuando decidas irte,"
+                },
+                {
+                    "t": null,
+                    "text": "llévame, Señor, contigo;"
+                },
+                {
+                    "t": null,
+                    "text": "porque el pensar que te irás"
+                },
+                {
+                    "t": null,
+                    "text": "me causa un terrible miedo"
+                },
+                {
+                    "t": null,
+                    "text": "de si yo sin ti me quedo,"
+                },
+                {
+                    "t": null,
+                    "text": "de si tú sin mí te vas."
+                },
+                {
+                    "t": null,
+                    "text": "Llévame en tu compañía,"
+                },
+                {
+                    "t": null,
+                    "text": "donde tú vayas, Jesús,"
+                },
+                {
+                    "t": null,
+                    "text": "porque bien sé que eres tú"
+                },
+                {
+                    "t": null,
+                    "text": "la vida del alma mía;"
+                },
+                {
+                    "t": null,
+                    "text": "si tu vida no me das,"
+                },
+                {
+                    "t": null,
+                    "text": "yo sé que vivir no puedo,"
+                },
+                {
+                    "t": null,
+                    "text": "ni si yo sin ti me quedo,"
+                },
+                {
+                    "t": null,
+                    "text": "ni si tú sin mí te vas."
+                },
+                {
+                    "t": null,
+                    "text": "Por eso, más que a la muerte,"
+                },
+                {
+                    "t": null,
+                    "text": "temo, Señor, tu partida"
+                },
+                {
+                    "t": null,
+                    "text": "y quiero perder la vida"
+                },
+                {
+                    "t": null,
+                    "text": "mil veces más que perderte;"
+                },
+                {
+                    "t": null,
+                    "text": "pues la inmortal que tú das"
+                },
+                {
+                    "t": null,
+                    "text": "sé que alcanzarla no puedo"
+                },
+                {
+                    "t": null,
+                    "text": "cuando yo sin ti me quedo,"
+                },
+                {
+                    "t": null,
+                    "text": "cuando tú sin mí te vas,"
+                },
+                {
+                    "t": null,
+                    "text": "cuando yo sin ti me quedo,"
+                },
+                {
+                    "t": null,
+                    "text": "cuando tú sin mí te vas."
+                }
+            ]
+        }
     },
     {
         "id": 14,
@@ -403,7 +1546,44 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Ven, Espíritu Santo,"
+                },
+                {
+                    "t": null,
+                    "text": "ven, Espíritu Santo,"
+                },
+                {
+                    "t": null,
+                    "text": "llena los corazones de tus fieles"
+                },
+                {
+                    "t": null,
+                    "text": "y enciende en ellos el fuego de tu amor."
+                },
+                {
+                    "t": null,
+                    "text": "Envía, Señor, tu Espíritu Creador"
+                },
+                {
+                    "t": null,
+                    "text": "y todas las cosas serán creadas,"
+                },
+                {
+                    "t": null,
+                    "text": "y renovarás la faz de la tierra."
+                },
+                {
+                    "t": null,
+                    "text": "Amén."
+                }
+            ]
+        }
     },
     {
         "id": 15,
@@ -429,7 +1609,108 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Si recordando el jardín del Edén"
+                },
+                {
+                    "t": null,
+                    "text": "me angustiase el destierro del pecado,"
+                },
+                {
+                    "t": null,
+                    "text": "no olvide que en su castigo también"
+                },
+                {
+                    "t": null,
+                    "text": "el Mesías nos ha sido anunciado."
+                },
+                {
+                    "t": null,
+                    "text": "Dirija la mirada hacia Belén"
+                },
+                {
+                    "t": null,
+                    "text": "y anhele por el Señor ser salvado,"
+                },
+                {
+                    "t": null,
+                    "text": "si creado a imagen y semejanza"
+                },
+                {
+                    "t": null,
+                    "text": "de volver a Dios guardo la esperanza."
+                },
+                {
+                    "t": null,
+                    "text": "Si contemplando el arca de Noé"
+                },
+                {
+                    "t": null,
+                    "text": "lamentase cuanto hay en lo profundo,"
+                },
+                {
+                    "t": null,
+                    "text": "observe que encontrar alguien con Fe"
+                },
+                {
+                    "t": null,
+                    "text": "permitió sepultar el mal del mundo."
+                },
+                {
+                    "t": null,
+                    "text": "El bien sobre la tierra buscaré"
+                },
+                {
+                    "t": null,
+                    "text": "cumpliendo la misión de ser fecundos,"
+                },
+                {
+                    "t": null,
+                    "text": "si al divisar el arco de la alianza"
+                },
+                {
+                    "t": null,
+                    "text": "volviera a confirmarme en la esperanza."
+                },
+                {
+                    "t": null,
+                    "text": "Si acompañando a Cristo en su Pasión"
+                },
+                {
+                    "t": null,
+                    "text": "llorase su condena amargamente,"
+                },
+                {
+                    "t": null,
+                    "text": "comprenda que para la Salvación"
+                },
+                {
+                    "t": null,
+                    "text": "debe entrar en la muerte el Dios viviente."
+                },
+                {
+                    "t": null,
+                    "text": "Eleve una mirada al corazón"
+                },
+                {
+                    "t": null,
+                    "text": "y vea que en su llaga está la fuente"
+                },
+                {
+                    "t": null,
+                    "text": "de vida que, cruzada por la lanza,"
+                },
+                {
+                    "t": null,
+                    "text": "en nosotros renueva la esperanza."
+                }
+            ]
+        }
     },
     {
         "id": 16,
@@ -459,7 +1740,68 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "La palabra de Dios crucificada"
+                },
+                {
+                    "t": null,
+                    "text": "es testigo fiel de su elocuencia."
+                },
+                {
+                    "t": null,
+                    "text": "Es palabra de amor y en su existencia"
+                },
+                {
+                    "t": null,
+                    "text": "en la vida y la muerte fue probada."
+                },
+                {
+                    "t": null,
+                    "text": "Por dar fe de su amor nos dio la vida,"
+                },
+                {
+                    "t": null,
+                    "text": "por dar fe de la vida fue exaltada"
+                },
+                {
+                    "t": null,
+                    "text": "sobre toda palabra pronunciada:"
+                },
+                {
+                    "t": null,
+                    "text": "por el Padre a los hombres ofrecida."
+                },
+                {
+                    "t": null,
+                    "text": "La palabra de Dios ya fue cumplida,"
+                },
+                {
+                    "t": null,
+                    "text": "el silencio de Dios está a la espera"
+                },
+                {
+                    "t": null,
+                    "text": "del amor de los hombres que él quisiera"
+                },
+                {
+                    "t": null,
+                    "text": "sea un sí a la palabra recibida,"
+                },
+                {
+                    "t": null,
+                    "text": "comunión en su amor por siempre fuera,"
+                },
+                {
+                    "t": null,
+                    "text": "plenitud de su don que a todos diera."
+                }
+            ]
+        }
     },
     {
         "id": 17,
@@ -488,7 +1830,140 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "De un Dios que se encarnó"
+                },
+                {
+                    "t": null,
+                    "text": "muestra el misterio la luz de Navidad."
+                },
+                {
+                    "t": null,
+                    "text": "Comienza hoy, Jesús,"
+                },
+                {
+                    "t": null,
+                    "text": "tu nuevo imperio de amor y de verdad."
+                },
+                {
+                    "t": null,
+                    "text": "El Padre eterno te engendró"
+                },
+                {
+                    "t": null,
+                    "text": "en su mente desde la eternidad,"
+                },
+                {
+                    "t": null,
+                    "text": "y antes que el mundo,"
+                },
+                {
+                    "t": null,
+                    "text": "ya eternamente, fue tu natividad."
+                },
+                {
+                    "t": null,
+                    "text": "La plenitud del tiempo está cumplida;"
+                },
+                {
+                    "t": null,
+                    "text": "rocío bienhechor"
+                },
+                {
+                    "t": null,
+                    "text": "baja del cielo, trae nueva vida"
+                },
+                {
+                    "t": null,
+                    "text": "al mundo pecador."
+                },
+                {
+                    "t": null,
+                    "text": "¡Oh santa noche! Hoy Cristo nacía"
+                },
+                {
+                    "t": null,
+                    "text": "en mísero portal;"
+                },
+                {
+                    "t": null,
+                    "text": "Hijo de Dios, recibe de María"
+                },
+                {
+                    "t": null,
+                    "text": "la carne del mortal."
+                },
+                {
+                    "t": null,
+                    "text": "Señor Jesús, el hombre en este suelo"
+                },
+                {
+                    "t": null,
+                    "text": "cantar quiere tu amor,"
+                },
+                {
+                    "t": null,
+                    "text": "y, junto con los ángeles del cielo,"
+                },
+                {
+                    "t": null,
+                    "text": "te ofrece su loor."
+                },
+                {
+                    "t": null,
+                    "text": "Este Jesús en brazos de María"
+                },
+                {
+                    "t": null,
+                    "text": "es nuestra redención;"
+                },
+                {
+                    "t": null,
+                    "text": "cielos y tierra con su abrazo unía"
+                },
+                {
+                    "t": null,
+                    "text": "de paz y de perdón."
+                },
+                {
+                    "t": null,
+                    "text": "Tú eres el Rey de Paz,"
+                },
+                {
+                    "t": null,
+                    "text": "de ti recibe su luz el porvenir;"
+                },
+                {
+                    "t": null,
+                    "text": "Ángel del gran Consejo,"
+                },
+                {
+                    "t": null,
+                    "text": "por ti vive cuando llega a existir."
+                },
+                {
+                    "t": null,
+                    "text": "A ti, Señor, y al Padre la alabanza,"
+                },
+                {
+                    "t": null,
+                    "text": "y de ambos al Amor."
+                },
+                {
+                    "t": null,
+                    "text": "Contigo al mundo llega la esperanza;"
+                },
+                {
+                    "t": null,
+                    "text": "a ti gloria y honor. Amén."
+                }
+            ]
+        }
     },
     {
         "id": 18,
@@ -516,7 +1991,180 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "María, yo quiero"
+                },
+                {
+                    "t": null,
+                    "text": "ya nunca más pecar,"
+                },
+                {
+                    "t": null,
+                    "text": "por el sendero"
+                },
+                {
+                    "t": null,
+                    "text": "de vida caminar."
+                },
+                {
+                    "t": null,
+                    "text": "Yo anhelo, María,"
+                },
+                {
+                    "t": null,
+                    "text": "aún en mi dolor,"
+                },
+                {
+                    "t": null,
+                    "text": "pueda algún día"
+                },
+                {
+                    "t": null,
+                    "text": "vivir en el amor."
+                },
+                {
+                    "t": null,
+                    "text": "Hijo amado,"
+                },
+                {
+                    "t": null,
+                    "text": "contempla el corazón"
+                },
+                {
+                    "t": null,
+                    "text": "inmaculado"
+                },
+                {
+                    "t": null,
+                    "text": "y herido en la Pasión."
+                },
+                {
+                    "t": null,
+                    "text": "Aunque la muerte"
+                },
+                {
+                    "t": null,
+                    "text": "te llene de temor,"
+                },
+                {
+                    "t": null,
+                    "text": "Dios es más fuerte:"
+                },
+                {
+                    "t": null,
+                    "text": "confía en el amor."
+                },
+                {
+                    "t": null,
+                    "text": "María, te pido:"
+                },
+                {
+                    "t": null,
+                    "text": "¡Ayúdame a confiar!"
+                },
+                {
+                    "t": null,
+                    "text": "Cuando afligido"
+                },
+                {
+                    "t": null,
+                    "text": "me dejo engañar."
+                },
+                {
+                    "t": null,
+                    "text": "Te ruego, María,"
+                },
+                {
+                    "t": null,
+                    "text": "que en toda tentación"
+                },
+                {
+                    "t": null,
+                    "text": "tu compañía"
+                },
+                {
+                    "t": null,
+                    "text": "me anime en mi oración."
+                },
+                {
+                    "t": null,
+                    "text": "Si un pensamiento"
+                },
+                {
+                    "t": null,
+                    "text": "te turba en tu interior,"
+                },
+                {
+                    "t": null,
+                    "text": "tu sufrimiento"
+                },
+                {
+                    "t": null,
+                    "text": "ofrécelo al Señor."
+                },
+                {
+                    "t": null,
+                    "text": "Bajo mi manto,"
+                },
+                {
+                    "t": null,
+                    "text": "en plena comunión,"
+                },
+                {
+                    "t": null,
+                    "text": "todos los santos"
+                },
+                {
+                    "t": null,
+                    "text": "apoyan tu oración."
+                },
+                {
+                    "t": null,
+                    "text": "María, en el cielo,"
+                },
+                {
+                    "t": null,
+                    "text": "a una sola voz,"
+                },
+                {
+                    "t": null,
+                    "text": "por sus anhelos"
+                },
+                {
+                    "t": null,
+                    "text": "rogamos ante Dios."
+                },
+                {
+                    "t": null,
+                    "text": "Sabiendo, María,"
+                },
+                {
+                    "t": null,
+                    "text": "que no defraudará,"
+                },
+                {
+                    "t": null,
+                    "text": "ya llega el día:"
+                },
+                {
+                    "t": null,
+                    "text": "la espera triunfará."
+                },
+                {
+                    "t": null,
+                    "text": "Virgen María,"
+                },
+                {
+                    "t": null,
+                    "text": "mi espera triunfará."
+                }
+            ]
+        }
     },
     {
         "id": 19,
@@ -546,7 +2194,96 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Nos apremia el amor, vírgenes santas;"
+                },
+                {
+                    "t": null,
+                    "text": "vosotras, que seguisteis su camino,"
+                },
+                {
+                    "t": null,
+                    "text": "guiadnos por las sendas de las almas"
+                },
+                {
+                    "t": null,
+                    "text": "que hicieron de su amar amor divino."
+                },
+                {
+                    "t": null,
+                    "text": "Esperasteis en vela a vuestro Esposo"
+                },
+                {
+                    "t": null,
+                    "text": "en la noche fugaz de vuestra vida;"
+                },
+                {
+                    "t": null,
+                    "text": "cuando llamó a la puerta, vuestro gozo"
+                },
+                {
+                    "t": null,
+                    "text": "fue contemplar su gloria sin medida."
+                },
+                {
+                    "t": null,
+                    "text": "Vuestra fe y vuestro amor fue fuego ardiente"
+                },
+                {
+                    "t": null,
+                    "text": "que mantuvo la llama en la tardanza;"
+                },
+                {
+                    "t": null,
+                    "text": "vuestra antorcha encendida asiduamente"
+                },
+                {
+                    "t": null,
+                    "text": "ha colmado de luz vuestra esperanza."
+                },
+                {
+                    "t": null,
+                    "text": "Pues gozáis ya las nupcias que el Cordero"
+                },
+                {
+                    "t": null,
+                    "text": "con la Iglesia de Dios ha celebrado,"
+                },
+                {
+                    "t": null,
+                    "text": "no dejéis que se apague nuestro fuego"
+                },
+                {
+                    "t": null,
+                    "text": "en la pereza y sueño del pecado."
+                },
+                {
+                    "t": null,
+                    "text": "Demos gracias a Dios y, humildemente,"
+                },
+                {
+                    "t": null,
+                    "text": "pidamos al Señor que su llamada"
+                },
+                {
+                    "t": null,
+                    "text": "nos encuentre en vigilia permanente,"
+                },
+                {
+                    "t": null,
+                    "text": "despiertos en la fe y en veste blanca."
+                },
+                {
+                    "t": null,
+                    "text": "Amén."
+                }
+            ]
+        }
     },
     {
         "id": 20,
@@ -574,7 +2311,108 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Los ángeles todos en las alturas"
+                },
+                {
+                    "t": null,
+                    "text": "y el mundo entero canta su victoria:"
+                },
+                {
+                    "t": null,
+                    "text": "del pecado rompió las ataduras,"
+                },
+                {
+                    "t": null,
+                    "text": "comienza ahora una nueva historia."
+                },
+                {
+                    "t": null,
+                    "text": "Ya han pasado las noches más oscuras"
+                },
+                {
+                    "t": null,
+                    "text": "y el sol ya se reviste de su gloria;"
+                },
+                {
+                    "t": null,
+                    "text": "la luna vuelve a iluminar radiante"
+                },
+                {
+                    "t": null,
+                    "text": "la luz eterna del Señor triunfante."
+                },
+                {
+                    "t": null,
+                    "text": "Jesús, el Señor, ha resucitado:"
+                },
+                {
+                    "t": null,
+                    "text": "viva siempre en nosotros su luz pascual"
+                },
+                {
+                    "t": null,
+                    "text": "y perdure hasta el banquete celestial:"
+                },
+                {
+                    "t": null,
+                    "text": "las bodas de la Iglesia con su Amado."
+                },
+                {
+                    "t": null,
+                    "text": "Porque Cristo, nuestra Pascua, Salvador,"
+                },
+                {
+                    "t": null,
+                    "text": "no nos abandonó a nuestra suerte;"
+                },
+                {
+                    "t": null,
+                    "text": "porque Cristo, nuestra Pascua, Redentor,"
+                },
+                {
+                    "t": null,
+                    "text": "ante las tinieblas se mostró fuerte;"
+                },
+                {
+                    "t": null,
+                    "text": "porque Cristo, nuestra Pascua, el Señor,"
+                },
+                {
+                    "t": null,
+                    "text": "ha cubierto de vergüenza la muerte:"
+                },
+                {
+                    "t": null,
+                    "text": "está resucitado del pecado,"
+                },
+                {
+                    "t": null,
+                    "text": "su vida eterna nos ha regalado."
+                },
+                {
+                    "t": null,
+                    "text": "Jesús, el Señor, ha resucitado:"
+                },
+                {
+                    "t": null,
+                    "text": "viva siempre en nosotros su luz pascual"
+                },
+                {
+                    "t": null,
+                    "text": "y perdure hasta el banquete celestial:"
+                },
+                {
+                    "t": null,
+                    "text": "las bodas de la Iglesia con su Amado."
+                }
+            ]
+        }
     },
     {
         "id": 21,
@@ -604,7 +2442,108 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Oveja perdida, ven"
+                },
+                {
+                    "t": null,
+                    "text": "sobre mis hombros, que hoy"
+                },
+                {
+                    "t": null,
+                    "text": "no sólo tu pastor soy,"
+                },
+                {
+                    "t": null,
+                    "text": "sino tu pasto también."
+                },
+                {
+                    "t": null,
+                    "text": "Por descubrirte mejor"
+                },
+                {
+                    "t": null,
+                    "text": "cuando balabas perdida,"
+                },
+                {
+                    "t": null,
+                    "text": "dejé en un árbol la vida"
+                },
+                {
+                    "t": null,
+                    "text": "donde me subió el amor;"
+                },
+                {
+                    "t": null,
+                    "text": "si prenda quieres mayor,"
+                },
+                {
+                    "t": null,
+                    "text": "mis obras hoy te la den."
+                },
+                {
+                    "t": null,
+                    "text": "Oveja perdida, ven"
+                },
+                {
+                    "t": null,
+                    "text": "sobre mis hombros, que hoy"
+                },
+                {
+                    "t": null,
+                    "text": "no sólo tu pastor soy,"
+                },
+                {
+                    "t": null,
+                    "text": "sino tu pasto también."
+                },
+                {
+                    "t": null,
+                    "text": "Pasto, al fin, hoy tuyo hecho,"
+                },
+                {
+                    "t": null,
+                    "text": "¿cuál dará mayor asombro,"
+                },
+                {
+                    "t": null,
+                    "text": "o al traerte yo en el hombro"
+                },
+                {
+                    "t": null,
+                    "text": "o al traerme tú en el pecho?"
+                },
+                {
+                    "t": null,
+                    "text": "Prenda son de amor estrecho"
+                },
+                {
+                    "t": null,
+                    "text": "que aún los más ciegos las ven."
+                },
+                {
+                    "t": null,
+                    "text": "Oveja perdida, ven"
+                },
+                {
+                    "t": null,
+                    "text": "sobre mis hombros, que hoy"
+                },
+                {
+                    "t": null,
+                    "text": "no sólo tu pastor soy,"
+                },
+                {
+                    "t": null,
+                    "text": "sino tu pasto también."
+                }
+            ]
+        }
     },
     {
         "id": 22,
@@ -633,7 +2572,128 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Mística Rosa de intocados pétalos,"
+                },
+                {
+                    "t": null,
+                    "text": "límpido cielo de infinitas lámparas,"
+                },
+                {
+                    "t": null,
+                    "text": "Musa celeste del Amor-Artífice,"
+                },
+                {
+                    "t": null,
+                    "text": "alba del alba, alba del alba."
+                },
+                {
+                    "t": null,
+                    "text": "Si de tu esencia lo inefable tocó,"
+                },
+                {
+                    "t": null,
+                    "text": "no sé si es luz, o resplandor, o llama,"
+                },
+                {
+                    "t": null,
+                    "text": "o mar, o nieve, o limpidez, o nube,"
+                },
+                {
+                    "t": null,
+                    "text": "flor o fragancia."
+                },
+                {
+                    "t": null,
+                    "text": "Como después del angustiado vuelo"
+                },
+                {
+                    "t": null,
+                    "text": "el trino posa en la mecida rama,"
+                },
+                {
+                    "t": null,
+                    "text": "regreso a ti —mi resplandor en ruinas—:"
+                },
+                {
+                    "t": null,
+                    "text": "tú eres mi casa."
+                },
+                {
+                    "t": null,
+                    "text": "Dilapidé mi hacienda, Madre mía,"
+                },
+                {
+                    "t": null,
+                    "text": "bebí mi sed y devoré mi náusea."
+                },
+                {
+                    "t": null,
+                    "text": "Lo tuve todo, y me han quedado sólo,"
+                },
+                {
+                    "t": null,
+                    "text": "sólo mis lágrimas."
+                },
+                {
+                    "t": null,
+                    "text": "Mis manos todo de tu amor lo esperan,"
+                },
+                {
+                    "t": null,
+                    "text": "como la noche espera, Madre, el alba."
+                },
+                {
+                    "t": null,
+                    "text": "Llévame siempre de la mano, llévame:"
+                },
+                {
+                    "t": null,
+                    "text": "sé tú mi lámpara."
+                },
+                {
+                    "t": null,
+                    "text": "Llévame en pos de tu luciente aroma,"
+                },
+                {
+                    "t": null,
+                    "text": "ciclón de lirios, amapola en llamas,"
+                },
+                {
+                    "t": null,
+                    "text": "y, cuando el viento tu presencia anuncie,"
+                },
+                {
+                    "t": null,
+                    "text": "róbame el alma."
+                },
+                {
+                    "t": null,
+                    "text": "Quiébrate, voz, ante el dintel sagrado"
+                },
+                {
+                    "t": null,
+                    "text": "de aquel que es Trino en Una sola llama,"
+                },
+                {
+                    "t": null,
+                    "text": "Llama que es Una en Tres incendios, Niña"
+                },
+                {
+                    "t": null,
+                    "text": "llena de gracia, llena de gracia,"
+                },
+                {
+                    "t": null,
+                    "text": "llena de gracia. Amén."
+                }
+            ]
+        }
     },
     {
         "id": 23,
@@ -662,7 +2722,164 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Ofrezcan los cristianos"
+                },
+                {
+                    "t": null,
+                    "text": "ofrendas de alabanza"
+                },
+                {
+                    "t": null,
+                    "text": "a gloria de la Víctima"
+                },
+                {
+                    "t": null,
+                    "text": "propicia de la Pascua."
+                },
+                {
+                    "t": null,
+                    "text": "Cordero sin pecado"
+                },
+                {
+                    "t": null,
+                    "text": "que a las ovejas salva,"
+                },
+                {
+                    "t": null,
+                    "text": "a Dios y a los culpables"
+                },
+                {
+                    "t": null,
+                    "text": "unió con nueva alianza."
+                },
+                {
+                    "t": null,
+                    "text": "Lucharon vida y muerte"
+                },
+                {
+                    "t": null,
+                    "text": "en singular batalla"
+                },
+                {
+                    "t": null,
+                    "text": "y, muerto el que es la Vida,"
+                },
+                {
+                    "t": null,
+                    "text": "triunfante se levanta."
+                },
+                {
+                    "t": null,
+                    "text": "¿Qué has visto de camino,"
+                },
+                {
+                    "t": null,
+                    "text": "María, en la mañana?"
+                },
+                {
+                    "t": null,
+                    "text": "A mi Señor glorioso,"
+                },
+                {
+                    "t": null,
+                    "text": "la tumba abandonada,"
+                },
+                {
+                    "t": null,
+                    "text": "los ángeles testigos,"
+                },
+                {
+                    "t": null,
+                    "text": "sudarios y mortaja."
+                },
+                {
+                    "t": null,
+                    "text": "¡Resucitó de veras"
+                },
+                {
+                    "t": null,
+                    "text": "mi amor y mi esperanza!"
+                },
+                {
+                    "t": null,
+                    "text": "¡Resucitó de veras"
+                },
+                {
+                    "t": null,
+                    "text": "mi amor y mi esperanza!"
+                },
+                {
+                    "t": null,
+                    "text": "Venid a Galilea,"
+                },
+                {
+                    "t": null,
+                    "text": "allí el Señor aguarda;"
+                },
+                {
+                    "t": null,
+                    "text": "allí veréis los suyos"
+                },
+                {
+                    "t": null,
+                    "text": "la gloria de la Pascua."
+                },
+                {
+                    "t": null,
+                    "text": "Primicia de los muertos,"
+                },
+                {
+                    "t": null,
+                    "text": "sabemos por tu gracia"
+                },
+                {
+                    "t": null,
+                    "text": "que estás resucitado;"
+                },
+                {
+                    "t": null,
+                    "text": "la muerte en ti no manda."
+                },
+                {
+                    "t": null,
+                    "text": "Rey vencedor, apiádate"
+                },
+                {
+                    "t": null,
+                    "text": "de la miseria humana"
+                },
+                {
+                    "t": null,
+                    "text": "y da a tus fieles parte"
+                },
+                {
+                    "t": null,
+                    "text": "en tu victoria santa,"
+                },
+                {
+                    "t": null,
+                    "text": "y da a tus fieles parte"
+                },
+                {
+                    "t": null,
+                    "text": "en tu victoria santa."
+                },
+                {
+                    "t": null,
+                    "text": "¡Amén! ¡Amén!"
+                },
+                {
+                    "t": null,
+                    "text": "¡Aleluya! ¡Aleluya!"
+                }
+            ]
+        }
     },
     {
         "id": 24,
@@ -691,7 +2908,164 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Vi el cielo abierto"
+                },
+                {
+                    "t": null,
+                    "text": "y un caballo blanco;"
+                },
+                {
+                    "t": null,
+                    "text": "su jinete se llama Fiel y Veraz"
+                },
+                {
+                    "t": null,
+                    "text": "y juzga y combate con justicia."
+                },
+                {
+                    "t": null,
+                    "text": "Sus ojos parecen"
+                },
+                {
+                    "t": null,
+                    "text": "llamas de fuego,"
+                },
+                {
+                    "t": null,
+                    "text": "su cabeza coronada de muchas diademas;"
+                },
+                {
+                    "t": null,
+                    "text": "lleva escrito un nombre que solo Él conoce."
+                },
+                {
+                    "t": null,
+                    "text": "Viste un manto"
+                },
+                {
+                    "t": null,
+                    "text": "empapado de sangre"
+                },
+                {
+                    "t": null,
+                    "text": "y se llama Palabra de Dios."
+                },
+                {
+                    "t": null,
+                    "text": "Sabe bien"
+                },
+                {
+                    "t": null,
+                    "text": "que vendré pronto"
+                },
+                {
+                    "t": null,
+                    "text": "y que traeré"
+                },
+                {
+                    "t": null,
+                    "text": "mi recompensa conmigo"
+                },
+                {
+                    "t": null,
+                    "text": "para pagar"
+                },
+                {
+                    "t": null,
+                    "text": "a cada uno"
+                },
+                {
+                    "t": null,
+                    "text": "según sus obras."
+                },
+                {
+                    "t": null,
+                    "text": "Yo soy el Alfa y la Omega,"
+                },
+                {
+                    "t": null,
+                    "text": "el Primero y el Último,"
+                },
+                {
+                    "t": null,
+                    "text": "el Principio y el Fin."
+                },
+                {
+                    "t": null,
+                    "text": "Los ejércitos del cielo,"
+                },
+                {
+                    "t": null,
+                    "text": "vestidos de lino blanco puro,"
+                },
+                {
+                    "t": null,
+                    "text": "le seguían sobre caballos blancos."
+                },
+                {
+                    "t": null,
+                    "text": "Lleva escrito un nombre"
+                },
+                {
+                    "t": null,
+                    "text": "en su manto y en su muslo:"
+                },
+                {
+                    "t": null,
+                    "text": "Rey de reyes"
+                },
+                {
+                    "t": null,
+                    "text": "y Señor de señores."
+                },
+                {
+                    "t": null,
+                    "text": "Sabe bien…"
+                },
+                {
+                    "t": null,
+                    "text": "el Principio y el Fin."
+                },
+                {
+                    "t": null,
+                    "text": "Dichosos los que laven sus vestidos:"
+                },
+                {
+                    "t": null,
+                    "text": "podrán disponer del árbol de la vida"
+                },
+                {
+                    "t": null,
+                    "text": "y entrar por las puertas de la ciudad."
+                },
+                {
+                    "t": null,
+                    "text": "Yo vendré pronto…"
+                },
+                {
+                    "t": null,
+                    "text": "el Principio y el Fin."
+                },
+                {
+                    "t": null,
+                    "text": "El Espíritu y la Novia dicen: ¡Ven!"
+                },
+                {
+                    "t": null,
+                    "text": "Y el que oiga, que diga: ¡Ven!"
+                },
+                {
+                    "t": null,
+                    "text": "Ven, Señor Jesús."
+                }
+            ]
+        }
     },
     {
         "id": 25,
@@ -720,7 +3094,48 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 10.0,
+                    "text": "Cordero de Dios,"
+                },
+                {
+                    "t": 13.54,
+                    "text": "Que quitas el pecado del mundo,"
+                },
+                {
+                    "t": 20.0,
+                    "text": "Ten piedad de nosotros."
+                },
+                {
+                    "t": 35.0,
+                    "text": "Cordero de Dios,"
+                },
+                {
+                    "t": 38.54,
+                    "text": "Que quitas el pecado del mundo,"
+                },
+                {
+                    "t": 45.0,
+                    "text": "Ten piedad de nosotros."
+                },
+                {
+                    "t": 60.0,
+                    "text": "Cordero de Dios,"
+                },
+                {
+                    "t": 63.54,
+                    "text": "Que quitas el pecado del mundo,"
+                },
+                {
+                    "t": 70.0,
+                    "text": "Danos la paz"
+                }
+            ]
+        }
     },
     {
         "id": 26,
@@ -749,7 +3164,148 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 3.64,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 10.91,
+                    "text": "Hemos pecado."
+                },
+                {
+                    "t": 18.18,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 25.45,
+                    "text": "Hemos pecado."
+                },
+                {
+                    "t": 33.18,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 35.91,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 36.82,
+                    "text": "Por tu bondad,"
+                },
+                {
+                    "t": 40.91,
+                    "text": "Por tu inmensa compasión borra mi culpa;"
+                },
+                {
+                    "t": 47.27,
+                    "text": "Lava del todo mi delito,"
+                },
+                {
+                    "t": 54.55,
+                    "text": "Límpiame de mi pecado."
+                },
+                {
+                    "t": 61.82,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 69.09,
+                    "text": "Hemos pecado."
+                },
+                {
+                    "t": 77.27,
+                    "text": "Porque yo reconozco mi culpa,"
+                },
+                {
+                    "t": 84.55,
+                    "text": "Tengo siempre presente mi pecado;"
+                },
+                {
+                    "t": 90.91,
+                    "text": "Contra ti,"
+                },
+                {
+                    "t": 94.55,
+                    "text": "Contra ti pequé,"
+                },
+                {
+                    "t": 98.18,
+                    "text": "Cometí la maldad que aborreces."
+                },
+                {
+                    "t": 105.45,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 112.73,
+                    "text": "Hemos pecado."
+                },
+                {
+                    "t": 120.91,
+                    "text": "Crea en mí,"
+                },
+                {
+                    "t": 122.27,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 123.18,
+                    "text": "Un puro corazón,"
+                },
+                {
+                    "t": 128.18,
+                    "text": "Y renueva en mí un espíritu firme;"
+                },
+                {
+                    "t": 134.55,
+                    "text": "No me arrojes lejos de tu rostro,"
+                },
+                {
+                    "t": 141.82,
+                    "text": "Y no me quites tu espíritu santo."
+                },
+                {
+                    "t": 149.09,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 156.36,
+                    "text": "Hemos pecado."
+                },
+                {
+                    "t": 164.09,
+                    "text": "El gozo de tu salvación devuélveme,"
+                },
+                {
+                    "t": 171.82,
+                    "text": "Con espíritu noble afiánzame;"
+                },
+                {
+                    "t": 178.18,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 181.82,
+                    "text": "Me abrirás los labios,"
+                },
+                {
+                    "t": 185.45,
+                    "text": "Y mi boca cantará tu alabanza."
+                },
+                {
+                    "t": 192.73,
+                    "text": "Misericordia,"
+                },
+                {
+                    "t": 200.0,
+                    "text": "Hemos pecado."
+                }
+            ]
+        }
     },
     {
         "id": 27,
@@ -777,7 +3333,148 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Señor, tú me llamaste"
+                },
+                {
+                    "t": null,
+                    "text": "para ser instrumento de tu gracia,"
+                },
+                {
+                    "t": null,
+                    "text": "para anunciar la buena nueva,"
+                },
+                {
+                    "t": null,
+                    "text": "para sanar las almas."
+                },
+                {
+                    "t": null,
+                    "text": "Instrumento de paz y de justicia,"
+                },
+                {
+                    "t": null,
+                    "text": "pregonero de todas tus palabras,"
+                },
+                {
+                    "t": null,
+                    "text": "agua para calmar la sed hiriente,"
+                },
+                {
+                    "t": null,
+                    "text": "mano que bendice y que ama."
+                },
+                {
+                    "t": null,
+                    "text": "Señor, tú me llamaste"
+                },
+                {
+                    "t": null,
+                    "text": "para salvar al mundo ya cansado,"
+                },
+                {
+                    "t": null,
+                    "text": "para amar a los hombres"
+                },
+                {
+                    "t": null,
+                    "text": "que tú, Padre, me diste como hermanos."
+                },
+                {
+                    "t": null,
+                    "text": "Señor, me quieres para abolir las guerras,"
+                },
+                {
+                    "t": null,
+                    "text": "y aliviar la miseria y el pecado;"
+                },
+                {
+                    "t": null,
+                    "text": "hacer temblar las piedras"
+                },
+                {
+                    "t": null,
+                    "text": "y ahuyentar a los lobos del rebaño."
+                },
+                {
+                    "t": null,
+                    "text": "Señor, tú me llamaste"
+                },
+                {
+                    "t": null,
+                    "text": "para curar los corazones heridos,"
+                },
+                {
+                    "t": null,
+                    "text": "para gritar, en medio de las plazas,"
+                },
+                {
+                    "t": null,
+                    "text": "que el Amor está vivo,"
+                },
+                {
+                    "t": null,
+                    "text": "para sacar del sueño a los que duermen"
+                },
+                {
+                    "t": null,
+                    "text": "y liberar al cautivo."
+                },
+                {
+                    "t": null,
+                    "text": "Soy cera blanda entre tus dedos,"
+                },
+                {
+                    "t": null,
+                    "text": "haz lo que quieras conmigo."
+                },
+                {
+                    "t": null,
+                    "text": "Señor, tú me llamaste"
+                },
+                {
+                    "t": null,
+                    "text": "para salvar al mundo ya cansado,"
+                },
+                {
+                    "t": null,
+                    "text": "para amar a los hombres"
+                },
+                {
+                    "t": null,
+                    "text": "que tú, Padre, me diste como hermanos."
+                },
+                {
+                    "t": null,
+                    "text": "Señor, me quieres para abolir las guerras,"
+                },
+                {
+                    "t": null,
+                    "text": "y aliviar la miseria y el pecado;"
+                },
+                {
+                    "t": null,
+                    "text": "hacer temblar las piedras"
+                },
+                {
+                    "t": null,
+                    "text": "y ahuyentar a los lobos del rebaño;"
+                },
+                {
+                    "t": null,
+                    "text": "hacer temblar las piedras"
+                },
+                {
+                    "t": null,
+                    "text": "y ahuyentar a los lobos del rebaño."
+                }
+            ]
+        }
     },
     {
         "id": 28,
@@ -805,7 +3502,72 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Jesús, hoy vine a verte una vez más,"
+                },
+                {
+                    "t": null,
+                    "text": "trayendo un corazón avergonzado."
+                },
+                {
+                    "t": null,
+                    "text": "¿No me condenarás?"
+                },
+                {
+                    "t": null,
+                    "text": "¿Por qué estás tan callado?"
+                },
+                {
+                    "t": null,
+                    "text": "Quería ofrecerte mis pecados."
+                },
+                {
+                    "t": null,
+                    "text": "Me pesa tanto haberte abandonado;"
+                },
+                {
+                    "t": null,
+                    "text": "buscándote por fuera me he perdido."
+                },
+                {
+                    "t": null,
+                    "text": "¿Me aceptas a tu lado"
+                },
+                {
+                    "t": null,
+                    "text": "si vuelvo arrepentido?"
+                },
+                {
+                    "t": null,
+                    "text": "Contigo aún el dolor cobra sentido."
+                },
+                {
+                    "t": null,
+                    "text": "De nuevo tu perdón me ha conmovido,"
+                },
+                {
+                    "t": null,
+                    "text": "no quiero volver a pecar jamás."
+                },
+                {
+                    "t": null,
+                    "text": "Y si ahora yo te pido"
+                },
+                {
+                    "t": null,
+                    "text": "y Tú me das tu paz,"
+                },
+                {
+                    "t": null,
+                    "text": "me iré para encontrarte en los demás."
+                }
+            ]
+        }
     },
     {
         "id": 29,
@@ -831,7 +3593,108 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Aún se ve la estela de tu barca"
+                },
+                {
+                    "t": null,
+                    "text": "indicando el rumbo de la misión"
+                },
+                {
+                    "t": null,
+                    "text": "y mostrando que no pueden las aguas"
+                },
+                {
+                    "t": null,
+                    "text": "apagar el fuego del corazón."
+                },
+                {
+                    "t": null,
+                    "text": "Mas si la vemos en el horizonte"
+                },
+                {
+                    "t": null,
+                    "text": "nos invade un temor a naufragar:"
+                },
+                {
+                    "t": null,
+                    "text": "que las olas no ahoguen en el hombre"
+                },
+                {
+                    "t": null,
+                    "text": "la alegría por evangelizar."
+                },
+                {
+                    "t": null,
+                    "text": "Ruega por nosotros, Francisco Javier,"
+                },
+                {
+                    "t": null,
+                    "text": "tu ejemplo nos llene de valor;"
+                },
+                {
+                    "t": null,
+                    "text": "que toda la Iglesia te imite con fe"
+                },
+                {
+                    "t": null,
+                    "text": "y todo se haga para mayor gloria de Dios."
+                },
+                {
+                    "t": null,
+                    "text": "Aún están las huellas de tus pasos"
+                },
+                {
+                    "t": null,
+                    "text": "relatando proezas de tu andar"
+                },
+                {
+                    "t": null,
+                    "text": "y enseñando que tus brazos cansados"
+                },
+                {
+                    "t": null,
+                    "text": "no dejaron nunca de bautizar."
+                },
+                {
+                    "t": null,
+                    "text": "Pero al seguirlas toda la jornada"
+                },
+                {
+                    "t": null,
+                    "text": "nuestros pies fatigados no dan más:"
+                },
+                {
+                    "t": null,
+                    "text": "ni el calor ni la sed que nos aguarda"
+                },
+                {
+                    "t": null,
+                    "text": "consigan que nos rindamos jamás."
+                },
+                {
+                    "t": null,
+                    "text": "Ruega por nosotros, Francisco Javier,"
+                },
+                {
+                    "t": null,
+                    "text": "tu ejemplo nos llene de valor;"
+                },
+                {
+                    "t": null,
+                    "text": "que toda la Iglesia te imite con fe"
+                },
+                {
+                    "t": null,
+                    "text": "y todo se haga para mayor gloria de Dios."
+                }
+            ]
+        }
     },
     {
         "id": 30,
@@ -861,7 +3724,132 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Hoy nos ha nacido"
+                },
+                {
+                    "t": null,
+                    "text": "un Salvador:"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Mesías,"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Señor."
+                },
+                {
+                    "t": null,
+                    "text": "Canten al Señor un cántico nuevo,"
+                },
+                {
+                    "t": null,
+                    "text": "canten al Señor, toda la Tierra,"
+                },
+                {
+                    "t": null,
+                    "text": "canten al Señor, bendigan su nombre."
+                },
+                {
+                    "t": null,
+                    "text": "Hoy nos ha nacido"
+                },
+                {
+                    "t": null,
+                    "text": "un Salvador:"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Mesías,"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Señor."
+                },
+                {
+                    "t": null,
+                    "text": "Proclamen día tras día su victoria,"
+                },
+                {
+                    "t": null,
+                    "text": "cuenten a todos los pueblos su gloria,"
+                },
+                {
+                    "t": null,
+                    "text": "sus maravillas a todas las naciones."
+                },
+                {
+                    "t": null,
+                    "text": "Hoy nos ha nacido"
+                },
+                {
+                    "t": null,
+                    "text": "un Salvador:"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Mesías,"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Señor."
+                },
+                {
+                    "t": null,
+                    "text": "Alégrese el cielo, goce la tierra,"
+                },
+                {
+                    "t": null,
+                    "text": "retumbe el mar y cuanto lo llena,"
+                },
+                {
+                    "t": null,
+                    "text": "vitoreen los campos y cuanto hay en ellos,"
+                },
+                {
+                    "t": null,
+                    "text": "aclamen los árboles del bosque."
+                },
+                {
+                    "t": null,
+                    "text": "Hoy nos ha nacido"
+                },
+                {
+                    "t": null,
+                    "text": "un Salvador:"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Mesías,"
+                },
+                {
+                    "t": null,
+                    "text": "Él es el Señor."
+                },
+                {
+                    "t": null,
+                    "text": "Delante del Señor que ya llega,"
+                },
+                {
+                    "t": null,
+                    "text": "ya llega para regir la tierra:"
+                },
+                {
+                    "t": null,
+                    "text": "regirá el orbe con justicia"
+                },
+                {
+                    "t": null,
+                    "text": "y los pueblos con fidelidad."
+                }
+            ]
+        }
     },
     {
         "id": 31,
@@ -891,7 +3879,112 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "¡Oh, virginal doncella,"
+                },
+                {
+                    "t": null,
+                    "text": "de tu Nombre purísimo, María,"
+                },
+                {
+                    "t": null,
+                    "text": "cuando la blanca estrella"
+                },
+                {
+                    "t": null,
+                    "text": "renace con el día"
+                },
+                {
+                    "t": null,
+                    "text": "las aves cantarán la letanía!"
+                },
+                {
+                    "t": null,
+                    "text": "Cumpliendo la promesa"
+                },
+                {
+                    "t": null,
+                    "text": "resplandeció tu integridad suave,"
+                },
+                {
+                    "t": null,
+                    "text": "y todo el cielo pesa"
+                },
+                {
+                    "t": null,
+                    "text": "con indulgencia grave"
+                },
+                {
+                    "t": null,
+                    "text": "sobre la fiel salutación del «Ave»."
+                },
+                {
+                    "t": null,
+                    "text": "Si en tu virtud sencilla"
+                },
+                {
+                    "t": null,
+                    "text": "la Trinidad perfecta se gozaba,"
+                },
+                {
+                    "t": null,
+                    "text": "hincando la rodilla"
+                },
+                {
+                    "t": null,
+                    "text": "el arcángel mostraba"
+                },
+                {
+                    "t": null,
+                    "text": "la gracia del Amor que lo enviaba."
+                },
+                {
+                    "t": null,
+                    "text": "Tú, Virgen florecida,"
+                },
+                {
+                    "t": null,
+                    "text": "diste el milagro de tu aroma al viento,"
+                },
+                {
+                    "t": null,
+                    "text": "y el aura agradecida"
+                },
+                {
+                    "t": null,
+                    "text": "que recogió tu acento"
+                },
+                {
+                    "t": null,
+                    "text": "vistió de alegre luz el aposento."
+                },
+                {
+                    "t": null,
+                    "text": "Sube el arcángel alto"
+                },
+                {
+                    "t": null,
+                    "text": "restaurando la paz amanecida,"
+                },
+                {
+                    "t": null,
+                    "text": "y al tierno sobresalto"
+                },
+                {
+                    "t": null,
+                    "text": "de su alada subida"
+                },
+                {
+                    "t": null,
+                    "text": "te llamarán los siglos escogida. Amén."
+                }
+            ]
+        }
     },
     {
         "id": 32,
@@ -920,7 +4013,132 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Ojos muertos que miráis"
+                },
+                {
+                    "t": null,
+                    "text": "con mirar indescriptible,"
+                },
+                {
+                    "t": null,
+                    "text": "y con fuerza irresistible"
+                },
+                {
+                    "t": null,
+                    "text": "atraéis y cautiváis,"
+                },
+                {
+                    "t": null,
+                    "text": "¿por qué, si muertos estáis,"
+                },
+                {
+                    "t": null,
+                    "text": "tenéis tan viva expresión"
+                },
+                {
+                    "t": null,
+                    "text": "que así turbáis mi razón"
+                },
+                {
+                    "t": null,
+                    "text": "trocando vuestras miradas"
+                },
+                {
+                    "t": null,
+                    "text": "en dos punzantes espadas"
+                },
+                {
+                    "t": null,
+                    "text": "que parten mi corazón?"
+                },
+                {
+                    "t": null,
+                    "text": "Al veros, ojos piadosos,"
+                },
+                {
+                    "t": null,
+                    "text": "todo mi ser se conmueve."
+                },
+                {
+                    "t": null,
+                    "text": "¿Quién a miraros se atreve"
+                },
+                {
+                    "t": null,
+                    "text": "sin llorar, ojos llorosos?"
+                },
+                {
+                    "t": null,
+                    "text": "Me cautiváis amorosos,"
+                },
+                {
+                    "t": null,
+                    "text": "me reprendéis justicieros,"
+                },
+                {
+                    "t": null,
+                    "text": "sois tiernos y sois severos,"
+                },
+                {
+                    "t": null,
+                    "text": "inspiráis dolor y calma,"
+                },
+                {
+                    "t": null,
+                    "text": "y las borrascas del alma"
+                },
+                {
+                    "t": null,
+                    "text": "enfrentáis sólo con veros."
+                },
+                {
+                    "t": null,
+                    "text": "¡Ah! Permitid, ojos píos,"
+                },
+                {
+                    "t": null,
+                    "text": "ojos que sois el encanto"
+                },
+                {
+                    "t": null,
+                    "text": "del cielo, que con mi llanto"
+                },
+                {
+                    "t": null,
+                    "text": "borre mis locos desvíos;"
+                },
+                {
+                    "t": null,
+                    "text": "bebí en cenagosos ríos"
+                },
+                {
+                    "t": null,
+                    "text": "aguas de ponzoñas llenas"
+                },
+                {
+                    "t": null,
+                    "text": "que, al infiltrarse en mis venas,"
+                },
+                {
+                    "t": null,
+                    "text": "causaron fiebres ardientes."
+                },
+                {
+                    "t": null,
+                    "text": "¡Cómo olvidé que erais fuentes"
+                },
+                {
+                    "t": null,
+                    "text": "de aguas dulces y serenas!"
+                }
+            ]
+        }
     },
     {
         "id": 33,
@@ -948,7 +4166,84 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "letras_acordes"
+        "tipo_pdf": "letras_acordes",
+        "letras": {
+            "sincronizada": false,
+            "lineas": [
+                {
+                    "t": null,
+                    "text": "Ya no temo, Señor, la tristeza,"
+                },
+                {
+                    "t": null,
+                    "text": "ya no temo, Señor, la soledad;"
+                },
+                {
+                    "t": null,
+                    "text": "porque eres, Señor, mi alegría,"
+                },
+                {
+                    "t": null,
+                    "text": "tengo siempre tu amistad."
+                },
+                {
+                    "t": null,
+                    "text": "Ya no temo, Señor, a la noche,"
+                },
+                {
+                    "t": null,
+                    "text": "ya no temo, Señor, la oscuridad;"
+                },
+                {
+                    "t": null,
+                    "text": "porque brilla tu luz en las sombras,"
+                },
+                {
+                    "t": null,
+                    "text": "ya no hay noche, tú eres luz."
+                },
+                {
+                    "t": null,
+                    "text": "Ya no temo, Señor, los fracasos,"
+                },
+                {
+                    "t": null,
+                    "text": "ya no temo, Señor, la ingratitud;"
+                },
+                {
+                    "t": null,
+                    "text": "porque el triunfo, Señor, en la vida"
+                },
+                {
+                    "t": null,
+                    "text": "tú lo tienes, tú lo das."
+                },
+                {
+                    "t": null,
+                    "text": "Ya no temo, Señor, los abismos,"
+                },
+                {
+                    "t": null,
+                    "text": "ya no temo, Señor, la inmensidad;"
+                },
+                {
+                    "t": null,
+                    "text": "porque eres, Señor, el camino"
+                },
+                {
+                    "t": null,
+                    "text": "y la vida, la verdad;"
+                },
+                {
+                    "t": null,
+                    "text": "porque eres, Señor, el camino"
+                },
+                {
+                    "t": null,
+                    "text": "y la vida, la verdad."
+                }
+            ]
+        }
     },
     {
         "id": 34,
@@ -1062,7 +4357,84 @@
                 "nombre": "Particella Contrabajos (PDF)",
                 "archivo": "media/Himno a la Virgen del Carmen-Contrabajos.pdf"
             }
-        ]
+        ],
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 25.13,
+                    "text": "Virgen del Carmen,"
+                },
+                {
+                    "t": 30.13,
+                    "text": "Reina de Chile:"
+                },
+                {
+                    "t": 35.13,
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                },
+                {
+                    "t": 45.13,
+                    "text": "Tú presides nuestros días,"
+                },
+                {
+                    "t": 50.13,
+                    "text": "Oh Virgen María,"
+                },
+                {
+                    "t": 75.13,
+                    "text": "Sabiamente iluminas el camino y nuestra misión."
+                },
+                {
+                    "t": 85.13,
+                    "text": "Virgen del Carmen,"
+                },
+                {
+                    "t": 90.13,
+                    "text": "Reina de Chile:"
+                },
+                {
+                    "t": 95.13,
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                },
+                {
+                    "t": 105.13,
+                    "text": "Tú a Cristo nos entregas,"
+                },
+                {
+                    "t": 110.13,
+                    "text": "Madre de la Iglesia,"
+                },
+                {
+                    "t": 135.13,
+                    "text": "Que sus brazos se extiendan sobre nuestra amada nación."
+                },
+                {
+                    "t": 145.13,
+                    "text": "Virgen del Carmen,"
+                },
+                {
+                    "t": 150.13,
+                    "text": "Reina de Chile:"
+                },
+                {
+                    "t": 155.13,
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                },
+                {
+                    "t": 165.45,
+                    "text": "Virgen del Carmen,"
+                },
+                {
+                    "t": 171.66,
+                    "text": "Reina de Chile:"
+                },
+                {
+                    "t": 177.87,
+                    "text": "¡Salva a tu pueblo que clama a Ti!"
+                }
+            ]
+        }
     },
     {
         "id": 35,
@@ -1091,6 +4463,143 @@
         "youtube_video_embed": null,
         "youtube_audio_embed": null,
         "interprete": null,
-        "tipo_pdf": "partitura"
+        "tipo_pdf": "partitura",
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 3.38,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 8.03,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 9.72,
+                    "text": "Pues me refugio en ti."
+                },
+                {
+                    "t": 16.9,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 21.55,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 23.24,
+                    "text": "Pues me refugio en ti."
+                },
+                {
+                    "t": 30.42,
+                    "text": "Tú que eres fiel escucha mi ruego,"
+                },
+                {
+                    "t": 37.18,
+                    "text": "Y por tu justicia respóndeme;"
+                },
+                {
+                    "t": 43.94,
+                    "text": "No entres en juicio con tu siervo,"
+                },
+                {
+                    "t": 50.7,
+                    "text": "Nadie es justo frente a ti."
+                },
+                {
+                    "t": 57.46,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 62.11,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 63.8,
+                    "text": "Pues me refugio en ti."
+                },
+                {
+                    "t": 70.99,
+                    "text": "Me persiguió a muerte el enemigo,"
+                },
+                {
+                    "t": 77.75,
+                    "text": "Y aplastó mi vida contra el suelo;"
+                },
+                {
+                    "t": 84.51,
+                    "text": "Enmudeció mi corazón,"
+                },
+                {
+                    "t": 91.27,
+                    "text": "Se angustió mi alma."
+                },
+                {
+                    "t": 98.03,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 102.68,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 104.37,
+                    "text": "Pues me refugio en ti."
+                },
+                {
+                    "t": 111.55,
+                    "text": "Como a los que han muerto para siempre me abandonó en la oscuridad;"
+                },
+                {
+                    "t": 125.07,
+                    "text": "Y recordé los días de antaño,"
+                },
+                {
+                    "t": 131.83,
+                    "text": "Medité en tus obras."
+                },
+                {
+                    "t": 138.59,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 143.24,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 144.93,
+                    "text": "Pues me refugio en ti."
+                },
+                {
+                    "t": 152.11,
+                    "text": "Me darás la vida por tu nombre,"
+                },
+                {
+                    "t": 158.87,
+                    "text": "Y por tu justicia me salvarás;"
+                },
+                {
+                    "t": 165.63,
+                    "text": "Tú dispersarás a mis enemigos,"
+                },
+                {
+                    "t": 172.39,
+                    "text": "Pues yo soy tu siervo."
+                },
+                {
+                    "t": 179.15,
+                    "text": "Líbrame del enemigo,"
+                },
+                {
+                    "t": 183.8,
+                    "text": "Señor,"
+                },
+                {
+                    "t": 185.49,
+                    "text": "Pues me refugio en ti."
+                }
+            ]
+        }
     }
 ]

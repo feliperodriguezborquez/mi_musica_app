@@ -63,6 +63,7 @@ from services.catalog_service import (
     sort_songs,
     get_playlist_songs,
 )
+from services.lyrics_service import lrc_to_letras, letras_to_lrc
 
 # Inicializar SQLAlchemy con la app Flask
 db.init_app(app)
@@ -358,6 +359,9 @@ def edit_cancion(comp_id):
         cancion_a_editar.youtube_audio_embed = request.form.get('youtube_audio_embed')
         cancion_a_editar.interprete = request.form.get('interprete')
         cancion_a_editar.tipo_pdf = request.form.get('tipo_pdf')
+        if 'letras_lrc' in request.form:
+            letras = lrc_to_letras(request.form.get('letras_lrc'))
+            cancion_a_editar.letras_json = json.dumps(letras, ensure_ascii=False) if letras else None
 
         dia = request.form.get('dia')
         mes = request.form.get('mes')
@@ -401,6 +405,11 @@ def edit_cancion(comp_id):
                             'interprete': cancion_a_editar.interprete,
                             'tipo_pdf': cancion_a_editar.tipo_pdf,
                         })
+                        if 'letras_lrc' in request.form:
+                            if cancion_a_editar.letras:
+                                data[i]['letras'] = cancion_a_editar.letras
+                            else:
+                                data[i].pop('letras', None)
                         break
                 f.seek(0)
                 json.dump(data, f, ensure_ascii=False, indent=4)
@@ -419,9 +428,23 @@ def edit_cancion(comp_id):
     return render_template(
         'edit_cancion.html',
         cancion=cancion_a_editar,
+        letras_lrc=letras_to_lrc(cancion_a_editar.letras),
         todos_los_tags=todos_los_tags,
         todas_las_categorias=todas_las_categorias
     )
+
+
+@app.route('/api/letras/<int:comp_id>')
+def api_letras(comp_id):
+    """Retorna en JSON la letra (sincronizada o plana) de una canción para el reproductor."""
+    cancion = Cancion.query.get_or_404(comp_id)
+    return jsonify({
+        'id': cancion.id,
+        'titulo': cancion.titulo,
+        'musica': cancion.musica,
+        'letra_autor': cancion.letra,
+        'letras': cancion.letras
+    })
 
 
 @app.route('/composicion/<int:comp_id>/delete', methods=['POST'])
