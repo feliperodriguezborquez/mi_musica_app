@@ -2418,7 +2418,8 @@ body { padding-bottom: 120px; }
 
 .fp-lyrics-overlay {
     width: 100%;
-    max-height: min(46vh, 380px);
+    height: var(--fp-lyrics-max-h, min(58vh, 520px));
+    max-height: var(--fp-lyrics-max-h, min(58vh, 520px));
     background: var(--color-fondo);
     color: var(--color-texto);
     border-bottom: 1px solid var(--color-borde);
@@ -2426,11 +2427,21 @@ body { padding-bottom: 120px; }
     flex-direction: column;
     overflow: hidden;
     opacity: 1;
-    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.24s ease,
-                border-color 0.24s ease;
+    transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+                height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.22s ease,
+                border-color 0.22s ease;
+}
+.fp-lyrics-overlay.is-tall {
+    height: calc(100vh - 125px);
+    max-height: calc(100vh - 125px);
+}
+.fp-lyrics-overlay.is-resizing {
+    transition: none !important;
+    user-select: none;
 }
 .fp-lyrics-overlay.hidden {
+    height: 0 !important;
     max-height: 0 !important;
     opacity: 0;
     pointer-events: none;
@@ -2438,11 +2449,35 @@ body { padding-bottom: 120px; }
     display: flex !important;
 }
 
+.fp-lyrics-resizer {
+    width: 100%;
+    height: 14px;
+    background: var(--color-blanco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ns-resize;
+    flex-shrink: 0;
+    touch-action: none;
+}
+.fp-lyrics-resizer-bar {
+    width: 42px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-borde);
+    transition: background 0.2s, width 0.2s;
+}
+.fp-lyrics-resizer:hover .fp-lyrics-resizer-bar,
+.fp-lyrics-overlay.is-resizing .fp-lyrics-resizer-bar {
+    background: var(--color-principal);
+    width: 56px;
+}
+
 .fp-lyrics-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 24px 10px;
+    padding: 4px 24px 10px;
     border-bottom: 1px solid var(--color-borde);
     background: var(--color-blanco);
     width: 100%;
@@ -2587,7 +2622,12 @@ body { padding-bottom: 120px; }
 
 @media (max-width: 768px) {
     .fp-lyrics-overlay {
-        max-height: min(42vh, 300px);
+        height: var(--fp-lyrics-max-h, min(52vh, 380px));
+        max-height: var(--fp-lyrics-max-h, min(52vh, 380px));
+    }
+    .fp-lyrics-overlay.is-tall {
+        height: calc(100vh - 140px);
+        max-height: calc(100vh - 140px);
     }
     .fp-lyrics-header {
         padding: 10px 16px 8px;
