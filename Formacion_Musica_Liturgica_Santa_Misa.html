@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sacrosanctum Concilium — Formación Musical Litúrgica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #b89020;
+            --gold-dark: #84630b;
+            --gold-soft: #f4ebd6;
+            --bg-cream: #f8f4ea;
+            --bg-white: #ffffff;
+            --text-dark: #262421;
+            --text-muted: #6b635a;
+            --border: #e6dbc6;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #23201d;
+            font-family: 'Lato', sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Lora', Georgia, serif;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .slide {
+            width: 1600px;
+            height: 900px;
+            margin: 0 auto 24px;
+            background: var(--bg-cream);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-frame {
+            width: 100%;
+            height: 100%;
+            padding: 54px 76px 48px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #fdfcf9 0%, #f6efe1 100%);
+            position: relative;
+        }
+
+        .slide-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--gold);
+        }
+
+        /* Cabecera */
+        .s-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1.5px solid var(--border);
+            padding-bottom: 18px;
+            margin-bottom: 28px;
+            flex-shrink: 0;
+        }
+
+        .s-kicker {
+            display: block;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .s-title {
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+        .s-num {
+            background: var(--gold-soft);
+            color: var(--gold-dark);
+            font-weight: 900;
+            font-size: 14px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+
+        /* Portada */
+        .slide-cover .slide-frame {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 70px 140px;
+        }
+
+        .cover-kicker {
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            color: var(--gold-dark);
+            margin-bottom: 24px;
+        }
+
+        .cover-title {
+            font-size: 68px;
+            line-height: 1.12;
+            margin-bottom: 22px;
+        }
+
+        .cover-sub {
+            font-size: 24px;
+            line-height: 1.48;
+            color: var(--text-muted);
+            margin: 0 0 42px;
+        }
+
+        .cover-quote-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-left: 7px solid var(--gold);
+            border-radius: 16px;
+            padding: 28px 46px;
+            max-width: 1020px;
+            margin-bottom: 36px;
+            box-shadow: 0 8px 28px rgba(184, 144, 32, 0.08);
+        }
+
+        .cover-quote-box blockquote {
+            margin: 0 0 10px;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 26px;
+            line-height: 1.42;
+        }
+
+        .cover-quote-box cite {
+            font-style: normal;
+            font-weight: 900;
+            font-size: 16px;
+            color: var(--gold-dark);
+        }
+
+        .cover-footer-note {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* Badges */
+        .badge-gold {
+            display: inline-block;
+            background: var(--gold);
+            color: #fff;
+            font-weight: 900;
+            font-size: 13.5px;
+            padding: 5px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-outline {
+            display: inline-block;
+            background: var(--gold-soft);
+            color: var(--gold-dark);
+            border: 1px solid var(--gold);
+            font-weight: 900;
+            font-size: 13px;
+            padding: 4px 13px;
+            border-radius: 999px;
+        }
+
+        /* Lámina 2: Diagrama de Marco */
+        .question-banner {
+            background: var(--gold-soft);
+            border-left: 5px solid var(--gold);
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            flex: 1;
+        }
+
+        .fw-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-top: 5px solid var(--gold);
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        .fw-card h3 {
+            font-size: 28px;
+            margin: 14px 0 12px;
+            color: var(--gold-dark);
+        }
+
+        .fw-card blockquote {
+            margin: 0;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 21px;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .fw-takeaway {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+            font-weight: 900;
+            font-size: 17px;
+            color: var(--text-dark);
+        }
+
+        /* Lámina 3: Roadmap Visual de 5 pasos */
+        .rm-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            flex: 1;
+            align-items: stretch;
+            margin-bottom: 28px;
+        }
+
+        .rm-step {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-top: 5px solid var(--gold);
+            border-radius: 16px;
+            padding: 28px 22px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.03);
+        }
+
+        .rm-circle {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: #fff;
+            font-family: 'Lora', serif;
+            font-size: 26px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .rm-step h3 {
+            font-size: 23px;
+            margin: 14px 0 10px;
+            color: var(--gold-dark);
+        }
+
+        .rm-step p {
+            font-size: 17px;
+            line-height: 1.45;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .bottom-callout {
+            background: var(--gold-soft);
+            border-radius: 12px;
+            padding: 18px 26px;
+            font-size: 19px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        /* Láminas de Cita + Punteo (Láminas 4, 5, 7, 8) */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            gap: 32px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .col-quotes {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .verbatim-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-left: 7px solid var(--gold);
+            border-radius: 16px;
+            padding: 28px 34px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 6px 24px rgba(184, 144, 32, 0.05);
+        }
+
+        .verbatim-box .badge-gold {
+            align-self: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .verbatim-box blockquote, .vb-paras p {
+            margin: 0;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 20.5px;
+            line-height: 1.54;
+            color: var(--text-dark);
+        }
+
+        .vb-paras p {
+            margin-bottom: 16px;
+            font-size: 19.5px;
+        }
+        .vb-paras p:last-child { margin-bottom: 0; }
+
+        . verbatim-box strong, .verbatim-box blockquote strong, .vb-paras strong {
+            color: var(--gold-dark);
+            background: rgba(244, 235, 214, 0.7);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+
+        .clean-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-top: 5px solid var(--gold);
+            border-radius: 16px;
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .clean-card h3 {
+            font-size: 27px;
+            color: var(--gold-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .clean-list {
+            margin: 0;
+            padding-left: 24px;
+            font-size: 20px;
+            line-height: 1.55;
+        }
+
+        .clean-list li {
+            margin-bottom: 18px;
+        }
+        .clean-list li:last-child { margin-bottom: 0; }
+
+        /* Lámina 6: Los 4 Géneros (2x2) */
+        .grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .genre-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--gold);
+            border-radius: 16px;
+            padding: 24px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .gc-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .gc-top h3 {
+            font-size: 24px;
+            color: var(--gold-dark);
+        }
+
+        .genre-card blockquote {
+            margin: 0;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 18px;
+            line-height: 1.48;
+        }
+
+        .genre-card blockquote strong {
+            color: var(--gold-dark);
+        }
+
+        .gc-note {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* Lámina 7: Condiciones Instrumentos */
+        .cond-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cond-row {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .cond-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: #fff;
+            font-weight: 900;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cond-row h4 {
+            font-size: 21px;
+            margin-bottom: 4px;
+            color: var(--gold-dark);
+        }
+
+        .cond-row p {
+            margin: 0;
+            font-size: 17.5px;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+
+        /* Lámina 8: SC 121 Pilares */
+        .col-pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            justify-content: space-between;
+        }
+
+        .pillar-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--gold);
+            border-radius: 14px;
+            padding: 22px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pillar-box .badge-outline {
+            align-self: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .pillar-box h4 {
+            font-size: 23px;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .pillar-box p {
+            margin: 0;
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.42;
+        }
+
+        /* Lámina 9: Síntesis 5 Preguntas */
+        .syn-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .syn-item {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--gold);
+            border-radius: 14px;
+            padding: 18px 28px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .syn-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .syn-left strong {
+            font-family: 'Lora', serif;
+            font-size: 22px;
+            color: var(--gold-dark);
+        }
+
+        .syn-item p {
+            margin: 0;
+            font-size: 19.5px;
+            line-height: 1.42;
+        }
+
+        @media print {
+            @page {
+                size: 1600px 900px;
+                margin: 0;
+            }
+            html, body {
+                background: #fff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .slide {
+                margin: 0 !important;
+                box-shadow: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+        <section class="slide slide-cover">
+            <div class="slide-frame">
+                <div class="cover-kicker">☧ · FORMACIÓN LITÚRGICA Y MUSICAL · SESIÓN 1 · ☧</div>
+                <h1 class="cover-title">El Canto Sagrado en el<br>Concilio Vaticano II</h1>
+                <p class="cover-sub">Lectura pedagógica de la Constitución <em>Sacrosanctum Concilium</em> (Cap. VI)<br>sobre la naturaleza, finalidad y misión de la música en la Liturgia</p>
+                <div class="cover-quote-box">
+                    <blockquote>«El canto sagrado, unido a las palabras, constituye una parte necesaria o integral de la Liturgia solemne.»</blockquote>
+                    <cite>— Concilio Vaticano II · Sacrosanctum Concilium, n. 112</cite>
+                </div>
+                <div class="cover-footer-note">Concilio Vaticano II · 4 de diciembre de 1963</div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">ANTES DE ENTRAR AL CAPÍTULO VI · EL MARCO CONCILIAR (SC 7, 14, 29, 30)</span>
+            <h2 class="s-title">¿Qué pasa realmente cuando cantamos en Misa?</h2>
+        </div>
+        <span class="s-num">2 / 9</span>
+    </header>
+    
+                <div class="question-banner">💬 Pregunta para abrir: ¿Venimos a «acompañar con música» la Misa o somos parte del rito mismo?</div>
+                <div class="grid-3">
+            <div class="fw-card">
+                <span class="badge-gold">SC 7</span>
+                <h3>Cristo está Presente</h3>
+                <blockquote>«Está presente, por último, cuando la Iglesia suplica y canta salmos.»</blockquote>
+                <div class="fw-takeaway">→ El canto es lugar real de la presencia de Cristo.</div>
+            </div>
+            
+            <div class="fw-card">
+                <span class="badge-gold">SC 14 & 30</span>
+                <h3>Participación Activa</h3>
+                <blockquote>«Se fomentarán las aclamaciones del pueblo, las respuestas, la salmodia, las antífonas y los cantos.»</blockquote>
+                <div class="fw-takeaway">→ Cantar es un derecho y deber bautismal de todo el pueblo.</div>
+            </div>
+            
+            <div class="fw-card">
+                <span class="badge-gold">SC 29</span>
+                <h3>Verdadero Ministerio</h3>
+                <blockquote>«Los miembros de la capilla musical desempeñan un auténtico ministerio litúrgico.»</blockquote>
+                <div class="fw-takeaway">→ No somos una «banda invitada»: somos ministros en el altar.</div>
+            </div>
+            </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">MAPA VISUAL DEL CAPÍTULO VI DE SACROSANCTUM CONCILIUM</span>
+            <h2 class="s-title">Los 5 Ejes de la Música Sacra en el Concilio (nn. 112–121)</h2>
+        </div>
+        <span class="s-num">3 / 9</span>
+    </header>
+    
+                <div class="rm-container">
+                    
+            <div class="rm-step">
+                <div class="rm-circle">1</div>
+                <span class="badge-outline">nn. 112 · 114</span>
+                <h3>1. Identidad y Fin</h3>
+                <p>Parte integral del rito · Gloria de Dios y santificación de los fieles.</p>
+            </div>
+            
+            <div class="rm-step">
+                <div class="rm-circle">2</div>
+                <span class="badge-outline">n. 115</span>
+                <h3>2. Formación</h3>
+                <p>Preparación musical y genuina educación litúrgica de los cantores.</p>
+            </div>
+            
+            <div class="rm-step">
+                <div class="rm-circle">3</div>
+                <span class="badge-outline">nn. 116 · 118 · 119</span>
+                <h3>3. Los Géneros</h3>
+                <p>Canto gregoriano, polifonía, canto popular e inculturación local.</p>
+            </div>
+            
+            <div class="rm-step">
+                <div class="rm-circle">4</div>
+                <span class="badge-outline">n. 120</span>
+                <h3>4. Instrumentos</h3>
+                <p>El órgano y las 3 condiciones para admitir otros instrumentos.</p>
+            </div>
+            
+            <div class="rm-step">
+                <div class="rm-circle">5</div>
+                <span class="badge-outline">n. 121</span>
+                <h3>5. Composición y Letra</h3>
+                <p>Misión de los compositores y textos tomados de la Escritura y Liturgia.</p>
+            </div>
+            
+                </div>
+                <div class="bottom-callout">
+                    📖 <strong>Dinámica:</strong> Leeremos juntos los textos esenciales del Capítulo VI (nn. 112–121) para descubrir qué nos pide directamente el Concilio.
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">EJE 1 · IDENTIDAD Y FINALIDAD (SC 112 Y 114)</span>
+            <h2 class="s-title">¿Por qué la Música sobresale entre todas las Artes?</h2>
+        </div>
+        <span class="s-num">4 / 9</span>
+    </header>
+    
+                <div class="grid-2">
+                    <div class="col-quotes">
+            <div class="verbatim-box">
+                <span class="badge-gold">SC 112 · Texto Conciliar</span>
+                <blockquote>«La tradición musical de la Iglesia universal constituye un tesoro de valor inestimable, que sobresale entre las demás expresiones artísticas, principalmente porque <strong>el canto sagrado, unido a las palabras, constituye una parte necesaria o integral de la Liturgia solemne</strong>... Por tanto, la música sagrada será <strong>tanto más santa cuanto más íntimamente esté unida a la acción litúrgica</strong>.»</blockquote>
+            </div>
+            
+            <div class="verbatim-box">
+                <span class="badge-gold">SC 114 · Texto Conciliar</span>
+                <blockquote>«...la finalidad de la música sacra, que es <strong>la gloria de Dios y la santificación de los fieles</strong>.»</blockquote>
+            </div>
+            </div>
+                    <div class="clean-card">
+                        <h3>Claves para Nuestro Grupo</h3>
+                        <ul class="clean-list"><li><strong>No es un «relleno» ni un adorno:</strong> Es <em>parte integral</em> de la liturgia porque nace unida a la Palabra.</li><li><strong>El termómetro de santidad (SC 112):</strong> Un canto no es más santo por sonar «más lento o emotivo», sino por estar <strong>íntimamente unido a lo que ocurre en el rito</strong>.</li><li><strong>El doble fin (SC 114):</strong><br>↑ <em>Hacia arriba:</em> La gloria de Dios.<br>↓ <em>Hacia adentro:</em> La santificación de los fieles.</li><li>❓ <strong>Para pensar:</strong> <em>¿Elegimos los cantos pensando en lo que nos gusta tocar a nosotros o en santificar a la asamblea?</em></li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">EJE 2 · ENSEÑANZA Y EDUCACIÓN LITÚRGICA (SC 115)</span>
+            <h2 class="s-title">Cantar en Misa Exige Formarse Musical y Litúrgicamente</h2>
+        </div>
+        <span class="s-num">5 / 9</span>
+    </header>
+    
+                <div class="grid-2">
+                    <div class="col-quotes">
+            <div class="verbatim-box">
+                <span class="badge-gold">SC 115 · Texto Conciliar</span>
+                <blockquote>«Dése mucha importancia a la <strong>enseñanza y a la práctica musical</strong> en los seminarios, en los noviciados de religiosos de ambos sexos y en las casas de estudios, así como también en los demás institutos y escuelas católicas; para que se pueda impartir esta enseñanza, fórmense con esmero profesores encargados de la música sacra.<br><br>Se recomienda, además, que, según las circunstancias, se erijan institutos superiores de música sacra.<br><br><strong>Dése también una genuina educación litúrgica a los compositores y cantores</strong>, en particular a los niños.»</blockquote>
+            </div>
+            </div>
+                    <div class="clean-card">
+                        <h3>Los Dos Pulmones del Cantor</h3>
+                        <ul class="clean-list"><li><strong>1. Práctica y técnica musical:</strong> Ensayar con rigor, cuidar la afinación, el ritmo y la dicción. A Dios le damos lo mejor, no lo improvisado a última hora.</li><li><strong>2. «Genuina educación litúrgica»:</strong> No basta con saber tocar guitarra o cantar afinado; el cantor necesita <strong>entender la Misa</strong> (qué significa cada momento, los tiempos litúrgicos y las rúbricas).</li><li>💡 <strong>Por eso estamos haciendo esta formación:</strong> para unir la técnica musical con el sentido litúrgico.</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">EJE 3 · LA RIQUEZA DE FORMAS EN LA IGLESIA (SC 116, 118, 119)</span>
+            <h2 class="s-title">Gregoriano, Polifonía, Canto Popular e Inculturación</h2>
+        </div>
+        <span class="s-num">6 / 9</span>
+    </header>
+    
+                <div class="grid-2x2">
+            <div class="genre-card">
+                <div class="gc-top">
+                    <span class="badge-gold">SC 116 · Primer Lugar</span>
+                    <h3>Canto Gregoriano</h3>
+                </div>
+                <blockquote>«La Iglesia reconoce el canto gregoriano como el <strong>propio de la liturgia romana</strong>; en igualdad de circunstancias, por tanto, hay que darle el primer lugar en las acciones litúrgicas.»</blockquote>
+                <div class="gc-note">💡 Es el modelo supremo de cómo la melodía sirve a la Palabra y a la oración.</div>
+            </div>
+            
+            <div class="genre-card">
+                <div class="gc-top">
+                    <span class="badge-gold">SC 116 · Coro a Voces</span>
+                    <h3>Polifonía Sagrada</h3>
+                </div>
+                <blockquote>«Los demás géneros de música sacra, y en particular la <strong>polifonía</strong>, de ninguna manera han de excluirse en la celebración de los oficios divinos, <strong>con tal que respondan al espíritu de la acción litúrgica</strong> a tenor del art. 30.»</blockquote>
+                <div class="gc-note">💡 Armonizar a voces embellece el rito, siempre que no anule la participación del pueblo.</div>
+            </div>
+            
+            <div class="genre-card">
+                <div class="gc-top">
+                    <span class="badge-gold">SC 118 · Asamblea Viva</span>
+                    <h3>Canto Religioso Popular</h3>
+                </div>
+                <blockquote>«Foméntese con empeño el <strong>canto religioso popular</strong>, de modo que en los ejercicios piadosos y sagrados y en las mismas acciones litúrgicas, de acuerdo con las normas y prescripciones de las rúbricas, <strong>resuenen las voces de los fieles</strong>.»</blockquote>
+                <div class="gc-note">💡 El objetivo pastoral: que toda la nave del templo cante unida.</div>
+            </div>
+            
+            <div class="genre-card">
+                <div class="gc-top">
+                    <span class="badge-gold">SC 119 · Identidad Local</span>
+                    <h3>Tradición Propia de los Pueblos</h3>
+                </div>
+                <blockquote>«Como en ciertas regiones... hay pueblos con <strong>tradición musical propia</strong> que tiene mucha importancia en su vida religiosa y social, dése a esta música la debida estima y el lugar correspondiente... al acomodar el culto a su idiosincrasia.»</blockquote>
+                <div class="gc-note">💡 Valora la raíz musical de cada pueblo puesta con reverencia al servicio del misterio.</div>
+            </div>
+            </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">EJE 4 · LOS INSTRUMENTOS EN EL TEMPLO (SC 120)</span>
+            <h2 class="s-title">El Órgano y las 3 Condiciones para Otros Instrumentos</h2>
+        </div>
+        <span class="s-num">7 / 9</span>
+    </header>
+    
+                <div class="grid-2">
+                    <div class="col-quotes">
+            <div class="verbatim-box">
+                <span class="badge-gold">SC 120a · El Órgano</span>
+                <blockquote>«Téngase en gran estima en la Iglesia latina el <strong>órgano de tubos</strong>, como instrumento musical tradicional, cuyo sonido puede aportar un esplendor notable a las ceremonias eclesiásticas y <strong>levantar poderosamente las almas hacia Dios y hacia las realidades celestiales</strong>.»</blockquote>
+            </div>
+            
+            <div class="verbatim-box">
+                <span class="badge-gold">SC 120b · Otros Instrumentos</span>
+                <blockquote>«En el culto divino <strong>se pueden admitir otros instrumentos</strong>, a juicio y con el consentimiento de la autoridad eclesiástica territorial competente... <strong>siempre que sean aptos o puedan adaptarse al uso sagrado, convengan a la dignidad del templo y contribuyan realmente a la edificación de los fieles</strong>.»</blockquote>
+            </div>
+            </div>
+                    <div class="clean-card">
+                        <h3>Las 3 Condiciones para Nuestros Instrumentos</h3>
+                        <div class="cond-stack">
+            <div class="cond-row">
+                <div class="cond-num">1</div>
+                <div>
+                    <h4>Aptos para el uso sagrado</h4>
+                    <p>El modo de tocar (rasgueo, volumen, arreglo) debe estar al servicio de la palabra cantada, sin tapar las voces ni convertir el altar en un recital.</p>
+                </div>
+            </div>
+            
+            <div class="cond-row">
+                <div class="cond-num">2</div>
+                <div>
+                    <h4>Acordes a la dignidad del templo</h4>
+                    <p>Que el timbre y carácter rítmico ayuden al sentido del misterio que se celebra en la casa de Dios.</p>
+                </div>
+            </div>
+            
+            <div class="cond-row">
+                <div class="cond-num">3</div>
+                <div>
+                    <h4>Que edifiquen a los fieles</h4>
+                    <p>La prueba final de todo instrumento en Misa: ¿ayuda realmente a que la comunidad rece mejor y eleve el alma a Dios?</p>
+                </div>
+            </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">EJE 5 · COMPOSICIÓN Y CRITERIO SUPREMO DE LAS LETRAS (SC 121)</span>
+            <h2 class="s-title">Vocación del Compositor y las 3 Condiciones del Texto</h2>
+        </div>
+        <span class="s-num">8 / 9</span>
+    </header>
+    
+                <div class="grid-2">
+                    <div class="verbatim-box full-h">
+                        <span class="badge-gold">SC 121 · Cualidades y misión de los compositores</span>
+                        <div class="vb-paras"><p>«Los compositores verdaderamente cristianos deben sentirse llamados a cultivar la música sacra y a acrecentar su tesoro.»</p><p>«Compongan obras que presenten las características de verdadera música sagrada y que no sólo puedan ser cantadas por las mayores <em>"Scholae cantorum"</em>, sino que <strong>también estén al alcance de los coros más modestos y fomenten la participación activa de toda la asamblea de los fieles</strong>.»</p><p>«<strong>Los textos destinados al canto sagrado deben estar de acuerdo con la doctrina católica; más aún: deben tomarse principalmente de la Sagrada Escritura y de las fuentes litúrgicas.</strong>»</p></div>
+                    </div>
+                    <div class="col-pillars">
+                        
+            <div class="pillar-box">
+                <span class="badge-outline">ALCANCE PASTORAL</span>
+                <h4>Cantables por Coros Sencillos y Asamblea</h4>
+                <p>La gran música litúrgica combina belleza artística con sencillez congregacional.</p>
+            </div>
+            
+            <div class="pillar-box">
+                <span class="badge-outline">CRITERIO DOCTRINAL</span>
+                <h4>De Acuerdo con la Doctrina Católica</h4>
+                <p>Sin ambigüedades teológicas, sin sentimentalismo vacío ni individualismo.</p>
+            </div>
+            
+            <div class="pillar-box">
+                <span class="badge-outline">FUENTE PRINCIPAL</span>
+                <h4>Sagrada Escritura y Fuentes Litúrgicas</h4>
+                <p>Salmos, cánticos bíblicos, antífonas y oraciones del Misal Romano.</p>
+            </div>
+            
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section class="slide">
+            <div class="slide-frame">
+                
+    <header class="s-head">
+        <div>
+            <span class="s-kicker">SÍNTESIS PEDAGÓGICA · SACROSANCTUM CONCILIUM (CAP. VI)</span>
+            <h2 class="s-title">5 Preguntas de Examen para Nuestro Coro</h2>
+        </div>
+        <span class="s-num">9 / 9</span>
+    </header>
+    
+                <div class="syn-stack">
+            <div class="syn-item">
+                <div class="syn-left">
+                    <span class="badge-gold">SC 112</span>
+                    <strong>1. ¿Unión con el rito?</strong>
+                </div>
+                <p>¿El canto que elegimos se une íntimamente a la acción litúrgica de ese momento o está desconectado de lo que hace el sacerdote?</p>
+            </div>
+            
+            <div class="syn-item">
+                <div class="syn-left">
+                    <span class="badge-gold">SC 114 & 118</span>
+                    <strong>2. ¿Resuena la voz del pueblo?</strong>
+                </div>
+                <p>¿Nuestra forma de tocar y cantar hace que resuenen las voces de los fieles para gloria de Dios, o los deja mudos como espectadores?</p>
+            </div>
+            
+            <div class="syn-item">
+                <div class="syn-left">
+                    <span class="badge-gold">SC 115</span>
+                    <strong>3. ¿Nos formamos?</strong>
+                </div>
+                <p>¿Cuidamos tanto nuestra preparación musical (ensayo, afinación) como nuestra educación litúrgica y espiritual?</p>
+            </div>
+            
+            <div class="syn-item">
+                <div class="syn-left">
+                    <span class="badge-gold">SC 120</span>
+                    <strong>4. ¿Instrumentos para orar?</strong>
+                </div>
+                <p>¿Nuestros instrumentos levantan las almas hacia Dios y sostienen el canto con la dignidad propia del templo?</p>
+            </div>
+            
+            <div class="syn-item">
+                <div class="syn-left">
+                    <span class="badge-gold">SC 121</span>
+                    <strong>5. ¿Letras bíblicas y litúrgicas?</strong>
+                </div>
+                <p>¿Las letras de nuestro repertorio están tomadas principalmente de la Sagrada Escritura y del Misal Romano?</p>
+            </div>
+            </div>
+            </div>
+        </section>
+        
+</body>
+</html>

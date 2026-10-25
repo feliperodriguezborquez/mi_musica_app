@@ -1,0 +1,466 @@
+<!-- Panel Lateral Izquierdo Minimalista (Replegable) -->
+<aside id="lit-study-sidebar" class="lit-study-sidebar" aria-label="Navegación de Formación Litúrgica">
+    <div class="lit-sidebar-header">
+        <span class="lit-sidebar-kicker">Contenidos</span>
+    </div>
+
+    <nav class="lit-sidebar-nav">
+        <!-- 1. LA SANTA MISA -->
+        <details class="lit-tree-group" {% if active_area == 'santa-misa' %}open{% endif %}>
+            <summary class="lit-tree-root {% if active_area == 'santa-misa' and not momento %}active{% endif %}">
+                <span class="lit-tree-root-label">La Santa Misa</span>
+                <span class="lit-tree-caret">›</span>
+            </summary>
+
+            <div class="lit-tree-children">
+                <a href="{{ url_for('ver_formacion') }}"
+                   class="lit-tree-item {% if active_area == 'santa-misa' and not momento %}active{% endif %}">
+                    Visión general
+                </a>
+
+                {% for parte in partes_misa %}
+                <details class="lit-tree-subgroup"
+                         {% if (momento is defined and momento and momento.parte_id == parte.id) or (not momento and loop.first) %}open{% endif %}>
+                    <summary class="lit-tree-subroot">
+                        <span>{{ parte.numero }}. {{ parte.titulo }}</span>
+                        <span class="lit-tree-caret">›</span>
+                    </summary>
+                    <div class="lit-tree-subchildren">
+                        {% for m in (todos_momentos if todos_momentos is defined else momentos_misa) if m.parte_id == parte.id %}
+                        <div class="lit-tree-momento-wrap">
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug) }}"
+                               class="lit-tree-momento {% if momento is defined and momento and momento.slug == m.slug %}active{% endif %}">
+                                <span class="lit-tree-num">{{ m.orden }}.</span>
+                                <span class="lit-tree-label">{{ m.titulo }}</span>
+                                {% if m.disponible %}
+                                <span class="lit-tree-dot" title="Guía completa disponible"></span>
+                                {% endif %}
+                            </a>
+
+                            {% if momento is defined and momento and momento.slug == m.slug and momento.disponible %}
+                            <div class="lit-tree-subvistas">
+                                {% for sv in subvistas %}
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion=sv.id) }}"
+                                   class="lit-tree-subvista {% if seccion_activa == sv.id %}active{% endif %}">
+                                    {{ sv.titulo_corto }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </details>
+                {% endfor %}
+            </div>
+        </details>
+
+        <!-- 2. AÑO LITÚRGICO Y TIEMPOS -->
+        <a href="{{ url_for('ver_formacion_tiempos') }}"
+           class="lit-tree-root-single {% if active_area == 'ano-liturgico' %}active{% endif %}">
+            <span>Año Litúrgico y Tiempos</span>
+        </a>
+
+        <!-- 3. BIBLIOTECA Y DOCUMENTOS OFICIALES -->
+        <details class="lit-tree-group" {% if active_area == 'fundamentos-magisterio' %}open{% endif %}>
+            <summary class="lit-tree-root {% if active_area == 'fundamentos-magisterio' %}active{% endif %}">
+                <span class="lit-tree-root-label">Documentos del Magisterio</span>
+                <span class="lit-tree-caret">›</span>
+            </summary>
+            <div class="lit-tree-children">
+                {% for d in documentos %}
+                <a href="{{ url_for('ver_formacion_documentos', doc_id=d.id) }}"
+                   class="lit-tree-item {% if doc_activo is defined and doc_activo and doc_activo.id == d.id %}active{% endif %}">
+                    <span class="lit-tree-sigla">{{ d.sigla }}</span> {{ d.titulo }}
+                </a>
+                {% endfor %}
+            </div>
+        </details>
+
+        <!-- 4. GUÍA PARA EL MÚSICO Y COMPOSITOR -->
+        <a href="{{ url_for('ver_formacion_musico') }}"
+           class="lit-tree-root-single {% if active_area == 'guia-musico' %}active{% endif %}">
+            <span>Guía del Músico y Compositor</span>
+        </a>
+
+        <!-- 5. OTRAS CELEBRACIONES -->
+        <a href="{{ url_for('ver_formacion_otras') }}"
+           class="lit-tree-root-single {% if active_area == 'otras-celebraciones' %}active{% endif %}">
+            <span>Otras Celebraciones</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- 1. Cajón Deslizable (Drawer) Global para Leer Documentos Embebidos sin salir del Estudio -->
+<div id="lit-doc-drawer" class="lit-doc-drawer hidden" aria-hidden="true">
+    <div class="lit-doc-drawer-backdrop" id="lit-doc-drawer-backdrop"></div>
+    <div class="lit-doc-drawer-panel">
+        <div class="lit-doc-drawer-header">
+            <div class="lit-doc-drawer-title-group">
+                <span id="lit-drawer-sigla" class="lit-meta-tag">IGMR</span>
+                <strong id="lit-drawer-title">Documento Oficial</strong>
+            </div>
+            <div class="lit-doc-drawer-actions">
+                <a id="lit-drawer-ext-link" href="#" target="_blank" rel="noopener" class="lit-ghost-link">
+                    Vatican.va ↗
+                </a>
+                <button type="button" id="lit-drawer-close" class="lit-icon-close-btn" title="Cerrar visor">✕</button>
+            </div>
+        </div>
+        <div class="lit-doc-drawer-body">
+            <iframe id="lit-drawer-iframe" src="about:blank" title="Visor de Documento Magisterial"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Paleta de Búsqueda Rápida de Estudio (Ctrl + K) -->
+<div id="lit-cmdk-modal" class="lit-cmdk-modal hidden" aria-hidden="true">
+    <div class="lit-cmdk-backdrop" id="lit-cmdk-backdrop"></div>
+    <div class="lit-cmdk-dialog" role="dialog" aria-label="Buscar en Formación Litúrgica">
+        <div class="lit-cmdk-input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="lit-cmdk-input" placeholder="Buscar momento de la Misa, numeral (ej. IGMR 48), tiempo o criterio..." autocomplete="off">
+            <kbd class="lit-kbd">Esc</kbd>
+        </div>
+        <div id="lit-cmdk-results" class="lit-cmdk-results"></div>
+        <div class="lit-cmdk-footer">
+            <span><kbd class="lit-kbd">↑</kbd> <kbd class="lit-kbd">↓</kbd> navegar</span>
+            <span><kbd class="lit-kbd">Enter</kbd> abrir</span>
+            <span><kbd class="lit-kbd">z</kbd> modo lectura</span>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Tarjeta Flotante (Popover) para Previsualizar Citas Magisteriales al Pasar el Mouse -->
+<div id="lit-cita-popover" class="lit-cita-popover hidden" role="tooltip" aria-hidden="true">
+    <div class="lit-popover-header">
+        <span id="lit-pop-ref" class="lit-meta-tag">IGMR 48</span>
+        <span id="lit-pop-source" class="lit-popover-source">Instrucción General del Misal Romano</span>
+    </div>
+    <blockquote id="lit-pop-text" class="lit-popover-quote"></blockquote>
+    <div class="lit-popover-actions">
+        <button type="button" id="lit-pop-open-embed" class="lit-ghost-link">
+            Leer en panel lateral →
+        </button>
+        <a id="lit-pop-ext-url" href="#" target="_blank" rel="noopener" class="lit-ghost-link">
+            Vatican.va ↗
+        </a>
+    </div>
+</div>
+
+<script id="lit-citas-json" type="application/json">
+{{ (citas_popover if citas_popover is defined else {}) | tojson }}
+</script>
+<script id="lit-cmdk-json" type="application/json">
+{{ (buscador_estudio_index if buscador_estudio_index is defined else []) | tojson }}
+</script>
+
+<script>
+(function() {
+    const workspace = document.getElementById('lit-workspace');
+    const toggleBtn = document.getElementById('lit-sidebar-toggle-btn');
+    const zenBtn = document.getElementById('lit-zen-toggle-btn');
+
+    // --- A. Panel Lateral Izquierdo y Modo Enfoque (Zen) ---
+    function setSidebarCollapsed(collapsed) {
+        if (!workspace) return;
+        workspace.classList.toggle('sidebar-collapsed', collapsed);
+        if (toggleBtn) toggleBtn.classList.toggle('is-active', !collapsed);
+        localStorage.setItem('lit_sidebar_collapsed', collapsed ? '1' : '0');
+    }
+
+    function setZenMode(zen) {
+        if (!workspace) return;
+        workspace.classList.toggle('zen-mode', zen);
+        if (zenBtn) zenBtn.classList.toggle('is-active', zen);
+        localStorage.setItem('lit_zen_mode', zen ? '1' : '0');
+    }
+
+    if (localStorage.getItem('lit_sidebar_collapsed') === '1') {
+        setSidebarCollapsed(true);
+    }
+    if (localStorage.getItem('lit_zen_mode') === '1') {
+        setZenMode(true);
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            if (workspace.classList.contains('zen-mode')) {
+                setZenMode(false);
+                setSidebarCollapsed(false);
+            } else {
+                setSidebarCollapsed(!workspace.classList.contains('sidebar-collapsed'));
+            }
+        });
+    }
+    if (zenBtn) {
+        zenBtn.addEventListener('click', () => {
+            setZenMode(!workspace.classList.contains('zen-mode'));
+        });
+    }
+
+    // --- B. Cajón Deslizable (Drawer) para Leer Documentos Embebidos ---
+    const docDrawer = document.getElementById('lit-doc-drawer');
+    const drawerIframe = document.getElementById('lit-drawer-iframe');
+    const drawerSigla = document.getElementById('lit-drawer-sigla');
+    const drawerTitle = document.getElementById('lit-drawer-title');
+    const drawerExtLink = document.getElementById('lit-drawer-ext-link');
+    const drawerClose = document.getElementById('lit-drawer-close');
+    const drawerBackdrop = document.getElementById('lit-doc-drawer-backdrop');
+
+    function openEmbedDrawer(docId, sigla, title, extUrl) {
+        if (!docDrawer || !drawerIframe) return;
+        const embedUrl = `/formacion/embed/${docId || 'igmr'}`;
+        if (drawerSigla) drawerSigla.textContent = sigla || 'DOC';
+        if (drawerTitle) drawerTitle.textContent = title || 'Documento Oficial';
+        if (drawerExtLink && extUrl) drawerExtLink.href = extUrl;
+        if (drawerIframe.getAttribute('src') !== embedUrl) {
+            drawerIframe.setAttribute('src', embedUrl);
+        }
+        docDrawer.classList.remove('hidden');
+        docDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    document.querySelectorAll('.lit-embed-trigger-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const url = btn.getAttribute('data-embed-url') || '/formacion/embed/igmr';
+            const docId = url.split('/').pop();
+            openEmbedDrawer(
+                docId,
+                btn.getAttribute('data-doc-sigla'),
+                btn.getAttribute('data-doc-title'),
+                btn.getAttribute('data-ext-url')
+            );
+        });
+    });
+
+    function closeDrawer() {
+        if (!docDrawer) return;
+        docDrawer.classList.add('hidden');
+        docDrawer.setAttribute('aria-hidden', 'true');
+    }
+    if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+    if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+
+    // --- C. Popovers / Hover Cards de Citas Magisteriales ---
+    let citasDict = {};
+    try {
+        citasDict = JSON.parse(document.getElementById('lit-citas-json')?.textContent || '{}');
+    } catch (e) {}
+
+    const popover = document.getElementById('lit-cita-popover');
+    const popRef = document.getElementById('lit-pop-ref');
+    const popSource = document.getElementById('lit-pop-source');
+    const popText = document.getElementById('lit-pop-text');
+    const popOpenEmbed = document.getElementById('lit-pop-open-embed');
+    const popExtUrl = document.getElementById('lit-pop-ext-url');
+    let popHideTimeout = null;
+    let activeCitaData = null;
+
+    function findCitaData(rawText) {
+        if (!rawText) return null;
+        const clean = rawText.trim();
+        if (citasDict[clean]) return citasDict[clean];
+        for (const [k, val] of Object.entries(citasDict)) {
+            if (clean.includes(k) || k.includes(clean)) return val;
+        }
+        return null;
+    }
+
+    function showCitaPopover(targetEl, data) {
+        if (!popover || !data) return;
+        clearTimeout(popHideTimeout);
+        activeCitaData = data;
+        popRef.textContent = data.ref;
+        popSource.textContent = data.fuente;
+        popText.textContent = data.texto;
+        popExtUrl.href = data.url || '#';
+
+        popover.classList.remove('hidden');
+        popover.setAttribute('aria-hidden', 'false');
+
+        const rect = targetEl.getBoundingClientRect();
+        const popWidth = 340;
+        let left = rect.left + window.scrollX;
+        if (left + popWidth > window.innerWidth - 20) {
+            left = window.innerWidth - popWidth - 20;
+        }
+        if (left < 12) left = 12;
+        const top = rect.bottom + window.scrollY + 8;
+
+        popover.style.left = `${left}px`;
+        popover.style.top = `${top}px`;
+    }
+
+    function scheduleHidePopover() {
+        popHideTimeout = setTimeout(() => {
+            if (popover) {
+                popover.classList.add('hidden');
+                popover.setAttribute('aria-hidden', 'true');
+            }
+        }, 220);
+    }
+
+    if (popover) {
+        popover.addEventListener('mouseenter', () => clearTimeout(popHideTimeout));
+        popover.addEventListener('mouseleave', scheduleHidePopover);
+    }
+    if (popOpenEmbed) {
+        popOpenEmbed.addEventListener('click', () => {
+            if (!activeCitaData) return;
+            if (popover) popover.classList.add('hidden');
+            openEmbedDrawer(activeCitaData.doc_id, activeCitaData.ref, activeCitaData.fuente, activeCitaData.url);
+        });
+    }
+
+    // Conectar automáticamente todas las etiquetas .lit-meta-tag o [data-cita] que coincidan con una cita
+    document.querySelectorAll('.lit-meta-tag, [data-cita]').forEach(el => {
+        const key = el.getAttribute('data-cita') || el.textContent;
+        const data = findCitaData(key);
+        if (data) {
+            el.classList.add('has-cita-popover');
+            el.addEventListener('mouseenter', () => showCitaPopover(el, data));
+            el.addEventListener('mouseleave', scheduleHidePopover);
+            el.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                showCitaPopover(el, data);
+            });
+        }
+    });
+
+    // --- D. Paleta de Búsqueda Rápida (Ctrl + K) ---
+    let cmdkIndex = [];
+    try {
+        cmdkIndex = JSON.parse(document.getElementById('lit-cmdk-json')?.textContent || '[]');
+    } catch (e) {}
+
+    const cmdkModal = document.getElementById('lit-cmdk-modal');
+    const cmdkBackdrop = document.getElementById('lit-cmdk-backdrop');
+    const cmdkInput = document.getElementById('lit-cmdk-input');
+    const cmdkResults = document.getElementById('lit-cmdk-results');
+    const cmdkTriggerBtns = document.querySelectorAll('.lit-cmdk-trigger');
+    let selectedIdx = 0;
+    let filteredItems = [];
+
+    function renderCmdkResults(query) {
+        if (!cmdkResults) return;
+        const q = (query || '').toLowerCase().trim();
+        filteredItems = cmdkIndex.filter(item => {
+            if (!q) return true;
+            return (
+                item.titulo.toLowerCase().includes(q) ||
+                item.subtitulo.toLowerCase().includes(q) ||
+                item.categoria.toLowerCase().includes(q) ||
+                (item.keywords || '').includes(q)
+            );
+        }).slice(0, 12);
+
+        selectedIdx = 0;
+        if (filteredItems.length === 0) {
+            cmdkResults.innerHTML = `<div class="lit-cmdk-empty">No se encontraron resultados para "${query}"</div>`;
+            return;
+        }
+
+        cmdkResults.innerHTML = filteredItems.map((item, i) => `
+            <a href="${item.url}" class="lit-cmdk-item ${i === 0 ? 'selected' : ''}" data-cmdk-idx="${i}">
+                <div class="lit-cmdk-item-main">
+                    <span class="lit-cmdk-item-title">${item.titulo}</span>
+                    <span class="lit-cmdk-item-sub">${item.subtitulo}</span>
+                </div>
+                <span class="lit-meta-tag">${item.categoria}</span>
+            </a>
+        `).join('');
+    }
+
+    function openCmdk() {
+        if (!cmdkModal) return;
+        cmdkModal.classList.remove('hidden');
+        cmdkModal.setAttribute('aria-hidden', 'false');
+        if (cmdkInput) {
+            cmdkInput.value = '';
+            renderCmdkResults('');
+            setTimeout(() => cmdkInput.focus(), 20);
+        }
+    }
+
+    function closeCmdk() {
+        if (!cmdkModal) return;
+        cmdkModal.classList.add('hidden');
+        cmdkModal.setAttribute('aria-hidden', 'true');
+    }
+
+    cmdkTriggerBtns.forEach(b => b.addEventListener('click', openCmdk));
+    if (cmdkBackdrop) cmdkBackdrop.addEventListener('click', closeCmdk);
+    if (cmdkInput) {
+        cmdkInput.addEventListener('input', () => renderCmdkResults(cmdkInput.value));
+        cmdkInput.addEventListener('keydown', (e) => {
+            const links = cmdkResults.querySelectorAll('.lit-cmdk-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIdx = Math.min(selectedIdx + 1, links.length - 1);
+                links.forEach((l, idx) => l.classList.toggle('selected', idx === selectedIdx));
+                links[selectedIdx]?.scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIdx = Math.max(selectedIdx - 1, 0);
+                links.forEach((l, idx) => l.classList.toggle('selected', idx === selectedIdx));
+                links[selectedIdx]?.scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter' && links[selectedIdx]) {
+                e.preventDefault();
+                window.location.href = links[selectedIdx].getAttribute('href');
+            } else if (e.key === 'Escape') {
+                closeCmdk();
+            }
+        });
+    }
+
+    // Atajos globales de teclado: Ctrl+K (Buscador), '[' (Sidebar), 'z' (Modo Lectura)
+    document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target?.isContentEditable;
+
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (cmdkModal && !cmdkModal.classList.contains('hidden')) closeCmdk();
+            else openCmdk();
+            return;
+        }
+        if (isTyping) return;
+
+        if (e.key === '[') {
+            e.preventDefault();
+            setSidebarCollapsed(!workspace.classList.contains('sidebar-collapsed'));
+        } else if (e.key.toLowerCase() === 'z' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            setZenMode(!workspace.classList.contains('zen-mode'));
+        }
+    });
+
+    // --- E. Scrollspy Activo en el Índice Derecho ("En esta vista") ---
+    const tocLinks = Array.from(document.querySelectorAll('.lit-study-toc .lit-toc-list a[href^="#"]'));
+    const observedSections = tocLinks
+        .map(link => {
+            const id = link.getAttribute('href').slice(1);
+            return id ? document.getElementById(id) : null;
+        })
+        .filter(Boolean);
+
+    if (observedSections.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocLinks.forEach(l => {
+                        l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+                    });
+                }
+            });
+        }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+
+        observedSections.forEach(sec => observer.observe(sec));
+    }
+})();
+</script>

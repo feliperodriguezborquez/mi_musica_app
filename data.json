@@ -467,7 +467,7 @@
             "Composición",
             "Arreglo"
         ],
-        "youtube_video_embed": null,
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/TwVPzHlobQs\" title=\"Santo\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "youtube_audio_embed": null,
         "interprete": null,
         "tipo_pdf": "partitura",
@@ -515,40 +515,32 @@
                     "text": "Llenos están el cielo y la tierra de tu gloria."
                 },
                 {
-                    "t": 43.04,
-                    "text": "Hosanna en el cielo."
+                    "t": 43.29,
+                    "text": "Sanna en el cielo."
                 },
                 {
                     "t": 46.04,
-                    "text": "Hosanna en el cielo."
-                },
-                {
-                    "t": 49.04,
-                    "text": "Hosanna en el cielo."
+                    "text": "Hosanna en el Hosanna en el cielo."
                 },
                 {
                     "t": 52.04,
                     "text": "Hosanna en el cielo."
                 },
                 {
-                    "t": 56.54,
-                    "text": "Bendito es el que viene en el nombre del Señor."
+                    "t": 56.29,
+                    "text": "Y bendito es el que viene en el nombre del Se"
                 },
                 {
-                    "t": 62.54,
-                    "text": "Bendito es el que viene en el nombre del Señor."
+                    "t": 62.29,
+                    "text": "Y bendito es el que viene en el nombre del Señor."
                 },
                 {
-                    "t": 68.54,
-                    "text": "Hosanna en el cielo."
+                    "t": 68.79,
+                    "text": "Sanna en el cielo."
                 },
                 {
                     "t": 71.54,
-                    "text": "Hosanna en el cielo."
-                },
-                {
-                    "t": 74.54,
-                    "text": "Hosanna en el cielo."
+                    "text": "Hosanna en el Hosanna en el cielo."
                 },
                 {
                     "t": 77.54,
@@ -568,15 +560,7 @@
                 },
                 {
                     "t": 88.29,
-                    "text": "Santo,"
-                },
-                {
-                    "t": 89.04,
-                    "text": "Santo,"
-                },
-                {
-                    "t": 89.79,
-                    "text": "Santo es el Señor."
+                    "text": "Dios del universo es el Señor."
                 }
             ]
         }
@@ -3161,7 +3145,7 @@
             "Composición",
             "Arreglo"
         ],
-        "youtube_video_embed": null,
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/kk2Jq6RyIdY\" title=\"Miserere (Salmo 50)\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "youtube_audio_embed": null,
         "interprete": null,
         "tipo_pdf": "partitura",

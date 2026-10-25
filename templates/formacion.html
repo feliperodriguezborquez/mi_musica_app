@@ -1,0 +1,755 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="lit-workspace" id="lit-workspace">
+    <!-- Columna Izquierda: Árbol de Navegación Replegable + Modales Globales -->
+    {% include '_formacion_sidebar.html' %}
+
+    <!-- Columna Central: Área Editorial Limpia -->
+    <div class="lit-study-main">
+
+        <!-- Barra Superior Minimalista (Toggle de panel + Breadcrumbs + Buscador Ctrl+K + Modo Lectura) -->
+        <div class="lit-topbar">
+            <div class="lit-topbar-left">
+                <button type="button" id="lit-sidebar-toggle-btn" class="lit-sidebar-toggle-inline" title="Mostrar / ocultar panel izquierdo ( [ )">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                    </svg>
+                </button>
+
+                <nav class="lit-breadcrumbs" aria-label="Ubicación">
+                    <a href="{{ url_for('ver_formacion') }}">Formación</a>
+                    <span>/</span>
+                    {% if active_area == 'santa-misa' %}
+                        <strong>La Santa Misa</strong>
+                    {% elif active_area == 'ano-liturgico' %}
+                        <strong>Año Litúrgico</strong>
+                    {% elif active_area == 'fundamentos-magisterio' %}
+                        <a href="{{ url_for('ver_formacion_documentos') }}">Magisterio</a>
+                        {% if doc_activo %}
+                        <span>/</span>
+                        <strong>{{ doc_activo.sigla }}</strong>
+                        {% endif %}
+                    {% elif active_area == 'guia-musico' %}
+                        <strong>Guía del Músico</strong>
+                    {% elif active_area == 'otras-celebraciones' %}
+                        <strong>Otras Celebraciones</strong>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="lit-topbar-right">
+                <button type="button" class="lit-cmdk-trigger" title="Buscar en Formación Litúrgica (Ctrl + K)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span>Buscar…</span>
+                    <kbd class="lit-kbd">Ctrl K</kbd>
+                </button>
+
+                <button type="button" id="lit-zen-toggle-btn" class="lit-zen-btn" title="Modo enfoque de lectura sin paneles laterales ( Z )">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Lectura</span>
+                </button>
+
+                {% if active_area == 'santa-misa' %}
+                <a href="{{ url_for('ver_formacion_misa_momento', slug='entrada', seccion='resumen') }}" class="lit-subtle-action">
+                    1.º Momento: Canto de Entrada →
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if active_area == 'santa-misa' %}
+        <!-- ========================================================== -->
+        <!-- ÁREA 1: LA SANTA MISA                                      -->
+        <!-- ========================================================== -->
+        <div class="lit-doc-header" id="sec-intro-misa">
+            <h1>La Santa Misa</h1>
+            <p class="lit-doc-lead">
+                Estructura ritual y criterios musicales para los 16 momentos de la celebración eucarística según la Instrucción General del Misal Romano (<span class="lit-meta-tag" data-cita="IGMR 16">IGMR 16</span>, <span class="lit-meta-tag" data-cita="IGMR 39–41">IGMR 39–41</span>).
+            </p>
+        </div>
+
+        <!-- Barra de Filtros y Vista Minimalista -->
+        <div class="lit-toolbar-minimal" id="sec-explorador-misa">
+            <div class="lit-segmented-control" role="group" aria-label="Modo de visualización">
+                <button type="button" class="lit-seg-btn active" data-misa-view="partes">Por partes (I–IV)</button>
+                <button type="button" class="lit-seg-btn" data-misa-view="cronologico">Secuencia (1–16)</button>
+                <button type="button" class="lit-seg-btn" data-misa-view="naturaleza">Ordinario / Propio</button>
+            </div>
+
+            <div class="lit-toolbar-right-group">
+                <div class="lit-inline-filter">
+                    <label for="lit-prot-select" class="lit-inline-filter-label">Participación:</label>
+                    <select id="lit-prot-select" class="lit-minimal-select">
+                        <option value="todos">Todos los actores</option>
+                        <option value="asamblea">Asamblea</option>
+                        <option value="coro">Coro</option>
+                        <option value="solista">Cantor / Salmista</option>
+                    </select>
+                </div>
+
+                <!-- Conmutador de Densidad (Lista Compacta vs Tarjetas) -->
+                <div class="lit-segmented-control" id="lit-density-switcher" title="Cambiar entre lista editorial compacta y tarjetas">
+                    <button type="button" class="lit-seg-btn active" data-density="lista">Lista</button>
+                    <button type="button" class="lit-seg-btn" data-density="tarjetas">Tarjetas</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA A: POR LAS 4 PARTES DEL RITO -->
+        <div id="misa-view-partes" class="lit-misa-view active" data-density-mode="lista">
+            {% for parte in partes_misa %}
+            <section class="lit-parte-block" id="parte-{{ parte.id }}">
+                <div class="lit-parte-header">
+                    <div class="lit-parte-title-row">
+                        <span class="lit-parte-roman">{{ parte.numero }}.</span>
+                        <h2>{{ parte.titulo }}</h2>
+                        <span class="lit-meta-tag">{{ parte.cita_igmr }}</span>
+                    </div>
+                    <p class="lit-parte-proposito">{{ parte.proposito }}</p>
+                </div>
+
+                <!-- MODO 1 (POR DEFECTO): LISTA / TABLA EDITORIAL COMPACTA (ESTILO LINEAR / NOTION) -->
+                <div class="lit-compact-table">
+                    {% for m in momentos_misa if m.parte_id == parte.id %}
+                    <div class="lit-compact-row {% if m.disponible %}is-ready{% endif %}"
+                         data-protagonistas="{{ m.protagonista_filtro | join(',') }}">
+                        <div class="lit-row-num">{{ '%02d' % m.orden }}</div>
+
+                        <div class="lit-row-main">
+                            <div class="lit-row-title-line">
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}" class="lit-row-title">
+                                    {{ m.titulo }}
+                                </a>
+                                <span class="lit-row-latin">{{ m.nombre_latino }}</span>
+                                {% if m.disponible %}
+                                <span class="lit-tree-dot" title="Guía completa disponible"></span>
+                                {% endif %}
+                            </div>
+                            <p class="lit-row-desc">{{ m.resumen_corto }}</p>
+                            {% if m.disponible %}
+                            <div class="lit-row-sublinks">
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}">Resumen</a>
+                                <span>·</span>
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='teologia') }}">Tratado y Fuentes</a>
+                                <span>·</span>
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='composicion') }}">Composición</a>
+                                <span>·</span>
+                                <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='repertorio') }}">Repertorio</a>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="lit-row-meta">
+                            <span class="lit-meta-tag">{{ m.naturaleza }}</span>
+                            <span class="lit-meta-tag">{{ m.cita_igmr }}</span>
+                            <span class="lit-row-actor">{{ m.protagonista }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- MODO 2 (OPCIONAL): CUADRÍCULA DE TARJETAS -->
+                <div class="lit-momentos-grid hidden">
+                    {% for m in momentos_misa if m.parte_id == parte.id %}
+                    <article class="lit-momento-card {% if m.disponible %}is-ready{% endif %}"
+                             data-protagonistas="{{ m.protagonista_filtro | join(',') }}">
+                        <div class="lit-momento-card-top">
+                            <span class="lit-momento-order">{{ m.orden }}. {{ m.nombre_latino }}</span>
+                            <div class="lit-momento-badges">
+                                <span class="lit-meta-tag">{{ m.naturaleza }}</span>
+                                <span class="lit-meta-tag">{{ m.cita_igmr }}</span>
+                            </div>
+                        </div>
+
+                        <h3 class="lit-momento-title">
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}">
+                                {{ m.titulo }}
+                            </a>
+                        </h3>
+
+                        <p class="lit-momento-summary">{{ m.resumen_corto }}</p>
+
+                        <div class="lit-momento-meta">
+                            <span><strong>Función:</strong> {{ m.funcion_ritual }}</span>
+                            <span><strong>Canta:</strong> {{ m.protagonista }}</span>
+                        </div>
+
+                        {% if m.disponible %}
+                        <div class="lit-momento-sublinks">
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}">Resumen</a>
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='teologia') }}">Tratado y Fuentes</a>
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='composicion') }}">Composición</a>
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='repertorio') }}">Repertorio</a>
+                        </div>
+                        {% else %}
+                        <div class="lit-momento-footer">
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug) }}" class="lit-subtle-link">
+                                Ver ficha síntesis →
+                            </a>
+                        </div>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        </div>
+
+        <!-- VISTA B: ORDEN CRONOLÓGICO PASO A PASO -->
+        <div id="misa-view-cronologico" class="lit-misa-view hidden">
+            <div class="lit-compact-table">
+                {% for m in momentos_misa %}
+                <div class="lit-compact-row {% if m.disponible %}is-ready{% endif %}"
+                     data-protagonistas="{{ m.protagonista_filtro | join(',') }}">
+                    <div class="lit-row-num">{{ '%02d' % m.orden }}</div>
+                    <div class="lit-row-main">
+                        <div class="lit-row-title-line">
+                            <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}" class="lit-row-title">
+                                {{ m.titulo }}
+                            </a>
+                            <span class="lit-row-latin">{{ m.nombre_latino }} · {{ m.parte_nombre }}</span>
+                        </div>
+                        <p class="lit-row-desc">{{ m.resumen_corto }}</p>
+                    </div>
+                    <div class="lit-row-meta">
+                        <span class="lit-meta-tag">{{ m.naturaleza }}</span>
+                        <span class="lit-meta-tag">{{ m.cita_igmr }}</span>
+                        <span class="lit-row-actor">{{ m.grado_musicam_sacram }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- VISTA C: ORDINARIO VS. PROPIO -->
+        <div id="misa-view-naturaleza" class="lit-misa-view hidden">
+            <div class="lit-dual-columns">
+                <div class="lit-nature-col">
+                    <div class="lit-nature-header">
+                        <h3>Ordinario de la Misa (Ordo Missae)</h3>
+                        <p>
+                            Textos fijos e invariables del Misal Romano que estructuran la plegaria de la Iglesia. Su letra oficial nunca debe alterarse ni sustituirse.
+                        </p>
+                    </div>
+                    <div class="lit-compact-table">
+                        {% for m in momentos_misa if 'Ordinario' in m.naturaleza %}
+                        <div class="lit-compact-row {% if m.disponible %}is-ready{% endif %}"
+                             data-protagonistas="{{ m.protagonista_filtro | join(',') }}">
+                            <div class="lit-row-num">{{ '%02d' % m.orden }}</div>
+                            <div class="lit-row-main">
+                                <div class="lit-row-title-line">
+                                    <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}" class="lit-row-title">
+                                        {{ m.titulo }}
+                                    </a>
+                                </div>
+                                <p class="lit-row-desc">{{ m.resumen_corto }}</p>
+                            </div>
+                            <div class="lit-row-meta">
+                                <span class="lit-meta-tag">{{ m.cita_igmr }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="lit-nature-col">
+                    <div class="lit-nature-header">
+                        <h3>Propio de la Misa (Proprium Missae) y Opcionales</h3>
+                        <p>
+                            Cantos de texto variable según el domingo, tiempo litúrgico o fiesta. Acompañan acciones procesionales o proclaman la Palabra.
+                        </p>
+                    </div>
+                    <div class="lit-compact-table">
+                        {% for m in momentos_misa if 'Ordinario' not in m.naturaleza %}
+                        <div class="lit-compact-row {% if m.disponible %}is-ready{% endif %}"
+                             data-protagonistas="{{ m.protagonista_filtro | join(',') }}">
+                            <div class="lit-row-num">{{ '%02d' % m.orden }}</div>
+                            <div class="lit-row-main">
+                                <div class="lit-row-title-line">
+                                    <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion='resumen') }}" class="lit-row-title">
+                                        {{ m.titulo }}
+                                    </a>
+                                </div>
+                                <p class="lit-row-desc">{{ m.resumen_corto }}</p>
+                            </div>
+                            <div class="lit-row-meta">
+                                <span class="lit-meta-tag">{{ m.cita_igmr }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif active_area == 'ano-liturgico' %}
+        <!-- ========================================================== -->
+        <!-- ÁREA 2: AÑO LITÚRGICO Y TIEMPOS (MATRIZ + TRATADO + 'O')   -->
+        <!-- ========================================================== -->
+        <div class="lit-doc-header" id="sec-intro-tiempos">
+            <div class="lit-doc-header-top">
+                <div>
+                    <h1>El Año Litúrgico y sus Criterios Musicales</h1>
+                </div>
+                <a href="{{ url_for('ver_tag', tag_name='Tiempos Litúrgicos') }}" class="lit-subtle-action">
+                    Ver repertorio por tiempo →
+                </a>
+            </div>
+            <p class="lit-doc-lead">
+                Cada tiempo del Año Litúrgico despliega una faceta del misterio de Cristo y posee normas precisas en el Misal Romano sobre el Gloria, el Aleluya, las antífonas marianas y el uso de los instrumentos musicales (<span class="lit-meta-tag" data-cita="IGMR 305, 313">IGMR 305, 313</span>).
+            </p>
+        </div>
+
+        <!-- 1. Matriz Sinóptica Comparativa de los 6 Tiempos -->
+        <section class="lit-section-clean" id="sec-matriz-tiempos">
+            <div class="lit-section-title-bar">
+                <h2>Matriz Sinóptica del Año Litúrgico</h2>
+                <span class="lit-section-hint">Comparativa de Gloria, Aleluya, Órgano/Instrumentos y Antífona Mariana</span>
+            </div>
+            <div class="lit-identity-table-wrapper">
+                <table class="lit-identity-table">
+                    <thead>
+                        <tr>
+                            <th>Tiempo Litúrgico</th>
+                            <th>Color</th>
+                            <th>Gloria in excelsis</th>
+                            <th>Aleluya</th>
+                            <th>Órgano e Instrumentos (IGMR 313)</th>
+                            <th>Antífona Mariana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in matriz_ano_liturgico %}
+                        <tr>
+                            <td class="lit-td-attr">
+                                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{{ row.color_hex }};margin-right:6px;"></span>
+                                {{ row.tiempo }}
+                            </td>
+                            <td class="lit-td-det">{{ row.color_nombre }}</td>
+                            <td class="lit-td-det">{{ row.gloria }}</td>
+                            <td class="lit-td-det">{{ row.aleluya }}</td>
+                            <td class="lit-td-det">{{ row.instrumentos }}</td>
+                            <td class="lit-td-val"><em>{{ row.antifona_mariana }}</em></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. Tratado Detallado de Cada Tiempo Litúrgico -->
+        <section class="lit-section-clean" id="sec-tratado-tiempos">
+            <div class="lit-section-title-bar">
+                <h2>Estudio de los Seis Tiempos Litúrgicos</h2>
+                <span class="lit-section-hint">Estructura, rúbricas musicales y repertorio propio</span>
+            </div>
+            <div class="lit-criterios-stack">
+                {% for t in tratado_tiempos %}
+                <article class="lit-criterio-card" id="{{ t.id }}" style="border-left: 3px solid {{ t.color }};">
+                    <span class="lit-criterio-cat">{{ t.lema_latino }}</span>
+                    <h3>{{ t.nombre }}</h3>
+                    <p><strong>Estructura del Tiempo:</strong> {{ t.estructura }}</p>
+                    <p style="white-space: pre-line; margin-top: 8px;"><strong>Normativa Musical:</strong> {{ t.normativa_musical }}</p>
+                    <p style="margin-top: 8px;"><strong>Repertorio y Textos Clave:</strong> {{ t.repertorio_clave }}</p>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- 3. Las 7 Antífonas Mayores de la 'O' (17 al 23 de Diciembre) -->
+        <section class="lit-section-clean" id="sec-antifonas-o">
+            <div class="lit-section-title-bar">
+                <div>
+                    <h2>Las 7 Antífonas Mayores de la «O» (17 al 23 de Diciembre)</h2>
+                    <span class="lit-section-hint">
+                        Joyas de la Feria Mayor de Adviento para el Magnificat y el Versículo del Aleluya (Acróstico inverso: ERO CRAS, «Mañana estaré allí»)
+                    </span>
+                </div>
+            </div>
+            <div class="lit-accordion-list">
+                {% for ant in antifonas_o %}
+                <details class="lit-accordion-item" {% if loop.first %}open{% endif %}>
+                    <summary class="lit-accordion-summary">
+                        <div class="lit-accordion-title-wrap">
+                            <span class="lit-meta-tag">{{ ant.fecha }}</span>
+                            <strong>{{ ant.titulo_lat }} — {{ ant.titulo_es }}</strong>
+                            <span class="lit-magisterio-year">({{ ant.cita_biblica }})</span>
+                        </div>
+                        <span class="lit-accordion-caret">›</span>
+                    </summary>
+                    <div class="lit-accordion-body">
+                        <div class="lit-bilingual-grid">
+                            <div class="lit-bilingual-col lit-col-latin">
+                                <span class="lit-lang-label">Antiphona Latina</span>
+                                <p class="lit-text-latin">{{ ant.texto_lat }}</p>
+                            </div>
+                            <div class="lit-bilingual-col lit-col-es">
+                                <span class="lit-lang-label">Texto Litúrgico en Español</span>
+                                <p class="lit-text-es">{{ ant.texto_es }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% elif active_area == 'fundamentos-magisterio' %}
+        <!-- ========================================================== -->
+        <!-- ÁREA 3: BIBLIOTECA Y DOCUMENTOS OFICIALES (CON EMBED)      -->
+        <!-- ========================================================== -->
+        <div class="lit-doc-header" id="doc-cabecera">
+            <div class="lit-doc-header-top">
+                <div>
+                    <span class="lit-kicker-minimal">{{ doc_activo.sigla }} · Fuente Magisterial ({{ doc_activo.fecha }})</span>
+                    <h1>{{ doc_activo.titulo }}</h1>
+                </div>
+                <div class="lit-header-links">
+                    {% if doc_activo.url_pdf_es %}
+                    <a href="{{ doc_activo.url_pdf_es }}" target="_blank" rel="noopener" class="lit-ghost-link">
+                        PDF Español ↗
+                    </a>
+                    {% endif %}
+                    <a href="{{ doc_activo.url_oficial }}" target="_blank" rel="noopener" class="lit-subtle-action">
+                        Vatican.va ↗
+                    </a>
+                </div>
+            </div>
+            <p class="lit-doc-lead">{{ doc_activo.resumen }}</p>
+
+            <div class="lit-segmented-control" style="margin-top: 16px; flex-wrap: wrap;">
+                {% for d in documentos %}
+                <a href="{{ url_for('ver_formacion_documentos', doc_id=d.id) }}"
+                   class="lit-seg-btn {% if doc_activo.id == d.id %}active{% endif %}">
+                    {{ d.sigla }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Secciones / Numerales Clave en Acordeones Desplegables -->
+        <section class="lit-section-clean" id="doc-extractos">
+            <div class="lit-section-title-bar">
+                <h2>Numerales Clave en {{ doc_activo.sigla }}</h2>
+                <span class="lit-section-hint">Haz clic en cada numeral para desplegar su texto oficial</span>
+            </div>
+            <div class="lit-accordion-list">
+                {% for sec in doc_activo.secciones_clave %}
+                <details class="lit-accordion-item" {% if loop.first %}open{% endif %}>
+                    <summary class="lit-accordion-summary">
+                        <div class="lit-accordion-title-wrap">
+                            <span class="lit-meta-tag">{{ sec.numeral }}</span>
+                            <strong>{{ sec.titulo }}</strong>
+                        </div>
+                        <span class="lit-accordion-caret">›</span>
+                    </summary>
+                    <div class="lit-accordion-body">
+                        <blockquote class="lit-magisterio-quote">{{ sec.extracto }}</blockquote>
+                        {% if doc_activo.url_oficial %}
+                        <div class="lit-cita-actions">
+                            <a href="{{ doc_activo.url_oficial }}{{ sec.ancla }}" target="_blank" rel="noopener" class="lit-ghost-link">
+                                Ver en contexto original ({{ doc_activo.sigla }}) ↗
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Visor Embebido a Pantalla Amplia del Documento Oficial -->
+        {% if doc_activo.embed_proxy_allowed %}
+        <section class="lit-section-clean" id="doc-visor-embed">
+            <div class="lit-section-title-bar">
+                <div>
+                    <h2>Lector Integrado ({{ doc_activo.sigla }})</h2>
+                    <span class="lit-section-hint">Texto completo servido directamente desde Vatican.va</span>
+                </div>
+                <a href="{{ doc_activo.url_oficial }}" target="_blank" rel="noopener" class="lit-ghost-link">
+                    Abrir en pestaña nueva ↗
+                </a>
+            </div>
+            <div class="lit-embed-frame-wrapper">
+                <iframe src="{{ url_for('ver_formacion_embed', doc_id=doc_activo.id) }}"
+                        class="lit-embed-iframe"
+                        title="Documento {{ doc_activo.titulo }}"></iframe>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Los 3 Grados de Participación -->
+        <section class="lit-section-clean" id="doc-grados">
+            <div class="lit-section-title-bar">
+                <h2>Los Tres Grados de Participación (<span class="lit-meta-tag" data-cita="MS 28–31">MS 28–31</span>)</h2>
+                <span class="lit-section-hint">Orden obligatorio de prioridad al programar los cantos de la Misa</span>
+            </div>
+            <div class="lit-accordion-list">
+                {% for g in grados_ms %}
+                <details class="lit-accordion-item" {% if loop.first %}open{% endif %}>
+                    <summary class="lit-accordion-summary">
+                        <div class="lit-accordion-title-wrap">
+                            <span class="lit-meta-tag">{{ g.cita }}</span>
+                            <strong>{{ g.grado }}</strong>
+                        </div>
+                        <span class="lit-accordion-caret">›</span>
+                    </summary>
+                    <div class="lit-accordion-body">
+                        <p>{{ g.explicacion }}</p>
+                        <ul>
+                            {% for el in g.elementos %}
+                            <li>{{ el }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Antología Patrística e Histórica -->
+        <section class="lit-section-clean" id="doc-patristica">
+            <div class="lit-section-title-bar">
+                <div>
+                    <h2>Antología Patrística y Magisterial sobre el Canto Sagrado</h2>
+                    <span class="lit-section-hint">De San Ignacio de Antioquía, San Basilio, San Ambrosio y San Agustín a Benedicto XVI</span>
+                </div>
+            </div>
+            <div class="lit-accordion-list">
+                {% for pat in antologia_patristica %}
+                <details class="lit-accordion-item" {% if loop.first %}open{% endif %}>
+                    <summary class="lit-accordion-summary">
+                        <div class="lit-accordion-title-wrap">
+                            <span class="lit-meta-tag">{{ pat.época }}</span>
+                            <strong>{{ pat.autor }} — {{ pat.obra }}</strong>
+                        </div>
+                        <span class="lit-accordion-caret">›</span>
+                    </summary>
+                    <div class="lit-accordion-body">
+                        <blockquote class="lit-magisterio-quote">{{ pat.cita }}</blockquote>
+                        <div class="lit-magisterio-comment">
+                            <strong>Clave teológica:</strong> {{ pat.comentario }}
+                        </div>
+                    </div>
+                </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% elif active_area == 'guia-musico' %}
+        <!-- ========================================================== -->
+        <!-- ÁREA 4: GUÍA PARA EL MÚSICO, CORO Y COMPOSITOR             -->
+        <!-- ========================================================== -->
+        <div class="lit-doc-header" id="sec-intro-musico">
+            <h1>Guía para el Músico, Coro y Compositor Litúrgico</h1>
+            <p class="lit-doc-lead">
+                Tratado práctico de prosodia castellana, arquitectura de las 5 formas musicales litúrgicas, tesitura congregacional, uso de instrumentos y pedagogía del ensayo coral (<span class="lit-meta-tag" data-cita="SC 121">SC 121</span>, <span class="lit-meta-tag" data-cita="TLS 1–2">TLS 1–2</span>).
+            </p>
+        </div>
+
+        {% for cap in guia_musico_tratado %}
+        <section class="lit-section-clean" id="{{ cap.id }}">
+            <div class="lit-section-title-bar">
+                <div>
+                    <h2>{{ cap.numero }}. {{ cap.titulo }}</h2>
+                    <span class="lit-section-hint">{{ cap.resumen }}</span>
+                </div>
+                <span class="lit-meta-tag">{{ cap.cita }}</span>
+            </div>
+
+            <div class="lit-criterios-stack">
+                {% for p in cap.principios %}
+                <article class="lit-criterio-card">
+                    <h3>{{ p.regla }}</h3>
+                    <p style="white-space: pre-line;">{{ p.explicacion }}</p>
+                    {% if p.ejemplo_incorrecto or p.ejemplo_correcto %}
+                    <div class="lit-bilingual-grid" style="margin-top: 12px;">
+                        {% if p.ejemplo_incorrecto %}
+                        <div class="lit-bilingual-col" style="border-left: 2px solid #c94a4a; padding-left: 12px;">
+                            <p style="font-size: 0.85rem; margin: 0;">{{ p.ejemplo_incorrecto }}</p>
+                        </div>
+                        {% endif %}
+                        {% if p.ejemplo_correcto %}
+                        <div class="lit-bilingual-col" style="border-left: 2px solid #3b8c62; padding-left: 12px;">
+                            <p style="font-size: 0.85rem; margin: 0;">{{ p.ejemplo_correcto }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+
+        {% elif active_area == 'otras-celebraciones' %}
+        <!-- ========================================================== -->
+        <!-- ÁREA 5: OTRAS CELEBRACIONES Y LITURGIAS                    -->
+        <!-- ========================================================== -->
+        <div class="lit-doc-header" id="sec-intro-otras">
+            <div class="lit-doc-header-top">
+                <div>
+                    <h1>Otras Celebraciones, Liturgia de las Horas y Sacramentos</h1>
+                </div>
+                <a href="{{ url_for('ver_tag', tag_name='Liturgia de las Horas') }}" class="lit-subtle-action">
+                    Ver repertorio de Liturgia de las Horas →
+                </a>
+            </div>
+            <p class="lit-doc-lead">
+                Estructura ritual y textos bilingües oficiales para la Exposición y Bendición con el Santísimo Sacramento, el Oficio Divino (Laudes, Vísperas, Completas), el Matrimonio y la Misa de Exequias (<span class="lit-meta-tag" data-cita="OGLH 268–284">OGLH 268–284</span>).
+            </p>
+        </div>
+
+        {% for cel in otras_celebraciones_detalle %}
+        <section class="lit-section-clean" id="{{ cel.id }}">
+            <div class="lit-section-title-bar">
+                <div>
+                    <h2>{{ cel.titulo }}</h2>
+                    <span class="lit-section-hint">{{ cel.descripcion }}</span>
+                </div>
+                <span class="lit-meta-tag">{{ cel.cita }}</span>
+            </div>
+
+            <div class="lit-criterio-card" style="margin-bottom: 16px;">
+                <span class="lit-criterio-cat">Estructura y Criterios del Rito</span>
+                <ul style="margin: 8px 0 0 18px; padding: 0; line-height: 1.68; font-size: 0.92rem; color: var(--lit-text-secondary);">
+                    {% for paso in cel.estructura_ritual %}
+                    <li style="margin-bottom: 6px;">{{ paso }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if cel.textos_bilingues %}
+            <div class="lit-bilingual-stack">
+                {% for tb in cel.textos_bilingues %}
+                <div class="lit-bilingual-card">
+                    <div class="lit-bilingual-header">
+                        <span class="lit-meta-tag">{{ tb.titulo }}</span>
+                    </div>
+                    <div class="lit-bilingual-grid">
+                        <div class="lit-bilingual-col lit-col-latin">
+                            <span class="lit-lang-label">Editio Typica (Latín)</span>
+                            <p class="lit-text-latin" style="white-space: pre-line;">{{ tb.latin }}</p>
+                        </div>
+                        <div class="lit-bilingual-col lit-col-es">
+                            <span class="lit-lang-label">Texto Litúrgico en Español</span>
+                            <p class="lit-text-es" style="white-space: pre-line;">{{ tb.espanol }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <!-- Columna Derecha: Índice Minimalista con Scrollspy ("En esta vista") -->
+    <aside class="lit-study-toc" aria-label="En esta vista">
+        <div class="lit-toc-box">
+            <span class="lit-toc-title">En esta vista</span>
+            <ul class="lit-toc-list">
+                {% if active_area == 'santa-misa' %}
+                    <li><a href="#sec-intro-misa" class="active">Introducción</a></li>
+                    <li><a href="#sec-explorador-misa">Vistas y filtros</a></li>
+                    {% for parte in partes_misa %}
+                    <li><a href="#parte-{{ parte.id }}">{{ parte.numero }}. {{ parte.titulo }}</a></li>
+                    {% endfor %}
+                {% elif active_area == 'fundamentos-magisterio' %}
+                    <li><a href="#doc-cabecera" class="active">{{ doc_activo.sigla }} — Síntesis</a></li>
+                    <li><a href="#doc-extractos">Numerales clave</a></li>
+                    {% if doc_activo.embed_proxy_allowed %}
+                    <li><a href="#doc-visor-embed">Lector integrado</a></li>
+                    {% endif %}
+                    <li><a href="#doc-grados">Grados de participación</a></li>
+                    <li><a href="#doc-patristica">Antología patrística</a></li>
+                {% elif active_area == 'ano-liturgico' %}
+                    <li><a href="#sec-intro-tiempos" class="active">Introducción</a></li>
+                    <li><a href="#sec-matriz-tiempos">Matriz sinóptica</a></li>
+                    <li><a href="#sec-tratado-tiempos">Los 6 tiempos</a></li>
+                    {% for t in tratado_tiempos %}
+                    <li class="lit-toc-sub"><a href="#{{ t.id }}">{{ t.nombre }}</a></li>
+                    {% endfor %}
+                    <li><a href="#sec-antifonas-o">Antífonas de la «O»</a></li>
+                {% elif active_area == 'guia-musico' %}
+                    <li><a href="#sec-intro-musico" class="active">Introducción</a></li>
+                    {% for cap in guia_musico_tratado %}
+                    <li><a href="#{{ cap.id }}">{{ cap.numero }}. {{ cap.titulo }}</a></li>
+                    {% endfor %}
+                {% elif active_area == 'otras-celebraciones' %}
+                    <li><a href="#sec-intro-otras" class="active">Introducción</a></li>
+                    {% for cel in otras_celebraciones_detalle %}
+                    <li><a href="#{{ cel.id }}">{{ cel.titulo }}</a></li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<script>
+(function() {
+    // 1. Conmutador de Vista de la Santa Misa (Partes | Secuencia | Ordinario/Propio)
+    const viewBtns = document.querySelectorAll('[data-misa-view]');
+    const misaViews = {
+        partes: document.getElementById('misa-view-partes'),
+        cronologico: document.getElementById('misa-view-cronologico'),
+        naturaleza: document.getElementById('misa-view-naturaleza'),
+    };
+    const densitySwitcher = document.getElementById('lit-density-switcher');
+
+    viewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const v = btn.getAttribute('data-misa-view');
+            viewBtns.forEach(b => b.classList.toggle('active', b === btn));
+            Object.entries(misaViews).forEach(([key, el]) => {
+                if (!el) return;
+                el.classList.toggle('active', key === v);
+                el.classList.toggle('hidden', key !== v);
+            });
+            if (densitySwitcher) {
+                densitySwitcher.style.display = (v === 'partes') ? '' : 'none';
+            }
+        });
+    });
+
+    // 2. Conmutador de Densidad (Lista Editorial Compacta vs Tarjetas)
+    const densityBtns = document.querySelectorAll('[data-density]');
+    densityBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.getAttribute('data-density');
+            densityBtns.forEach(b => b.classList.toggle('active', b === btn));
+            document.querySelectorAll('#misa-view-partes .lit-compact-table').forEach(el => {
+                el.classList.toggle('hidden', mode !== 'lista');
+            });
+            document.querySelectorAll('#misa-view-partes .lit-momentos-grid').forEach(el => {
+                el.classList.toggle('hidden', mode !== 'tarjetas');
+            });
+        });
+    });
+
+    // 3. Filtro Discreto por Protagonista (<select>)
+    const protSelect = document.getElementById('lit-prot-select');
+    if (protSelect) {
+        protSelect.addEventListener('change', () => {
+            const filter = protSelect.value;
+            document.querySelectorAll('[data-protagonistas]').forEach(row => {
+                const list = (row.getAttribute('data-protagonistas') || '').split(',');
+                const show = filter === 'todos' || list.includes(filter);
+                row.style.display = show ? '' : 'none';
+            });
+        });
+    }
+})();
+</script>
+{% endblock %}

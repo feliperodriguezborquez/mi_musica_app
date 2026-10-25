@@ -1,0 +1,805 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="lit-workspace" id="lit-workspace">
+    <!-- Columna Izquierda: Árbol de Navegación Replegable -->
+    {% include '_formacion_sidebar.html' %}
+
+    <!-- Columna Central: Área Editorial Limpia de Estudio -->
+    <div class="lit-study-main">
+
+        <!-- Barra Superior Minimalista (Toggle de panel + Breadcrumbs + Selector discreto) -->
+        <div class="lit-topbar">
+            <div class="lit-topbar-left">
+                <button type="button" id="lit-sidebar-toggle-btn" class="lit-sidebar-toggle-inline" title="Mostrar / ocultar panel de contenidos">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                    </svg>
+                </button>
+
+                <nav class="lit-breadcrumbs" aria-label="Ubicación">
+                    <a href="{{ url_for('ver_formacion') }}">Formación</a>
+                    <span>/</span>
+                    <a href="{{ url_for('ver_formacion') }}">La Santa Misa</a>
+                    <span>/</span>
+                    <span>{{ momento.parte_nombre }}</span>
+                    <span>/</span>
+                    <strong>{{ momento.titulo }}</strong>
+                </nav>
+            </div>
+
+            <div class="lit-topbar-right">
+                <button type="button" class="lit-cmdk-trigger" title="Buscar en Formación Litúrgica (Ctrl + K)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span>Buscar…</span>
+                    <kbd class="lit-kbd">Ctrl K</kbd>
+                </button>
+
+                <button type="button" id="lit-zen-toggle-btn" class="lit-zen-btn" title="Modo enfoque de lectura sin paneles laterales ( Z )">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Lectura</span>
+                </button>
+
+                <!-- Selector desplegable discreto para cambiar de momento -->
+                <details class="lit-quick-jump-dropdown">
+                    <summary class="lit-ghost-select-btn">
+                        <span>{{ momento.orden }}/16 · {{ momento.titulo }}</span>
+                        <span class="lit-caret-small">▾</span>
+                    </summary>
+                    <div class="lit-quick-jump-menu">
+                        {% for m in todos_momentos %}
+                        <a href="{{ url_for('ver_formacion_misa_momento', slug=m.slug, seccion=seccion_activa) }}"
+                           class="lit-quick-jump-item {% if m.slug == momento.slug %}active{% endif %}">
+                            <span>{{ m.orden }}. {{ m.titulo }}</span>
+                            {% if m.disponible %}<span class="lit-tree-dot"></span>{% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </details>
+
+                {% if momento.disponible %}
+                <button type="button" id="btn-open-presentation" class="lit-ghost-link" title="Abrir vista de diapositivas para taller">
+                    Modo taller ↗
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Cabecera Editorial Sobria del Momento -->
+        <div class="lit-doc-header" id="sec-cabecera">
+            <div class="lit-meta-inline-row">
+                <span>{{ momento.parte_nombre }}</span>
+                <span>·</span>
+                <span>{{ momento.naturaleza }}</span>
+                <span>·</span>
+                <span class="lit-meta-tag">{{ momento.cita_principal or momento.cita_igmr }}</span>
+                <span>·</span>
+                <span>{{ momento.grado_musicam_sacram }}</span>
+            </div>
+
+            <h1>{{ momento.titulo }} <span class="lit-hero-latin">({{ momento.nombre_latino }})</span></h1>
+            <p class="lit-doc-lead">{{ momento.subtitulo or momento.resumen_corto }}</p>
+
+            {% if momento.disponible %}
+            <!-- Pestañas Editoriales Minimalistas (Subrayado fino, sin cajas doradas) -->
+            <nav class="lit-editorial-tabs" aria-label="Secciones de {{ momento.titulo }}">
+                {% for sv in subvistas %}
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion=sv.id) }}"
+                   class="lit-editorial-tab {% if seccion_activa == sv.id %}active{% endif %}">
+                    {{ sv.titulo_corto }}
+                </a>
+                {% endfor %}
+            </nav>
+            {% endif %}
+        </div>
+
+        {% if momento.disponible %}
+
+            {% if seccion_activa == 'resumen' %}
+            <!-- ========================================================== -->
+            <!-- PÁGINA DEDICADA 1: RESUMEN Y CRITERIOS PRINCIPALES         -->
+            <!-- ========================================================== -->
+            <section class="lit-section-clean" id="sec-ficha-identidad">
+                <div class="lit-section-title-bar">
+                    <h2>Síntesis de Identidad Litúrgica</h2>
+                    <span class="lit-section-hint">Naturaleza ritual, función y ejecución según la IGMR</span>
+                </div>
+                <div class="lit-identity-table-wrapper">
+                    <table class="lit-identity-table">
+                        <thead>
+                            <tr>
+                                <th>Atributo</th>
+                                <th>Criterio Normativo</th>
+                                <th>Aplicación Práctica</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in momento.ficha_identidad %}
+                            <tr id="{{ item.id }}">
+                                <td class="lit-td-attr">{{ item.atributo }}</td>
+                                <td class="lit-td-val">{{ item.valor }}</td>
+                                <td class="lit-td-det">{{ item.detalle }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {% if momento.opciones_igmr %}
+            <section class="lit-section-clean" id="sec-opciones-igmr">
+                <div class="lit-section-title-bar">
+                    <h2>Opciones y Modos de Ejecución ({{ momento.cita_principal }})</h2>
+                    <span class="lit-section-hint">Orden de prelación y modalidades del Misal Romano</span>
+                </div>
+                <div class="lit-opciones-grid">
+                    {% for op in momento.opciones_igmr %}
+                    <div class="lit-opcion-card">
+                        <span class="lit-opcion-num">{{ op.numero }}</span>
+                        <h4>{{ op.titulo }}</h4>
+                        <p>{{ op.descripcion }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if momento.textos_oficiales %}
+            <section class="lit-section-clean" id="sec-textos-oficiales">
+                <div class="lit-section-title-bar">
+                    <div>
+                        <h2>{{ momento.textos_oficiales.titulo }}</h2>
+                        <span class="lit-section-hint">{{ momento.textos_oficiales.nota }}</span>
+                    </div>
+                </div>
+                <div class="lit-bilingual-stack">
+                    {% for txt in momento.textos_oficiales['items'] %}
+                    <div class="lit-bilingual-card">
+                        <div class="lit-bilingual-header">
+                            <span class="lit-meta-tag">{{ txt.ocasion }}</span>
+                        </div>
+                        <div class="lit-bilingual-grid">
+                            <div class="lit-bilingual-col lit-col-latin">
+                                <span class="lit-lang-label">Editio Typica (Latín)</span>
+                                <p class="lit-text-latin" style="white-space: pre-line;">{{ txt.latin }}</p>
+                            </div>
+                            <div class="lit-bilingual-col lit-col-es">
+                                <span class="lit-lang-label">Misal Romano / Leccionario (Español)</span>
+                                <p class="lit-text-es" style="white-space: pre-line;">{{ txt.espanol }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="lit-section-clean" id="sec-semaforo">
+                <div class="lit-section-title-bar">
+                    <h2>Criterios de Discernimiento Pastoral</h2>
+                    <span class="lit-section-hint">Principios esenciales, excepciones rituales y prácticas a evitar</span>
+                </div>
+                <div class="lit-semaforo-grid">
+                    <div class="lit-semaforo-col lit-sem-verde">
+                        <div class="lit-sem-header">
+                            <span class="lit-status-indicator ind-verde"></span>
+                            <h3>Lo Esencial (Regla de Oro)</h3>
+                        </div>
+                        <div class="lit-sem-items">
+                            {% for v in momento.semaforo.verde %}
+                            <div class="lit-sem-item">
+                                <h4>{{ v.titulo }}</h4>
+                                <p>{{ v.texto }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="lit-semaforo-col lit-sem-amarillo">
+                        <div class="lit-sem-header">
+                            <span class="lit-status-indicator ind-amarillo"></span>
+                            <h3>Excepciones y Tiempos Especiales</h3>
+                        </div>
+                        <div class="lit-sem-items">
+                            {% for a in momento.semaforo.amarillo %}
+                            <div class="lit-sem-item">
+                                <h4>{{ a.titulo }}</h4>
+                                <p>{{ a.texto }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="lit-semaforo-col lit-sem-rojo">
+                        <div class="lit-sem-header">
+                            <span class="lit-status-indicator ind-rojo"></span>
+                            <h3>Errores Frecuentes (Qué Evitar)</h3>
+                        </div>
+                        <div class="lit-sem-items">
+                            {% for r in momento.semaforo.rojo %}
+                            <div class="lit-sem-item">
+                                <h4>{{ r.titulo }}</h4>
+                                <p>{{ r.texto }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% if momento.adaptacion_tiempos %}
+            <section class="lit-section-clean" id="sec-tiempos-momento">
+                <div class="lit-section-title-bar">
+                    <h2>Adaptación según el Tiempo Litúrgico</h2>
+                    <div class="lit-inline-filter">
+                        <label for="lit-season-select" class="lit-inline-filter-label">Tiempo:</label>
+                        <select id="lit-season-select" class="lit-minimal-select">
+                            {% for nombre_tiempo, datos_t in momento.adaptacion_tiempos.items() %}
+                            <option value="{{ loop.index0 }}">{{ nombre_tiempo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                {% for nombre_tiempo, datos_t in momento.adaptacion_tiempos.items() %}
+                <div class="lit-season-panel {% if loop.first %}active{% else %}hidden{% endif %}" data-season-panel="{{ loop.index0 }}">
+                    <div class="lit-season-panel-grid">
+                        <div class="lit-season-box">
+                            <span class="lit-season-label">Espíritu del Tiempo</span>
+                            <p>{{ datos_t.espiritu }}</p>
+                        </div>
+                        <div class="lit-season-box">
+                            <span class="lit-season-label">Textos y Salmos Sugeridos</span>
+                            <p>{{ datos_t.textos_sugeridos }}</p>
+                        </div>
+                        <div class="lit-season-box">
+                            <span class="lit-season-label">Carácter Musical e Instrumentación</span>
+                            <p>{{ datos_t.criterio_musical }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            <div class="lit-subpage-footer-nav">
+                <span></span>
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='teologia') }}" class="lit-subtle-action">
+                    Siguiente: Tratado Teológico y Documentos →
+                </a>
+            </div>
+
+            {% elif seccion_activa == 'teologia' %}
+            <!-- ========================================================== -->
+            <!-- PÁGINA DEDICADA 2: TRATADO TEOLÓGICO Y DOCUMENTOS (EMBED)  -->
+            <!-- ========================================================== -->
+            <section class="lit-section-clean" id="sec-tratado">
+                <div class="lit-section-title-bar">
+                    <h2>Tratado Teológico, Mistagógico e Histórico</h2>
+                    <span class="lit-section-hint">Fundamento doctrinal y evolución en el Rito Romano</span>
+                </div>
+                <div class="lit-treatise-content">
+                    {% for sec in momento.tratado_teologico %}
+                    <article class="lit-treatise-section" id="tratado-{{ sec.id }}">
+                        <h3>{{ sec.titulo }}</h3>
+                        {% for p in sec.parrafos %}
+                        <p>{{ p }}</p>
+                        {% endfor %}
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="lit-section-clean" id="sec-magisterio-citas">
+                <div class="lit-section-title-bar">
+                    <div>
+                        <h2>Fuentes Oficiales del Magisterio</h2>
+                        <span class="lit-section-hint">
+                            Despliega cada numeral o abre el documento completo en el visor lateral sin salir de tu lectura.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="lit-accordion-list">
+                    {% for cita in momento.citas_magisteriales %}
+                    <details class="lit-accordion-item" id="{{ cita.id_cita }}" {% if loop.first %}open{% endif %}>
+                        <summary class="lit-accordion-summary">
+                            <div class="lit-accordion-title-wrap">
+                                <span class="lit-meta-tag">{{ cita.numeral }}</span>
+                                <strong>{{ cita.fuente }}</strong>
+                                <span class="lit-magisterio-year">({{ cita.año }})</span>
+                            </div>
+                            <span class="lit-accordion-caret">›</span>
+                        </summary>
+                        <div class="lit-accordion-body">
+                            <blockquote class="lit-magisterio-quote">
+                                {{ cita.texto }}
+                            </blockquote>
+                            <div class="lit-magisterio-comment">
+                                <strong>Clave pastoral:</strong> {{ cita.comentario_pastoral }}
+                            </div>
+                            <div class="lit-cita-actions">
+                                {% if cita.doc_id %}
+                                <button type="button"
+                                        class="lit-embed-trigger-btn"
+                                        data-embed-url="{{ url_for('ver_formacion_embed', doc_id=cita.doc_id) }}"
+                                        data-doc-sigla="{{ cita.numeral }}"
+                                        data-doc-title="{{ cita.fuente }}"
+                                        data-ext-url="{{ cita.url_oficial }}">
+                                    Abrir documento en panel lateral
+                                </button>
+                                {% endif %}
+                                {% if cita.url_oficial %}
+                                <a href="{{ cita.url_oficial }}" target="_blank" rel="noopener" class="lit-ghost-link">
+                                    Vatican.va ↗
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </details>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Lector Embebido Directo en Página (Desplegable) -->
+            <section class="lit-section-clean" id="sec-visor-inline">
+                <details class="lit-inline-embed-details">
+                    <summary class="lit-inline-embed-summary">
+                        <div>
+                            <strong>Lector Integrado: Instrucción General del Misal Romano (Vatican.va)</strong>
+                            <span class="lit-section-hint" style="display:block;">Desplegar documento completo en esta página</span>
+                        </div>
+                        <span class="lit-ghost-link">Mostrar / ocultar visor ▾</span>
+                    </summary>
+                    <div class="lit-embed-frame-wrapper" style="margin-top: 14px;">
+                        <iframe src="{{ url_for('ver_formacion_embed', doc_id='igmr') }}"
+                                class="lit-embed-iframe"
+                                loading="lazy"
+                                title="IGMR Vatican.va"></iframe>
+                    </div>
+                </details>
+            </section>
+
+            <div class="lit-subpage-footer-nav">
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='resumen') }}" class="lit-ghost-link">
+                    ← Resumen y Criterios
+                </a>
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='composicion') }}" class="lit-subtle-action">
+                    Siguiente: Composición y Práctica →
+                </a>
+            </div>
+
+            {% elif seccion_activa == 'composicion' %}
+            <!-- ========================================================== -->
+            <!-- PÁGINA DEDICADA 3: COMPOSICIÓN, PRÁCTICA Y CHECKLIST       -->
+            <!-- ========================================================== -->
+            <section class="lit-section-clean" id="sec-criterios-musicales">
+                <div class="lit-section-title-bar">
+                    <h2>Criterios de Composición, Arreglo e Interpretación</h2>
+                    <span class="lit-section-hint">Forma musical, tesitura congregacional, prosodia y dirección durante el rito</span>
+                </div>
+                <div class="lit-criterios-stack">
+                    {% for crit in momento.criterios_musicales %}
+                    <article class="lit-criterio-card" id="{{ crit.id }}">
+                        <span class="lit-criterio-cat">{{ crit.categoria }}</span>
+                        <h3>{{ crit.titulo }}</h3>
+                        <p style="white-space: pre-line;">{{ crit.explicacion }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if momento.checklist_discernimiento %}
+            <section class="lit-section-clean" id="sec-checklist">
+                <div class="lit-section-title-bar">
+                    <div>
+                        <h2>Lista de Verificación Antes de Programar o Componer</h2>
+                        <span class="lit-section-hint">Cinco criterios prácticos para evaluar la idoneidad litúrgica de la obra</span>
+                    </div>
+                    <div id="lit-checklist-score" class="lit-meta-tag">0 / {{ momento.checklist_discernimiento|length }}</div>
+                </div>
+                <div class="lit-checklist-items">
+                    {% for item in momento.checklist_discernimiento %}
+                    <label class="lit-checklist-row" for="{{ item.id }}">
+                        <input type="checkbox" id="{{ item.id }}" class="lit-chk-input">
+                        <div class="lit-chk-body">
+                            <span class="lit-chk-question">{{ item.pregunta }}</span>
+                            <small class="lit-chk-hint">{{ item.pista }}</small>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <div class="lit-subpage-footer-nav">
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='teologia') }}" class="lit-ghost-link">
+                    ← Tratado y Documentos
+                </a>
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='repertorio') }}" class="lit-subtle-action">
+                    Siguiente: Repertorio y Audios →
+                </a>
+            </div>
+
+            {% elif seccion_activa == 'repertorio' %}
+            <!-- ========================================================== -->
+            <!-- PÁGINA DEDICADA 4: REPERTORIO Y AUDIOS APLICADOS           -->
+            <!-- ========================================================== -->
+            <section class="lit-section-clean" id="sec-repertorio-especifico">
+                <div class="lit-section-title-bar">
+                    <div>
+                        <h2>Obras Etiquetadas para {{ momento.titulo }}</h2>
+                        <span class="lit-section-hint">
+                            Escucha con el reproductor inferior o abre la partitura interactiva.
+                        </span>
+                    </div>
+                    <a href="{{ url_for('ver_tag', tag_name=momento.tag_repertorio) }}" class="lit-ghost-link">
+                        Ver etiqueta "{{ momento.tag_repertorio }}" →
+                    </a>
+                </div>
+
+                {% if canciones_especificas %}
+                    {% with composiciones=canciones_especificas, page_context='tag', tag_nombre=momento.tag_repertorio, search_query='', sort_by='cronologico' %}
+                        {% include '_song_list.html' %}
+                    {% endwith %}
+                {% else %}
+                    <div class="lit-empty-repertorio">
+                        <p>
+                            Aún no hay obras con la etiqueta exacta <code>{{ momento.tag_repertorio }}</code> en <code>data.json</code>.
+                        </p>
+                    </div>
+                {% endif %}
+            </section>
+
+            {% if canciones_sugeridas %}
+            <section class="lit-section-clean" id="sec-repertorio-sugerido">
+                <div class="lit-section-title-bar">
+                    <div>
+                        <h2>Salmos e Himnos Afines del Catálogo (IGMR 48)</h2>
+                        <span class="lit-section-hint">
+                            Obras del repertorio que pueden emplearse según el tiempo litúrgico o celebración.
+                        </span>
+                    </div>
+                </div>
+                {% with composiciones=canciones_sugeridas, page_context='index', tag_nombre=None, search_query='', sort_by='cronologico' %}
+                    {% include '_song_list.html' %}
+                {% endwith %}
+            </section>
+            {% endif %}
+
+            <div class="lit-subpage-footer-nav">
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion='composicion') }}" class="lit-ghost-link">
+                    ← Composición y Práctica
+                </a>
+                {% if next_momento %}
+                <a href="{{ url_for('ver_formacion_misa_momento', slug=next_momento.slug) }}" class="lit-subtle-action">
+                    Siguiente momento: {{ next_momento.orden }}. {{ next_momento.titulo }} →
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        {% else %}
+        <!-- Vista Síntesis para momentos cuyo tratado detallado está en preparación -->
+        <section class="lit-section-clean" id="sec-ficha-identidad">
+            <div class="lit-section-title-bar">
+                <h2>Ficha Síntesis de {{ momento.titulo }}</h2>
+                <span class="lit-section-hint">Estudio detallado en preparación</span>
+            </div>
+            <div class="lit-identity-table-wrapper">
+                <table class="lit-identity-table">
+                    <tbody>
+                        <tr>
+                            <td class="lit-td-attr">Parte de la Misa</td>
+                            <td class="lit-td-val">{{ momento.parte_nombre }}</td>
+                        </tr>
+                        <tr>
+                            <td class="lit-td-attr">Naturaleza</td>
+                            <td class="lit-td-val">{{ momento.naturaleza }}</td>
+                        </tr>
+                        <tr>
+                            <td class="lit-td-attr">Función Ritual</td>
+                            <td class="lit-td-val">{{ momento.funcion_ritual }}</td>
+                        </tr>
+                        <tr>
+                            <td class="lit-td-attr">Protagonista</td>
+                            <td class="lit-td-val">{{ momento.protagonista }}</td>
+                        </tr>
+                        <tr>
+                            <td class="lit-td-attr">Grado de Participación</td>
+                            <td class="lit-td-val">{{ momento.grado_musicam_sacram }} ({{ momento.cita_igmr }})</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {% if canciones_especificas %}
+            <div style="margin-top: 28px;" id="sec-repertorio-especifico">
+                <h3>Repertorio en el Catálogo para {{ momento.titulo }}</h3>
+                {% with composiciones=canciones_especificas, page_context='tag', tag_nombre=momento.tag_repertorio, search_query='', sort_by='cronologico' %}
+                    {% include '_song_list.html' %}
+                {% endwith %}
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+    </div>
+
+    <!-- Columna Derecha: Índice Minimalista ("En esta página") -->
+    <aside class="lit-study-toc" aria-label="En esta página">
+        <div class="lit-toc-box">
+            <span class="lit-toc-title">En esta página</span>
+            <ul class="lit-toc-list">
+                <li><a href="#sec-cabecera">{{ momento.titulo }}</a></li>
+                {% if momento.disponible %}
+                    {% if seccion_activa == 'resumen' %}
+                        <li><a href="#sec-ficha-identidad">Identidad litúrgica</a></li>
+                        <li><a href="#sec-opciones-igmr">Opciones IGMR</a></li>
+                        {% if momento.textos_oficiales %}
+                        <li><a href="#sec-textos-oficiales">Textos Latín / Español</a></li>
+                        {% endif %}
+                        <li><a href="#sec-semaforo">Discernimiento pastoral</a></li>
+                        <li><a href="#sec-tiempos-momento">Tiempos litúrgicos</a></li>
+                    {% elif seccion_activa == 'teologia' %}
+                        <li><a href="#sec-tratado">Tratado teológico</a></li>
+                        {% for sec in momento.tratado_teologico %}
+                        <li class="lit-toc-sub"><a href="#tratado-{{ sec.id }}">{{ sec.titulo }}</a></li>
+                        {% endfor %}
+                        <li><a href="#sec-magisterio-citas">Fuentes magisteriales</a></li>
+                        <li><a href="#sec-visor-inline">Lector integrado IGMR</a></li>
+                    {% elif seccion_activa == 'composicion' %}
+                        <li><a href="#sec-criterios-musicales">Criterios musicales</a></li>
+                        {% for crit in momento.criterios_musicales %}
+                        <li class="lit-toc-sub"><a href="#{{ crit.id }}">{{ crit.categoria }}</a></li>
+                        {% endfor %}
+                        <li><a href="#sec-checklist">Lista de verificación</a></li>
+                    {% elif seccion_activa == 'repertorio' %}
+                        <li><a href="#sec-repertorio-especifico">Obras del momento</a></li>
+                        {% if canciones_sugeridas %}
+                        <li><a href="#sec-repertorio-sugerido">Salmos e himnos afines</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <li><a href="#sec-ficha-identidad">Ficha síntesis</a></li>
+                {% endif %}
+            </ul>
+
+            {% if momento.disponible %}
+            <div class="lit-toc-divider"></div>
+            <span class="lit-toc-title">Secciones</span>
+            <ul class="lit-toc-list">
+                {% for sv in subvistas %}
+                <li>
+                    <a href="{{ url_for('ver_formacion_misa_momento', slug=momento.slug, seccion=sv.id) }}"
+                       class="{% if seccion_activa == sv.id %}active{% endif %}">
+                        {{ sv.titulo_corto }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </aside>
+
+    {% if momento.disponible %}
+    <!-- ========================================================== -->
+    <!-- MODAL DE MODO TALLER / PRESENTACIÓN                        -->
+    <!-- ========================================================== -->
+    <div id="lit-presentation-modal" class="lit-pres-modal hidden" aria-hidden="true">
+        <div class="lit-pres-topbar">
+            <div class="lit-pres-brand">
+                <span class="lit-meta-tag">{{ momento.parte_nombre }}</span>
+                <strong>{{ momento.titulo }} ({{ momento.cita_principal }})</strong>
+            </div>
+            <div class="lit-pres-progress-wrap">
+                <span id="lit-pres-counter">1 / 6</span>
+                <div class="lit-pres-progress-bar">
+                    <div id="lit-pres-progress-fill" class="lit-pres-progress-fill" style="width: 16.6%;"></div>
+                </div>
+            </div>
+            <button type="button" id="btn-close-presentation" class="lit-ghost-link" title="Salir (Esc)">
+                ✕ Cerrar (Esc)
+            </button>
+        </div>
+
+        <div class="lit-pres-stage">
+            <div class="lit-pres-slide active" data-slide-index="0">
+                <span class="lit-pres-kicker">Formación Litúrgica · {{ momento.parte_nombre }}</span>
+                <h2 class="lit-pres-title">{{ momento.titulo }} ({{ momento.nombre_latino }})</h2>
+                <p class="lit-pres-subtitle">{{ momento.subtitulo }}</p>
+                {% if momento.opciones_igmr %}
+                <div class="lit-pres-highlight-box">
+                    <h4>Opciones y Modos de Ejecución ({{ momento.cita_principal }})</h4>
+                    <ol class="lit-pres-big-list">
+                        {% for op in momento.opciones_igmr %}
+                        <li><strong>{{ op.titulo }}:</strong> {{ op.descripcion }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="lit-pres-slide hidden" data-slide-index="1">
+                <span class="lit-pres-kicker">1. Identidad Ritual</span>
+                <h2 class="lit-pres-title">Naturaleza, Ejecución y Duración</h2>
+                <div class="lit-pres-cards-grid">
+                    {% for item in momento.ficha_identidad %}
+                    <div class="lit-pres-mini-card">
+                        <span class="lit-pres-mini-label">{{ item.atributo }}</span>
+                        <strong>{{ item.valor }}</strong>
+                        <p>{{ item.detalle }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="lit-pres-slide hidden" data-slide-index="2">
+                <span class="lit-pres-kicker">2. Discernimiento Pastoral en Chile</span>
+                <h2 class="lit-pres-title">Criterios del {{ momento.titulo }}</h2>
+                <div class="lit-semaforo-grid">
+                    <div class="lit-semaforo-col lit-sem-verde">
+                        <div class="lit-sem-header"><span class="lit-status-indicator ind-verde"></span><h3>Lo Esencial</h3></div>
+                        {% for v in momento.semaforo.verde %}
+                        <div class="lit-sem-item"><h4>{{ v.titulo }}</h4><p>{{ v.texto }}</p></div>
+                        {% endfor %}
+                    </div>
+                    <div class="lit-semaforo-col lit-sem-amarillo">
+                        <div class="lit-sem-header"><span class="lit-status-indicator ind-amarillo"></span><h3>Excepciones</h3></div>
+                        {% for a in momento.semaforo.amarillo %}
+                        <div class="lit-sem-item"><h4>{{ a.titulo }}</h4><p>{{ a.texto }}</p></div>
+                        {% endfor %}
+                    </div>
+                    <div class="lit-semaforo-col lit-sem-rojo">
+                        <div class="lit-sem-header"><span class="lit-status-indicator ind-rojo"></span><h3>Qué Evitar</h3></div>
+                        {% for r in momento.semaforo.rojo %}
+                        <div class="lit-sem-item"><h4>{{ r.titulo }}</h4><p>{{ r.texto }}</p></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="lit-pres-slide hidden" data-slide-index="3">
+                <span class="lit-pres-kicker">3. Fuentes Oficiales de la Iglesia</span>
+                <h2 class="lit-pres-title">¿Qué dice el Magisterio?</h2>
+                <div class="lit-pres-quotes">
+                    {% for cita in momento.citas_magisteriales[:2] %}
+                    <div class="lit-magisterio-card" style="margin-bottom: 14px;">
+                        <strong>{{ cita.fuente }} ({{ cita.numeral }})</strong>
+                        <blockquote class="lit-magisterio-quote">{{ cita.texto }}</blockquote>
+                        <div class="lit-magisterio-comment">{{ cita.comentario_pastoral }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="lit-pres-slide hidden" data-slide-index="4">
+                <span class="lit-pres-kicker">4. Música y Composición Litúrgica</span>
+                <h2 class="lit-pres-title">Forma, Tesitura y Dirección en Vivo</h2>
+                <div class="lit-pres-cards-grid">
+                    {% for crit in momento.criterios_musicales %}
+                    <div class="lit-pres-mini-card">
+                        <span class="lit-pres-mini-label">{{ crit.categoria }}</span>
+                        <strong>{{ crit.titulo }}</strong>
+                        <p>{{ crit.explicacion }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="lit-pres-slide hidden" data-slide-index="5">
+                <span class="lit-pres-kicker">5. Síntesis Práctica para el Coro</span>
+                <h2 class="lit-pres-title">Preguntas de Discernimiento: {{ momento.titulo }}</h2>
+                <div class="lit-pres-highlight-box">
+                    <ol class="lit-pres-big-list">
+                        {% for chk in momento.checklist_discernimiento %}
+                        <li>
+                            <strong>{{ chk.pregunta }}</strong><br>
+                            <small style="opacity: 0.8;">{{ chk.pista }}</small>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="lit-pres-controls">
+            <button type="button" id="lit-pres-prev" class="lit-ghost-link">← Anterior</button>
+            <span class="lit-pres-hint">Usa las flechas ◀ ▶ del teclado para avanzar</span>
+            <button type="button" id="lit-pres-next" class="lit-subtle-action">Siguiente →</button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    // 1. Selector discreto (<select>) de Tiempo Litúrgico
+    const seasonSelect = document.getElementById('lit-season-select');
+    const seasonPanels = document.querySelectorAll('[data-season-panel]');
+    if (seasonSelect) {
+        seasonSelect.addEventListener('change', () => {
+            const key = seasonSelect.value;
+            seasonPanels.forEach(p => {
+                const match = p.getAttribute('data-season-panel') === key;
+                p.classList.toggle('active', match);
+                p.classList.toggle('hidden', !match);
+            });
+        });
+    }
+
+    // 2. Checklist interactivo de discernimiento
+    const chkInputs = document.querySelectorAll('.lit-chk-input');
+    const scoreBadge = document.getElementById('lit-checklist-score');
+    function updateChecklistScore() {
+        if (!scoreBadge || chkInputs.length === 0) return;
+        const checked = Array.from(chkInputs).filter(i => i.checked).length;
+        scoreBadge.textContent = `${checked} / ${chkInputs.length}`;
+    }
+    chkInputs.forEach(input => input.addEventListener('change', updateChecklistScore));
+
+    // 3. Modo Presentación / Taller
+    const modal = document.getElementById('lit-presentation-modal');
+    const openBtn = document.getElementById('btn-open-presentation');
+    const closeBtn = document.getElementById('btn-close-presentation');
+    const prevBtn = document.getElementById('lit-pres-prev');
+    const nextBtn = document.getElementById('lit-pres-next');
+    const slides = document.querySelectorAll('.lit-pres-slide');
+    const counter = document.getElementById('lit-pres-counter');
+    const fill = document.getElementById('lit-pres-progress-fill');
+    let currentSlide = 0;
+
+    function showSlide(idx) {
+        if (!slides.length) return;
+        currentSlide = Math.max(0, Math.min(idx, slides.length - 1));
+        slides.forEach((s, i) => {
+            s.classList.toggle('active', i === currentSlide);
+            s.classList.toggle('hidden', i !== currentSlide);
+        });
+        if (counter) counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+        if (fill) fill.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+        if (prevBtn) prevBtn.disabled = currentSlide === 0;
+        if (nextBtn) nextBtn.textContent = currentSlide === slides.length - 1 ? 'Finalizar' : 'Siguiente →';
+    }
+
+    function openPresentation() {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        showSlide(0);
+    }
+
+    function closePresentation() {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openPresentation);
+    if (closeBtn) closeBtn.addEventListener('click', closePresentation);
+    if (prevBtn) prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentSlide === slides.length - 1) closePresentation();
+            else showSlide(currentSlide + 1);
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (!modal || modal.classList.contains('hidden')) return;
+        if (e.key === 'Escape') closePresentation();
+        if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
+        if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+    });
+})();
+</script>
+{% endblock %}

@@ -782,6 +782,200 @@ def build_master_tempo_map(root, mscz_data=None, rit_profile="ease-in", rit_drop
     return tempo_map
 
 
+def _read_midi_tempos(midi_path):
+    """Lee los eventos de tempo de un MIDI. Retorna (ppq, [(tick, usec_por_negra)], tick_final)."""
+    import struct
+    d = open(midi_path, "rb").read()
+    if d[:4] != b"MThd":
+        raise ValueError("MIDI invalido")
+    hl = struct.unpack(">I", d[4:8])[0]
+    _fmt, ntr, ppq = struct.unpack(">HHH", d[8:14])
+    pos = 8 + hl
+    tempos = []
+    max_tick = 0
+
+    def varlen(p):
+        v = 0
+        while True:
+            b = d[p]
+            p += 1
+            v = (v << 7) | (b & 0x7F)
+            if not b & 0x80:
+                return v, p
+
+    for _ in range(ntr):
+        ln = struct.unpack(">I", d[pos + 4:pos + 8])[0]
+        p, end, tick, run = pos + 8, pos + 8 + ln, 0, None
+        while p < end:
+            dt, p = varlen(p)
+            tick += dt
+            st = d[p]
+            if st == 0xFF:
+                typ = d[p + 1]
+                l, p = varlen(p + 2)
+                if typ == 0x51:
+                    tempos.append((tick, int.from_bytes(d[p:p + 3], "big")))
+                p += l
+            elif st in (0xF0, 0xF7):
+                l, p = varlen(p + 1)
+                p += l
+            else:
+                if st & 0x80:
+                    run = st
+                    p += 1
+                else:
+                    st = run
+                p += 1 if (st & 0xF0) in (0xC0, 0xD0) else 2
+        max_tick = max(max_tick, tick)
+        pos = end
+    return ppq, sorted(set(tempos)), max_tick
+
+
+def _midi_tick_to_sec(ppq, tempos, tick):
+    t, last, us = 0.0, 0, 500000
+    for tk, u in tempos:
+        if tk >= tick:
+            break
+        t += (tk - last) / ppq * us / 1e6
+        last, us = tk, u
+    return t + (tick - last) / ppq * us / 1e6
+
+
+def build_midi_tempo_map(root, mscz_path):
+    """
+    Construye el mapa de tempos {(compas, offset): bpm} usando como verdad el MIDI que
+    exporta MuseScore (incluye ritardandos, pausas de cesura y calderones tal como suenan).
+    Cada intervalo entre notas recibe el BPM que reproduce exactamente su duracion en MuseScore
+    (con difusion de error al redondear). Retorna None si no se puede (el llamador usa el mapa antiguo).
+    """
+    import tempfile
+    musescore_bin = find_musescore_bin()
+    if not musescore_bin or not mscz_path or not Path(mscz_path).exists():
+        return None
+
+    with tempfile.TemporaryDirectory() as tmp:
+        midi_path = Path(tmp) / "ref.mid"
+        res = subprocess.run([musescore_bin, "-o", str(midi_path), str(mscz_path)],
+                             capture_output=True, text=True, timeout=120)
+        if res.returncode != 0 or not midi_path.exists():
+            return None
+        ppq, tempos, max_tick = _read_midi_tempos(midi_path)
+
+    div_elem = root.find(".//divisions")
+    divisions = int(div_elem.text) if div_elem is not None and div_elem.text else 1
+
+    # Posicion (en negras) del inicio de cada compas y de cada inicio de nota (voz 1, sin acordes)
+    first_part = root.find(".//part")
+    if first_part is None:
+        return None
+    measure_start_q = {}
+    q_total = 0.0
+    for m in first_part.findall("measure"):
+        m_num = int(m.get("number", 0))
+        measure_start_q[m_num] = q_total
+        cur = longest = 0
+        for el in m:
+            if el.tag == "note" and el.find("chord") is None:
+                cur += int(el.findtext("duration", "0") or 0)
+            elif el.tag == "forward":
+                cur += int(el.findtext("duration", "0") or 0)
+            elif el.tag == "backup":
+                cur -= int(el.findtext("duration", "0") or 0)
+            longest = max(longest, cur)
+        q_total += longest / divisions
+
+    midi_end_q = max_tick / ppq
+    if not (q_total - 0.5 <= midi_end_q <= q_total + 8):
+        print(f"[WARN] El MIDI ({midi_end_q:.1f} negras) no coincide con la partitura ({q_total:.1f}); "
+              f"se usa el mapa de tempos anterior (repeticiones?).")
+        return None
+
+    boundaries = {}  # q_abs -> (compas, offset_en_divisiones)
+    for part in root.findall(".//part"):
+        for m in part.findall("measure"):
+            m_num = int(m.get("number", 0))
+            base = measure_start_q.get(m_num)
+            if base is None:
+                continue
+            boundaries.setdefault(round(base, 6), (m_num, 0))
+            cur = 0
+            for el in m:
+                if el.tag == "note":
+                    if el.find("chord") is None:
+                        if el.findtext("voice") in (None, "", "1"):
+                            off_q = base + cur / divisions
+                            boundaries.setdefault(round(off_q, 6), (m_num, cur))
+                        cur += int(el.findtext("duration", "0") or 0)
+                elif el.tag == "forward":
+                    cur += int(el.findtext("duration", "0") or 0)
+                elif el.tag == "backup":
+                    cur -= int(el.findtext("duration", "0") or 0)
+
+    # --- Cesuras: en MuseScore la pausa se SUMA tras la nota con cesura (el MIDI la representa con un
+    # evento de tempo anomalo que comprime esas notas). Se neutraliza ese evento y se suma la pausa real.
+    pauses = []  # [(q_inicio_siguiente_nota, segundos)]
+    try:
+        breaths = (extract_mscz_playback_data(mscz_path) or {}).get("breaths", [])
+    except Exception:
+        breaths = []
+    for b in breaths:
+        m_num, pause_s = b["m_num"], float(b.get("pause", 1.0))
+        m_el = first_part.find(f'measure[@number="{m_num}"]')
+        base = measure_start_q.get(m_num)
+        if m_el is None or base is None:
+            continue
+        cur = 0
+        els = [e for e in m_el if e.tag == "note" and e.find("chord") is None]
+        pause_q = None
+        for idx, n in enumerate(els):
+            d = int(n.findtext("duration", "0") or 0)
+            if n.find(".//caesura") is not None:
+                end = cur + d
+                if idx + 1 < len(els) and els[idx + 1].find("rest") is not None:
+                    end += int(els[idx + 1].findtext("duration", "0") or 0)
+                pause_q = base + end / divisions
+                break
+            cur += d
+        if pause_q is not None:
+            pauses.append((pause_q, pause_s))
+            tk = round(pause_q * ppq)
+            tempos = [(t_, u_) for (t_, u_) in tempos if abs(t_ - tk) > 2]
+
+    def true_time(q):
+        t = _midi_tick_to_sec(ppq, tempos, q * ppq)
+        return t + sum(p for (pq, p) in pauses if q >= pq - 1e-6)
+
+    # --- Calderon final: factor de estiramiento tomado del MIDI (tempo del ultimo evento vs el anterior)
+    fermata_ratio = 1.0
+    end_events = [(t_, u_) for (t_, u_) in tempos if t_ >= round(q_total * ppq) - 2]
+    prev_events = [(t_, u_) for (t_, u_) in tempos if t_ < round(q_total * ppq) - 2]
+    if end_events and prev_events:
+        r = end_events[0][1] / prev_events[-1][1]  # usec/negra: mayor = mas lento
+        if r > 1.05:
+            fermata_ratio = r
+
+    qs = sorted(boundaries)
+    tempo_map = {}
+    actual = 0.0
+    for i, q in enumerate(qs):
+        is_last = (i + 1 >= len(qs))
+        q_next = q_total if is_last else qs[i + 1]
+        dq = q_next - q
+        if dq <= 0:
+            continue
+        t_start = true_time(q)
+        t_end = true_time(q_next)
+        if is_last:
+            t_end = t_start + (t_end - t_start) * fermata_ratio
+        target_end = t_end
+        need = target_end - actual
+        bpm = dq * 60.0 / need if need > 0.02 else 300
+        bpm = int(max(15, min(300, round(bpm))))
+        tempo_map[boundaries[q]] = bpm
+        actual += dq * 60.0 / bpm
+    return tempo_map
+
+
 def process_cantamus(
     input_path,
     output_path=None,
@@ -949,14 +1143,24 @@ def process_cantamus(
     # -------------------------------------------------------------
     # 4. Construccion del Mapa Maestro de Tempos Multicuerda
     # -------------------------------------------------------------
-    tempo_map = build_master_tempo_map(
-        root=root,
-        mscz_data=mscz_data,
-        rit_profile=rit_profile,
-        rit_drop=rit_drop,
-        rit_measures=rit_measures,
-        initial_bpm=initial_bpm
-    )
+    tempo_map = None
+    if mscz_path:
+        try:
+            tempo_map = build_midi_tempo_map(root, mscz_path)
+            if tempo_map:
+                print("[INFO] Tempos calibrados con el MIDI real de MuseScore (ritardandos, cesuras y calderon final).")
+        except Exception as e:
+            print(f"[WARN] No se pudo calibrar con el MIDI de MuseScore ({e}); se usa el mapa heuristico.")
+            tempo_map = None
+    if not tempo_map:
+        tempo_map = build_master_tempo_map(
+            root=root,
+            mscz_data=mscz_data,
+            rit_profile=rit_profile,
+            rit_drop=rit_drop,
+            rit_measures=rit_measures,
+            initial_bpm=initial_bpm
+        )
 
     # -------------------------------------------------------------
     # 3. Procesamiento por Parte (Monofonía Estricta y Tempo Baking)

@@ -15,6 +15,7 @@ from flask import (
     Flask, render_template, abort, request, redirect,
     url_for, session, flash, send_file, jsonify
 )
+from sqlalchemy import text
 
 # Cargar variables de entorno locales desde .env si existe
 load_dotenv()
@@ -64,6 +65,22 @@ from services.catalog_service import (
     get_playlist_songs,
 )
 from services.lyrics_service import lrc_to_letras, letras_to_lrc
+from services.liturgy_service import (
+    get_all_areas,
+    get_subvistas_momento,
+    get_documentos_magisteriales,
+    get_documento_by_id,
+    get_partes_misa,
+    get_momentos_misa,
+    get_momento_by_slug,
+    get_detalle_momento,
+    get_datos_areas_extra,
+    get_repertorio_for_momento,
+    get_citas_popover_dictionary,
+    get_buscador_estudio_index,
+    TIEMPOS_LITURGICOS_RESUMEN,
+    GRADOS_PARTICIPACION_MS,
+)
 
 # Inicializar SQLAlchemy con la app Flask
 db.init_app(app)
@@ -106,6 +123,39 @@ def login_required(f):
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
+
+
+# ============================================================
+# RUTAS DE MONITOREO Y SALUD (UPTIMEROBOT / CLOUD)
+# ============================================================
+@app.route('/health', methods=['GET', 'HEAD'])
+@app.route('/healthz', methods=['GET', 'HEAD'])
+def health_check():
+    """
+    Endpoint de monitoreo de disponibilidad para UptimeRobot y servicios cloud.
+    Verifica el estado de la aplicación web y la conexión a la base de datos.
+    Soporta peticiones GET y HEAD.
+    """
+    health_data = {
+        'status': 'healthy',
+        'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'database': 'connected',
+    }
+
+    try:
+        with open('build_date.txt', 'r', encoding='utf-8') as f:
+            health_data['build_date'] = f.read().strip()
+    except Exception:
+        pass
+
+    try:
+        # Verificar conectividad a la base de datos mediante consulta rápida
+        db.session.execute(text('SELECT 1')).scalar()
+        return jsonify(health_data), 200
+    except Exception as e:
+        health_data['status'] = 'unhealthy'
+        health_data['database'] = f'error: {str(e)}'
+        return jsonify(health_data), 503
 
 
 # ============================================================
@@ -186,6 +236,208 @@ def ver_listas():
     set_de_tags = {tag.strip() for c in todas_las_canciones for tag in c.tags if tag and tag.strip()}
     simple_tags, hierarchical_tags = build_hierarchical_tags(set_de_tags)
     return render_template('listas.html', simple_tags=simple_tags, hierarchical_tags=hierarchical_tags)
+
+
+@app.route('/formacion')
+def ver_formacion():
+    """Portal de Estudio de Formación Litúrgica: La Santa Misa (4 partes, cronológico, Ordinario vs. Propio)."""
+    return render_template(
+        'formacion.html',
+        active_area='santa-misa',
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momentos_misa=get_momentos_misa(),
+        documentos=get_documentos_magisteriales(),
+        tiempos_resumen=TIEMPOS_LITURGICOS_RESUMEN,
+        grados_ms=GRADOS_PARTICIPACION_MS,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+        **get_datos_areas_extra(),
+    )
+
+
+@app.route('/formacion/tiempos')
+def ver_formacion_tiempos():
+    """Vista de Estudio dedicada al Año Litúrgico y sus Tiempos."""
+    return render_template(
+        'formacion.html',
+        active_area='ano-liturgico',
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momentos_misa=get_momentos_misa(),
+        documentos=get_documentos_magisteriales(),
+        tiempos_resumen=TIEMPOS_LITURGICOS_RESUMEN,
+        grados_ms=GRADOS_PARTICIPACION_MS,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+        **get_datos_areas_extra(),
+    )
+
+
+@app.route('/formacion/documentos')
+@app.route('/formacion/documentos/<doc_id>')
+def ver_formacion_documentos(doc_id=None):
+    """Biblioteca de Documentos Oficiales del Magisterio con lector integrado embebido."""
+    docs = get_documentos_magisteriales()
+    doc_activo = get_documento_by_id(doc_id) if doc_id else docs[0]
+    if doc_id and not doc_activo:
+        abort(404)
+    return render_template(
+        'formacion.html',
+        active_area='fundamentos-magisterio',
+        doc_activo=doc_activo,
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momentos_misa=get_momentos_misa(),
+        documentos=docs,
+        tiempos_resumen=TIEMPOS_LITURGICOS_RESUMEN,
+        grados_ms=GRADOS_PARTICIPACION_MS,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+        **get_datos_areas_extra(),
+    )
+
+
+@app.route('/formacion/musico')
+def ver_formacion_musico():
+    """Vista de Estudio para el Músico, Coro y Compositor Litúrgico."""
+    return render_template(
+        'formacion.html',
+        active_area='guia-musico',
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momentos_misa=get_momentos_misa(),
+        documentos=get_documentos_magisteriales(),
+        tiempos_resumen=TIEMPOS_LITURGICOS_RESUMEN,
+        grados_ms=GRADOS_PARTICIPACION_MS,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+        **get_datos_areas_extra(),
+    )
+
+
+@app.route('/formacion/otras')
+def ver_formacion_otras():
+    """Vista de Estudio para Otras Celebraciones y Liturgias."""
+    return render_template(
+        'formacion.html',
+        active_area='otras-celebraciones',
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momentos_misa=get_momentos_misa(),
+        documentos=get_documentos_magisteriales(),
+        tiempos_resumen=TIEMPOS_LITURGICOS_RESUMEN,
+        grados_ms=GRADOS_PARTICIPACION_MS,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+        **get_datos_areas_extra(),
+    )
+
+
+@app.route('/formacion/misa/<slug>')
+@app.route('/formacion/misa/<slug>/<seccion>')
+def ver_formacion_misa_momento(slug, seccion='resumen'):
+    """
+    Vista de Estudio a pantalla completa de un momento de la Santa Misa.
+    Separa cada capa en su propia sub-vista dedicada:
+    - 'resumen': Resumen Ejecutivo y Criterios Principales
+    - 'teologia': Tratado Teológico y Documentos (con visor embebido)
+    - 'composicion': Composición, Práctica y Checklist
+    - 'repertorio': Repertorio y Audios Aplicados
+    """
+    momento = get_detalle_momento(slug)
+    if not momento:
+        abort(404)
+
+    subvistas = get_subvistas_momento()
+    valid_ids = {sv['id'] for sv in subvistas}
+    if seccion not in valid_ids:
+        seccion = 'resumen'
+
+    todos_momentos = get_momentos_misa()
+    idx_actual = next((i for i, m in enumerate(todos_momentos) if m['slug'] == slug), -1)
+    prev_momento = todos_momentos[idx_actual - 1] if idx_actual > 0 else None
+    next_momento = todos_momentos[idx_actual + 1] if 0 <= idx_actual < len(todos_momentos) - 1 else None
+
+    canciones_especificas, canciones_sugeridas = get_repertorio_for_momento(slug)
+
+    return render_template(
+        'formacion_momento.html',
+        active_area='santa-misa',
+        areas=get_all_areas(),
+        partes_misa=get_partes_misa(),
+        momento=momento,
+        seccion_activa=seccion,
+        subvistas=subvistas,
+        todos_momentos=todos_momentos,
+        prev_momento=prev_momento,
+        next_momento=next_momento,
+        documentos=get_documentos_magisteriales(),
+        canciones_especificas=canciones_especificas,
+        canciones_sugeridas=canciones_sugeridas,
+        citas_popover=get_citas_popover_dictionary(),
+        buscador_estudio_index=get_buscador_estudio_index(),
+        page_context='formacion',
+    )
+
+
+@app.route('/formacion/embed/<doc_id>')
+def ver_formacion_embed(doc_id):
+    """
+    Proxy lector para incrustar documentos oficiales de Vatican.va en un iframe local
+    (evitando el bloqueo X-Frame-Options: SAMEORIGIN del servidor externo) con estilo limpio de lectura.
+    """
+    import urllib.request
+    doc = get_documento_by_id(doc_id)
+    if not doc or not doc.get('embed_proxy_allowed'):
+        abort(404)
+
+    target_url = doc['url_oficial']
+    try:
+        req = urllib.request.Request(target_url, headers={'User-Agent': 'Mozilla/5.0'})
+        raw_bytes = urllib.request.urlopen(req, timeout=10).read()
+        try:
+            html_doc = raw_bytes.decode('utf-8')
+        except UnicodeDecodeError:
+            html_doc = raw_bytes.decode('iso-8859-1', errors='replace')
+
+        base_href = target_url.rsplit('/', 1)[0] + '/'
+        style_inject = f"""
+        <base href="{base_href}" target="_blank">
+        <style>
+            body {{
+                font-family: 'Georgia', 'Lora', serif !important;
+                background-color: #fdfbf7 !important;
+                color: #2d2b29 !important;
+                line-height: 1.72 !important;
+                padding: 28px 36px !important;
+                max-width: 860px !important;
+                margin: 0 auto !important;
+            }}
+            a {{ color: #8e6c13 !important; }}
+            table[ width="100%" ] {{ background: transparent !important; }}
+        </style>
+        """
+        if '<head>' in html_doc:
+            html_doc = html_doc.replace('<head>', '<head>' + style_inject, 1)
+        elif '<HEAD>' in html_doc:
+            html_doc = html_doc.replace('<HEAD>', '<HEAD>' + style_inject, 1)
+        else:
+            html_doc = style_inject + html_doc
+        return html_doc
+    except Exception as exc:
+        return (
+            f"<html><body style='font-family:sans-serif;padding:24px;'>"
+            f"<h3>No se pudo cargar la vista previa directa desde Vatican.va</h3>"
+            f"<p>Detalle: {exc}</p>"
+            f"<p><a href='{target_url}' target='_blank' rel='noopener'>Abrir documento directamente en Vatican.va ↗</a></p>"
+            f"</body></html>"
+        )
 
 
 @app.route('/get_playlist')
