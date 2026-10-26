@@ -24,8 +24,10 @@
         <nav class="container">
             <a href="{{ url_for('index') }}" class="brand-logo">Mis Canciones</a>
             <ul>
+                {% if FEATURES.get('formacion_liturgica') %}
                 <li><a href="{{ url_for('ver_formacion') }}">Formación Litúrgica</a></li>
-                <li><a href="{{ url_for('ver_listas') }}">Listas</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('ver_listas') }}">Listas de Reproducción</a></li>
                 {% if session.logged_in and FEATURES['cantamus'] %}
                 <li><a href="{{ url_for('cantamus_view') }}">Cantāmus</a></li>
                 {% endif %}

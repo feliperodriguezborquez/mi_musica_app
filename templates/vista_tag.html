@@ -6,7 +6,7 @@
         <div class="vista-tag-header-left">
             {% if breadcrumbs and breadcrumbs|length > 1 %}
                 <div class="breadcrumbs" style="font-size: 0.9em; margin-bottom: 6px;">
-                    <a href="{{ url_for('ver_listas') }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">Listas</a>
+                    <a href="{{ url_for('ver_listas') }}" style="color: var(--color-acento); text-decoration: none; font-weight: 500;">Listas de Reproducción</a>
                     {% for crumb in breadcrumbs %}
                         <span style="margin: 0 4px; opacity: 0.6; color: var(--color-texto-secundario);">/</span>
                         {% if not loop.last %}

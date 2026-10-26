@@ -12,7 +12,8 @@ FEATURES = {
     'autoplay':        True,   # Opción de auto-reproducción en perfil
     'category_pills':  True,   # Pestañas Todas/Composiciones/Arreglos
     'ideas_admin':     True,   # Tablero Kanban para gestión de ideas
-    'cantamus':        True,   # Herramienta de optimización y mezcla para Cantamus
+    'cantamus':            True,   # Herramienta de optimización y mezcla para Cantamus
+    'formacion_liturgica': False,  # Sección de Formación Litúrgica
 }
 
 # ============================================================

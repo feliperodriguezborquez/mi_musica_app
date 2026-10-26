@@ -125,6 +125,12 @@ def login_required(f):
     return decorated_function
 
 
+@app.before_request
+def check_formacion_feature():
+    if request.path.startswith('/formacion') and not FEATURES.get('formacion_liturgica', False):
+        abort(404)
+
+
 # ============================================================
 # RUTAS DE MONITOREO Y SALUD (UPTIMEROBOT / CLOUD)
 # ============================================================

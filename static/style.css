@@ -275,6 +275,10 @@ footer p {
     opacity: 0.85;
     font-weight: 700; 
     font-size: 1.05em; 
+    min-width: 1.8rem;
+    flex-shrink: 0;
+    display: inline-block;
+    text-align: left;
 }
 
 .tarjeta-obra:last-child {
@@ -296,6 +300,7 @@ footer p {
     color: var(--color-texto-secundario); 
     font-size: 0.90em; 
     font-weight: 500;
+    padding-left: calc(1.8rem + 10px);
 }
 .categoria-tags-container { 
     display: flex; 
@@ -794,19 +799,63 @@ footer p {
     }
 
     /* --- Tarjeta de Canción en la Lista --- */
+    .ui-polished .tarjeta-obra,
     .tarjeta-obra {
-        flex-direction: column; /* Apila la info y las categorías */
-        align-items: flex-start; /* Alinea todo a la izquierda */
-        gap: 10px;
-        padding: 12px;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 14px 16px !important;
+    }
+
+    .ui-polished .info-tarjeta,
+    .info-tarjeta {
+        width: 100% !important;
+        text-align: left !important;
+    }
+
+    .ui-polished .song-title-with-number,
+    .song-title-with-number {
+        width: 100% !important;
+        display: flex !important;
+        align-items: baseline !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .song-number {
+        display: inline-block !important;
+        min-width: 1.6rem !important;
+        text-align: left !important;
+        flex-shrink: 0 !important;
+    }
+
+    .info-tarjeta p {
+        padding-left: calc(1.6rem + 8px) !important;
+        margin: 0 !important;
+    }
+
+    .ui-polished .tarjeta-right-section,
+    .tarjeta-right-section {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-top: 4px !important;
+        padding-top: 8px !important;
+        border-top: 1px solid var(--color-borde) !important;
     }
 
     .categoria-tags-container {
-        margin-left: 0;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        align-items: center !important;
+        flex: 1 1 auto !important;
+        margin-left: 0 !important;
     }
 
     .categoria-tag {
-        margin-left: 0; /* Resetea el margen */
+        margin-left: 0 !important;
     }
 
     /* --- Página de Detalle --- */
@@ -1586,6 +1635,12 @@ footer p {
     display: flex;
     align-items: center;
     gap: 16px;
+}
+.tarjeta-audio-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 .list-play-btn {
     display: flex;
