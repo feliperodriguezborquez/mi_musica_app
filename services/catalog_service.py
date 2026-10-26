@@ -168,8 +168,10 @@ def get_playlist_songs(
     norm_cat = normalize_category_name(categoria) if categoria else None
 
     # 1. Conjunto base según contexto
-    if norm_cat:
+    if norm_cat in ['Composición', 'Arreglo']:
         base_songs = search_by_category(norm_cat)
+    elif norm_cat in ['todas', 'all']:
+        base_songs = Cancion.query.all()
     elif context == 'composiciones':
         base_songs = search_by_category("Composición")
     elif context == 'arreglos':
@@ -177,6 +179,9 @@ def get_playlist_songs(
     elif context == 'tag' and tag_name:
         all_songs = Cancion.query.all()
         base_songs = [s for s in all_songs if tag_matches(tag_name, s.tags)]
+    elif context == 'index' and not categoria:
+        # Por defecto en la página de inicio: solo composiciones
+        base_songs = search_by_category("Composición")
     else:
         base_songs = Cancion.query.all()
 

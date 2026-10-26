@@ -4464,7 +4464,7 @@
             "Composición",
             "Arreglo"
         ],
-        "youtube_video_embed": null,
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/BBCPpa0fdC4\" title=\"Eripe Me (Salmo 142)\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
         "youtube_audio_embed": null,
         "interprete": null,
         "tipo_pdf": "partitura",
@@ -4605,5 +4605,87 @@
                 }
             ]
         }
+    },
+    {
+        "id": 36,
+        "titulo": "Quédate con nosotros",
+        "musica": "Romina González Romanini",
+        "letra": "Romina González Romanini",
+        "adaptacion": null,
+        "arreglo": "Felipe Rodríguez",
+        "idioma": "Español",
+        "anio": 2025,
+        "mes": 11,
+        "dia": 6,
+        "descripcion": "Arreglo del canto «Quédate con nosotros».",
+        "audio": null,
+        "letras_acordes": "media/Quédate con Nosotros.pdf",
+        "partitura": null,
+        "midi": null,
+        "tags": [
+            "Tiempo Ordinario"
+        ],
+        "tipo": "youtube_selectable",
+        "categorias": [
+            "Arreglo"
+        ],
+        "youtube_video_embed": null,
+        "youtube_audio_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/ZPPhxwEmzvI?si=HQJDDrpFKsFgVzzp\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "interprete": "Coro Misión País",
+        "tipo_pdf": "partitura",
+        "descargas": [
+            {
+                "nombre": "Partitura General Completa (PDF)",
+                "archivo": "media/Quédate con Nosotros.pdf"
+            },
+            {
+                "nombre": "Arreglo Coral (PDF)",
+                "archivo": "media/Quédate con Nosotros-Coral.pdf"
+            },
+            {
+                "nombre": "Particella Solista (PDF)",
+                "archivo": "media/Quédate con Nosotros-Solista.pdf"
+            },
+            {
+                "nombre": "Particella Trío (PDF)",
+                "archivo": "media/Quédate con Nosotros-Trío.pdf"
+            },
+            {
+                "nombre": "Particella Sopranos (PDF)",
+                "archivo": "media/Quédate con Nosotros-Sopranos.pdf"
+            },
+            {
+                "nombre": "Particella Altos (PDF)",
+                "archivo": "media/Quédate con Nosotros-Altos.pdf"
+            },
+            {
+                "nombre": "Particella Tenores (PDF)",
+                "archivo": "media/Quédate con Nosotros-Tenores.pdf"
+            },
+            {
+                "nombre": "Particella Bajos (PDF)",
+                "archivo": "media/Quédate con Nosotros-Bajos.pdf"
+            },
+            {
+                "nombre": "Particella Bajo Eléctrico (PDF)",
+                "archivo": "media/Quédate con Nosotros-Bajo_eléctrico.pdf"
+            },
+            {
+                "nombre": "Particella Saxofón Alto (PDF)",
+                "archivo": "media/Quédate con Nosotros-Saxofón_Alto.pdf"
+            },
+            {
+                "nombre": "Particella Saxofón Tenor (PDF)",
+                "archivo": "media/Quédate con Nosotros-Saxofón_Tenor.pdf"
+            },
+            {
+                "nombre": "Particella Trompeta en Sib (PDF)",
+                "archivo": "media/Quédate con Nosotros-Trompeta_en_Sib.pdf"
+            },
+            {
+                "nombre": "Particella Trombón (PDF)",
+                "archivo": "media/Quédate con Nosotros-Trombón.pdf"
+            }
+        ]
     }
 ]

@@ -163,12 +163,29 @@ def health_check():
 # ============================================================
 @app.route('/')
 def index():
-    """Página de inicio: Catálogo completo con buscador en vivo y opciones de orden."""
-    base_songs = Cancion.query.all()
+    """Página de inicio: Catálogo con buscador en vivo y opciones de orden (por defecto solo Composiciones)."""
+    categoria = request.args.get('categoria')
+    if categoria is None:
+        categoria = 'Composición'
+    
+    if categoria in ['Composición', 'Arreglo']:
+        base_songs = search_by_category(categoria)
+    elif categoria in ['todas', 'all', '']:
+        base_songs = Cancion.query.all()
+    else:
+        base_songs = search_by_category(categoria) or Cancion.query.all()
+
     filtered_songs, search_query = search_songs(base_songs, request.args.get('search', '').strip())
     sort_by = request.args.get('sort_by', 'cronologico')
     sorted_songs = sort_songs(filtered_songs, sort_by=sort_by)
-    return render_template('index.html', composiciones=sorted_songs, search_query=search_query, page_context='index', sort_by=sort_by)
+    return render_template(
+        'index.html',
+        composiciones=sorted_songs,
+        search_query=search_query,
+        page_context='index',
+        sort_by=sort_by,
+        categoria=categoria
+    )
 
 
 @app.route('/composiciones')

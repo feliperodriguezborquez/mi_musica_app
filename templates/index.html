@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Todas las Canciones</h2>
+    <h2>{% if categoria == 'Arreglo' %}Arreglos{% elif categoria in ['todas', 'all'] %}Todas las Canciones{% else %}Composiciones{% endif %}</h2>
     
     {% include '_filters.html' %}
 

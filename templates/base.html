@@ -1098,6 +1098,12 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
+            const heading = document.querySelector('main h2');
+            if (heading && (window.location.pathname === '/' || window.location.pathname.endsWith('/index'))) {
+                if (pill.dataset.cat === 'todas') heading.textContent = 'Todas las Canciones';
+                else if (pill.dataset.cat === 'Arreglo') heading.textContent = 'Arreglos';
+                else heading.textContent = 'Composiciones';
+            }
             const container = document.getElementById('song-list-container');
             if (container) {
                 const params = new URLSearchParams();

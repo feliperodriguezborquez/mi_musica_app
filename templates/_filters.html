@@ -11,9 +11,9 @@
     <div class="filter-row-combined">
         {% if FEATURES['category_pills'] %}
         <div class="category-pills-wrapper">
-            <button class="category-pill active" data-cat="">Todas</button>
-            <button class="category-pill" data-cat="Composición">Composiciones</button>
-            <button class="category-pill" data-cat="Arreglo">Arreglos</button>
+            <button class="category-pill {% if categoria in ['todas', 'all'] or (categoria == '' and categoria is not none) %}active{% endif %}" data-cat="todas">Todas</button>
+            <button class="category-pill {% if categoria == 'Composición' or (categoria is none and (page_context == 'index' or request.endpoint == 'index')) %}active{% endif %}" data-cat="Composición">Composiciones</button>
+            <button class="category-pill {% if categoria == 'Arreglo' %}active{% endif %}" data-cat="Arreglo">Arreglos</button>
         </div>
         {% endif %}
         
