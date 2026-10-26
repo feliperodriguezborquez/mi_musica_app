@@ -45,12 +45,6 @@
                                     <span class="theme-icon-moon">🌙</span>
                                 </button>
                             </div>
-                            {% if FEATURES['autoplay'] %}
-                            <div class="dropdown-item dropdown-toggle-row">
-                                <span class="dropdown-label">Auto-reproducir</span>
-                                <button id="autoplay-toggle" class="toggle-switch" aria-label="Auto-reproducción"></button>
-                            </div>
-                            {% endif %}
                         </div>
                         
                         <div class="dropdown-separator"></div>
@@ -465,12 +459,6 @@ window.FP = {
         };
         this._endedHandler = () => {
             updatePlayIcon(true);
-            if (localStorage.getItem('autoplay_playlist') === 'true' &&
-                next && next.href && !next.href.endsWith('#')) {
-                const url = new URL(next.href);
-                url.searchParams.set('play', '1');
-                window.location.href = url.toString();
-            }
         };
 
         a.addEventListener('timeupdate', this._timeUpdateHandler);
@@ -768,19 +756,6 @@ document.addEventListener('DOMContentLoaded', function() {
         applyTheme(localStorage.getItem('theme') || 'light');
         themeToggle.addEventListener('click', () => {
             applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        });
-    }
-
-    // ====== Toggle de Autoplay ======
-    const autoplayToggle = document.getElementById('autoplay-toggle');
-    if (autoplayToggle) {
-        const applyAutoplay = (val) => {
-            localStorage.setItem('autoplay_playlist', val ? 'true' : 'false');
-            autoplayToggle.classList.toggle('on', val);
-        };
-        applyAutoplay(localStorage.getItem('autoplay_playlist') === 'true');
-        autoplayToggle.addEventListener('click', () => {
-            applyAutoplay(localStorage.getItem('autoplay_playlist') !== 'true');
         });
     }
 
