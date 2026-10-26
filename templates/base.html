@@ -131,12 +131,12 @@
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 6h2v12h-2zm-10.5 6l8.5 6V6z" transform="rotate(180 9.75 12)"/></svg>
                 </button>
             </div>
+            <div class="fp-progress-container">
+                <span id="fp-current">0:00</span>
+                <input type="range" id="fp-seek" class="fp-seek" value="0" min="0" step="1">
+                <span id="fp-duration">0:00</span>
+            </div>
             <div class="fp-right">
-                <div class="fp-progress-container">
-                    <span id="fp-current">0:00</span>
-                    <input type="range" id="fp-seek" class="fp-seek" value="0" min="0" step="1">
-                    <span id="fp-duration">0:00</span>
-                </div>
                 <div class="fp-volume-container">
                     <button id="fp-volume-btn" class="fp-btn" title="Silenciar">
                         <svg id="fp-vol-svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
@@ -559,6 +559,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const applyLyricsHeight = (px) => {
         if (!fpLyricsOverlay) return;
+        if (window.innerWidth <= 768) {
+            fpLyricsOverlay.style.removeProperty('--fp-lyrics-max-h');
+            return;
+        }
         if (px) {
             const clamped = Math.max(200, Math.min(window.innerHeight - 130, Number(px)));
             fpLyricsOverlay.style.setProperty('--fp-lyrics-max-h', `${clamped}px`);
@@ -568,15 +572,17 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const savedLyricsH = localStorage.getItem('fp_lyrics_height');
-    if (savedLyricsH) applyLyricsHeight(savedLyricsH);
+    if (savedLyricsH && window.innerWidth > 768) applyLyricsHeight(savedLyricsH);
 
     if (fpLyricsExpand && fpLyricsOverlay) {
         fpLyricsExpand.addEventListener('click', () => {
             const isTall = fpLyricsOverlay.classList.toggle('is-tall');
             if (isTall) {
                 fpLyricsOverlay.style.removeProperty('--fp-lyrics-max-h');
-            } else if (localStorage.getItem('fp_lyrics_height')) {
+            } else if (localStorage.getItem('fp_lyrics_height') && window.innerWidth > 768) {
                 applyLyricsHeight(localStorage.getItem('fp_lyrics_height'));
+            } else {
+                fpLyricsOverlay.style.removeProperty('--fp-lyrics-max-h');
             }
             const svg = document.getElementById('fp-lyrics-expand-svg');
             if (svg) {
@@ -599,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let dragging = false;
 
         const onMove = (clientY) => {
-            if (!dragging) return;
+            if (!dragging || window.innerWidth <= 768) return;
             const delta = startY - clientY;
             const newH = Math.max(180, Math.min(window.innerHeight - 120, startH + delta));
             fpLyricsOverlay.classList.remove('is-tall');

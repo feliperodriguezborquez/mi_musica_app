@@ -1720,7 +1720,7 @@ footer p {
     text-overflow: ellipsis; 
     display: block;
 }
-.fp-controls { display: flex; align-items: center; gap: 12px; }
+.fp-controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .fp-btn {
     background: none; border: none !important; outline: none !important; cursor: pointer;
     font-size: 1.3rem; color: var(--color-texto); padding: 6px;
@@ -1757,11 +1757,11 @@ footer p {
     background: var(--color-acento) !important;
     box-shadow: 0 6px 16px rgba(184, 144, 32, 0.4);
 }
-.fp-right { display: flex; align-items: center; gap: 16px; flex: 2; min-width: 0; }
 .fp-progress-container {
-    display: flex; align-items: center; gap: 10px; flex: 1;
+    display: flex; align-items: center; gap: 10px; flex: 2;
     font-size: 0.8rem; color: var(--color-texto-secundario); min-width: 0;
 }
+.fp-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
 .fp-seek {
     flex: 1; accent-color: var(--color-principal);
     height: 4px; cursor: pointer; border-radius: 2px; min-width: 80px;
@@ -1804,34 +1804,56 @@ footer p {
     .floating-player {
         bottom: 8px; left: 8px; right: 8px;
         padding: 0;
+        max-height: calc(100dvh - 16px);
+        max-height: calc(100vh - 16px);
     }
     
-    /* En móviles, dividimos la barra en dos filas: arriba info/play/close, abajo barra de progreso */
+    /* En móviles, dividimos la barra en dos filas: arriba info/play/acciones, abajo barra de progreso */
     .fp-bar {
-        padding: 10px 16px;
-        min-height: 70px;
-        gap: 12px;
+        padding: 8px 12px 10px 14px;
+        min-height: unset;
         display: grid;
         grid-template-areas: 
             "info controls actions"
             "progress progress progress";
-        grid-template-columns: 1fr auto auto;
-        row-gap: 8px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        row-gap: 6px;
+        column-gap: 8px;
+        align-items: center;
     }
     
     .fp-song-info {
         grid-area: info;
+        min-width: 0;
+        overflow: hidden;
         align-self: center;
+    }
+    .fp-title {
+        font-size: 0.88rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
     }
     
     .fp-controls {
         grid-area: controls;
-        gap: 8px;
+        gap: 0;
         align-self: center;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
     }
     
     .fp-controls .fp-skip {
-        display: none; /* Ocultar botones anterior/siguiente en móvil para ahorrar espacio */
+        display: none !important; /* Ocultar botones anterior/siguiente en móvil para ahorrar espacio */
+    }
+
+    .fp-play-btn {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 1.15rem;
+        flex-shrink: 0;
     }
     
     .fp-right {
@@ -1839,50 +1861,59 @@ footer p {
         flex: none;
         align-self: center;
         justify-content: flex-end;
-        gap: 8px;
+        gap: 4px;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .fp-btn {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 4px !important;
+        flex-shrink: 0;
     }
     
     .fp-progress-container {
         grid-area: progress;
         width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+        margin: 0;
+        padding: 0;
+    }
+
+    .fp-seek {
+        min-width: 0;
+        flex: 1;
+        height: 4px;
     }
     
-    /* Ocultar el slider de volumen fijo en móvil para que no estorbe */
-    .fp-volume-slider {
-        display: none;
-    }
-    
-    /* Mostrar el volumen en un popup o simplemente ocultar slider y depender de controles físicos en celular */
-    .fp-volume-container:hover .fp-volume-slider,
-    .fp-volume-container:focus-within .fp-volume-slider {
-        display: block;
-        position: absolute;
-        bottom: 45px;
-        left: 50%;
-        transform: translateX(-50%) rotate(-90deg);
-        transform-origin: bottom center;
-        background: var(--color-blanco);
-        padding: 8px;
-        border: 1px solid var(--color-borde);
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 9100;
-        width: 80px;
-        height: 24px;
+    /* Ocultar el slider y botón de volumen en móvil (se usan controles físicos del teléfono) */
+    .fp-volume-container {
+        display: none !important;
     }
 }
 
 @media (max-width: 480px) {
     .fp-title {
-        font-size: 0.9rem;
+        font-size: 0.86rem;
     }
     .fp-play-btn {
-        width: 38px;
-        height: 38px;
+        width: 36px !important;
+        height: 36px !important;
     }
     .fp-bar {
-        grid-template-columns: 1fr auto auto;
-        gap: 8px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 6px;
+        row-gap: 5px;
+        padding: 8px 10px 10px 12px;
+    }
+    .fp-btn {
+        width: 30px !important;
+        height: 30px !important;
     }
     .fp-queue-dropdown {
         width: 100%; /* Pantalla completa en celular */
@@ -2677,21 +2708,36 @@ body { padding-bottom: 120px; }
 
 @media (max-width: 768px) {
     .fp-lyrics-overlay {
-        height: var(--fp-lyrics-max-h, min(52vh, 380px));
-        max-height: var(--fp-lyrics-max-h, min(52vh, 380px));
+        height: var(--fp-lyrics-max-h, min(48dvh, 340px));
+        max-height: min(var(--fp-lyrics-max-h, 48dvh), calc(100dvh - 110px));
+        max-height: min(var(--fp-lyrics-max-h, 48vh), calc(100vh - 110px));
     }
     .fp-lyrics-overlay.is-tall {
-        height: calc(100vh - 140px);
-        max-height: calc(100vh - 140px);
+        height: calc(100dvh - 110px);
+        max-height: calc(100dvh - 110px);
+        height: calc(100vh - 110px);
+        max-height: calc(100vh - 110px);
+    }
+    .fp-lyrics-resizer {
+        display: none !important;
     }
     .fp-lyrics-header {
-        padding: 10px 16px 8px;
+        padding: 8px 14px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+    .fp-lyrics-close {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
     }
     .fp-lyrics-sub {
         display: none;
     }
     .fp-lyrics-body {
-        padding: 14px 16px 20px;
+        padding: 12px 14px 18px;
     }
     .fp-lyric-line {
         font-size: 1rem;
