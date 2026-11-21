@@ -4687,5 +4687,293 @@
                 "archivo": "media/Quédate con Nosotros-Trombón.pdf"
             }
         ]
+    },
+    {
+        "id": 37,
+        "titulo": "El Tesoro",
+        "musica": "Juan Pablo Rojas",
+        "letra": "Mt 13, 44",
+        "adaptacion": "Juan Pablo Rojas",
+        "arreglo": "Felipe Rodríguez y Juan Pablo Rojas",
+        "idioma": "Español",
+        "anio": 2026,
+        "mes": 11,
+        "dia": 14,
+        "descripcion": "Canto sobre la parábola del tesoro escondido.",
+        "audio": "media/El Tesoro.mp3",
+        "letras_acordes": "media/El Tesoro.pdf",
+        "partitura": "media/El Tesoro.musicxml",
+        "midi": "media/El Tesoro.mid",
+        "tags": [
+            "Cantos Bíblicos: Evangelios"
+        ],
+        "tipo": "local",
+        "categorias": [
+            "Arreglo"
+        ],
+        "youtube_video_embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/oG8oZuy1bd4\" title=\"El Tesoro\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+        "youtube_audio_embed": null,
+        "interprete": "Rodrigo Correa, Enrique Da Fonseca, Manuel Lorca, Gonzalo Villaseca, José Tomás Pérez y Coro Misión País",
+        "tipo_pdf": "partitura",
+        "ensambles": [
+            {
+                "nombre": "Partitura Completa (Tutti)",
+                "instrumentos": [
+                    "Todos"
+                ],
+                "destacado": true
+            },
+            {
+                "nombre": "Vocal (Coro y Solistas)",
+                "instrumentos": [
+                    "Soprano",
+                    "Alto",
+                    "Tenor",
+                    "Bajo",
+                    "Solista Tenor 1",
+                    "Solista Tenor 2",
+                    "Solista Tenor 3",
+                    "Solista Barítono 1",
+                    "Solista Barítono 2"
+                ],
+                "destacado": true
+            },
+            {
+                "nombre": "Instrumental",
+                "instrumentos": [
+                    "Clarinete en Sib",
+                    "Guitarra clásica",
+                    "Violín",
+                    "Violonchelo"
+                ],
+                "destacado": true
+            },
+            {
+                "nombre": "Solo Solistas",
+                "instrumentos": [
+                    "Solista Tenor 1",
+                    "Solista Tenor 2",
+                    "Solista Tenor 3",
+                    "Solista Barítono 1",
+                    "Solista Barítono 2"
+                ],
+                "destacado": false
+            }
+        ],
+        "descargas": [
+            {
+                "nombre": "Partitura General Completa (PDF)",
+                "archivo": "media/El Tesoro.pdf"
+            },
+            {
+                "nombre": "Partitura Vocal (PDF)",
+                "archivo": "media/El Tesoro-Vocal.pdf"
+            },
+            {
+                "nombre": "Arreglo Coral (PDF)",
+                "archivo": "media/El Tesoro-Coral.pdf"
+            },
+            {
+                "nombre": "Partitura Instrumental (PDF)",
+                "archivo": "media/El Tesoro-Instrumental.pdf"
+            },
+            {
+                "nombre": "Particella Soprano (PDF)",
+                "archivo": "media/El Tesoro-Soprano.pdf"
+            },
+            {
+                "nombre": "Particella Alto (PDF)",
+                "archivo": "media/El Tesoro-Alto.pdf"
+            },
+            {
+                "nombre": "Particella Tenor (PDF)",
+                "archivo": "media/El Tesoro-Tenor.pdf"
+            },
+            {
+                "nombre": "Particella Bajo (PDF)",
+                "archivo": "media/El Tesoro-Bajo.pdf"
+            },
+            {
+                "nombre": "Particella Solista Tenor 1 (PDF)",
+                "archivo": "media/El Tesoro-Solista_Tenor_1.pdf"
+            },
+            {
+                "nombre": "Particella Solista Tenor 2 (PDF)",
+                "archivo": "media/El Tesoro-Solista_Tenor_2.pdf"
+            },
+            {
+                "nombre": "Particella Solista Tenor 3 (PDF)",
+                "archivo": "media/El Tesoro-Solista_Tenor_3.pdf"
+            },
+            {
+                "nombre": "Particella Solista Barítono 1 (PDF)",
+                "archivo": "media/El Tesoro-Solista_Barítono_1.pdf"
+            },
+            {
+                "nombre": "Particella Solista Barítono 2 (PDF)",
+                "archivo": "media/El Tesoro-Solista_Barítono_2.pdf"
+            },
+            {
+                "nombre": "Particella Clarinete en Sib (PDF)",
+                "archivo": "media/El Tesoro-Clarinete_en_Sib.pdf"
+            },
+            {
+                "nombre": "Particella Guitarra Clásica (PDF)",
+                "archivo": "media/El Tesoro-Guitarra_clásica.pdf"
+            },
+            {
+                "nombre": "Particella Violín (PDF)",
+                "archivo": "media/El Tesoro-Violín.pdf"
+            },
+            {
+                "nombre": "Particella Violonchelo (PDF)",
+                "archivo": "media/El Tesoro-Violonchelo.pdf"
+            }
+        ],
+        "letras": {
+            "sincronizada": true,
+            "lineas": [
+                {
+                    "t": 20.63,
+                    "text": "Cada día me levantaba a pescar,"
+                },
+                {
+                    "t": 30.08,
+                    "text": "Temprano echaba mis redes al mar,"
+                },
+                {
+                    "t": 34.9,
+                    "text": "Por la tarde tornar a la orilla"
+                },
+                {
+                    "t": 40.77,
+                    "text": "Y en la noche volver a mi hogar."
+                },
+                {
+                    "t": 50.84,
+                    "text": "Pero un día encontré un tesoro,"
+                },
+                {
+                    "t": 60.28,
+                    "text": "Su voz me atraía desde el corazón:"
+                },
+                {
+                    "t": 65.95,
+                    "text": "Seguir mi vida o empezar otra vida,"
+                },
+                {
+                    "t": 70.98,
+                    "text": "Dejar mis redes de pescador."
+                },
+                {
+                    "t": 79.17,
+                    "text": "El Reino de Dios"
+                },
+                {
+                    "t": 83.57,
+                    "text": "Es un tesoro escondido en el campo,"
+                },
+                {
+                    "t": 89.24,
+                    "text": "Un hombre lo encuentra y lo vuelve a esconder,"
+                },
+                {
+                    "t": 95.53,
+                    "text": "Y lleno de alegría vende todo,"
+                },
+                {
+                    "t": 102.45,
+                    "text": "Deja todo lo que posee"
+                },
+                {
+                    "t": 109.38,
+                    "text": "Y compra el campo."
+                },
+                {
+                    "t": 126.37,
+                    "text": "Era plata, oro, diamantes y luz,"
+                },
+                {
+                    "t": 135.81,
+                    "text": "El tesoro resplandecía ante mí,"
+                },
+                {
+                    "t": 140.63,
+                    "text": "Perlas finas que nunca había visto,"
+                },
+                {
+                    "t": 146.51,
+                    "text": "Perlas que yo no dejaré ir."
+                },
+                {
+                    "t": 156.58,
+                    "text": "En la arena yace acostada una red"
+                },
+                {
+                    "t": 165.81,
+                    "text": "Y las huellas se alejan del hombre que fui."
+                },
+                {
+                    "t": 171.68,
+                    "text": "Lo dejé todo para tenerlo todo"
+                },
+                {
+                    "t": 176.72,
+                    "text": "Y en pescador de hombres me convertí."
+                },
+                {
+                    "t": 184.9,
+                    "text": "El Reino de Dios"
+                },
+                {
+                    "t": 189.31,
+                    "text": "Es un tesoro escondido en el campo,"
+                },
+                {
+                    "t": 194.97,
+                    "text": "Un hombre lo encuentra y lo vuelve a esconder,"
+                },
+                {
+                    "t": 201.26,
+                    "text": "Y lleno de alegría vende todo,"
+                },
+                {
+                    "t": 208.19,
+                    "text": "Deja todo lo que posee,"
+                },
+                {
+                    "t": 213.22,
+                    "text": "Lo que posee."
+                },
+                {
+                    "t": 217.63,
+                    "text": "El Reino de Dios"
+                },
+                {
+                    "t": 222.03,
+                    "text": "Es un tesoro escondido en el campo,"
+                },
+                {
+                    "t": 227.7,
+                    "text": "Un hombre lo encuentra y lo vuelve a esconder,"
+                },
+                {
+                    "t": 233.99,
+                    "text": "Y lleno de alegría vende todo,"
+                },
+                {
+                    "t": 240.91,
+                    "text": "Deja todo lo que posee"
+                },
+                {
+                    "t": 247.84,
+                    "text": "Y compra el campo,"
+                },
+                {
+                    "t": 253.5,
+                    "text": "Y compra el campo."
+                }
+            ]
+        }
     }
 ]
